@@ -1,0 +1,212 @@
+
+############  input_number:  #####################  
+input_number:
+  front_door_accesscount_2:
+    name: Access Count
+    min: 0
+    max: 100
+    step: 1
+    unit_of_measurement: "Openings Left"
+  front_door_accesscount_2:
+    name: Access Count
+    min: 0
+    max: 100
+    step: 1
+    unit_of_measurement: "Openings Left"
+
+#################  input_datetime:  ##############  
+input_datetime:
+  end_date_2:
+    name: 'End'
+    has_time: false
+    has_date: true
+  start_date_2:
+    name: 'Start'
+    has_time: false
+    has_date: true
+
+
+  sunstart_date_2:
+    name: 'Start'
+    has_time: true
+    has_date: false
+  sunend_date_2:
+    name: 'End'
+    has_time: true
+    has_date: false
+
+  monstart_date_2:
+    name: 'Start'
+    has_time: true
+    has_date: false
+  monend_date_2:
+    name: 'End'
+    has_time: true
+    has_date: false
+
+  tuestart_date_2:
+    name: 'Start'
+    has_time: true
+    has_date: false
+  tueend_date_2:
+    name: 'End'
+    has_time: true
+    has_date: false
+
+  wedstart_date_2:
+    name: 'Start'
+    has_time: true
+    has_date: false
+  wedend_date_2:
+    name: 'End'
+    has_time: true
+    has_date: false
+
+  thustart_date_2:
+    name: 'Start'
+    has_time: true
+    has_date: false
+  thuend_date_2:
+    name: 'End'
+    has_time: true
+    has_date: false
+
+  fristart_date_2:
+    name: 'Start'
+    has_time: true
+    has_date: false
+  friend_date_2:
+    name: 'End'
+    has_time: true
+    has_date: false
+
+  satstart_date_2:
+    name: 'Start'
+    has_time: true
+    has_date: false
+  satend_date_2:
+    name: 'End'
+    has_time: true
+    has_date: false
+
+
+####################  input_text:  ###############  
+input_text:
+  front_door_name_2:
+    name: 'Name'
+  front_door_pin_2:
+    name: 'PIN'
+
+#################  input_boolean: ################  
+input_boolean:
+  front_door_notify_2:
+    name: 'Notifications'
+  front_door_daterange_2:
+    name: 'Use Date Range'
+  front_door_smtwtfs_2:
+    name: 'Use SMTWTFS'
+  front_door_enabled_2:
+    name: 'Enabled'
+  front_door_accesslimit_2:
+    name: 'Limit Access Count'
+    initial: off
+
+  sun_2:
+    name: 'Sunday'
+    initial: on
+
+  mon_2:
+    name: 'Monday'
+    initial: on
+
+  tue_2:
+    name: 'Tuesday'
+    initial: on
+
+  wed_2:
+    name: 'Wednesday'
+    initial: on
+
+  thu_2:
+    name: 'Thursday'
+    initial: on
+
+  fri_2:
+    name: 'Friday'
+    initial: on
+
+  sat_2:
+    name: 'Saturday'
+    initial: on
+
+################  binary_sensor: #################  
+binary_sensor:
+
+- platform: template
+  sensors:
+
+    front_door_enabled_2:
+      value_template: "{{ is_state('input_boolean.front_door_enabled_2', 'on') }}"
+
+    front_door_daterange_2:
+      value_template: "{{ ((is_state('input_boolean.front_door_daterange_2', 'off') or (states.input_datetime.start_date_2.attributes.timestamp| int | timestamp_custom('%Y%m%d', False)|int)|string <= now().strftime('%Y%m%d')) and (states.input_datetime.end_date_2.attributes.timestamp| int | timestamp_custom('%Y%m%d', False)|int)|string >=  now().strftime('%Y%m%d'))}}"
+
+    sun_2:
+      value_template: "{{ ((is_state('input_boolean.sun_2', 'on'))) and (now().strftime('%A') == 'Sunday') and ((states.input_datetime.sunstart_date_2.state  == states.input_datetime.sunend_date_2.state) or ((states.input_datetime.sunstart_date_2.attributes.timestamp| int | timestamp_custom('%H%M', False)|int)|string <= now().strftime('%H%M') and (states.input_datetime.sunend_date_2.attributes.timestamp| int | timestamp_custom('%H%M', False)|int)|string >= now().strftime('%H%M'))) }}"
+
+    mon_2:
+      value_template: "{{ ((is_state('input_boolean.mon_2', 'on'))) and (now().strftime('%A') == 'Monday') and ((states.input_datetime.monstart_date_2.state  == states.input_datetime.monend_date_2.state) or ((states.input_datetime.monstart_date_2.attributes.timestamp| int | timestamp_custom('%H%M', False)|int)|string <= now().strftime('%H%M') and (states.input_datetime.monend_date_2.attributes.timestamp| int | timestamp_custom('%H%M', False)|int)|string >= now().strftime('%H%M'))) }}"
+
+    tue_2:
+      value_template: "{{ ((is_state('input_boolean.tue_2', 'on'))) and (now().strftime('%A') == 'Tuesday') and ((states.input_datetime.tuestart_date_2.state  == states.input_datetime.tueend_date_2.state) or ((states.input_datetime.tuestart_date_2.attributes.timestamp| int | timestamp_custom('%H%M', False)|int)|string <= now().strftime('%H%M') and (states.input_datetime.tueend_date_2.attributes.timestamp| int | timestamp_custom('%H%M', False)|int)|string >= now().strftime('%H%M'))) }}"
+
+    wed_2:
+      value_template: "{{ ((is_state('input_boolean.wed_2', 'on'))) and (now().strftime('%A') == 'Wednesday') and ((states.input_datetime.wedstart_date_2.state  == states.input_datetime.wedend_date_2.state) or ((states.input_datetime.wedstart_date_2.attributes.timestamp| int | timestamp_custom('%H%M', False)|int)|string <= now().strftime('%H%M') and (states.input_datetime.wedend_date_2.attributes.timestamp| int | timestamp_custom('%H%M', False)|int)|string >= now().strftime('%H%M'))) }}"
+
+    thu_2:
+      value_template: "{{ ((is_state('input_boolean.thu_2', 'on'))) and (now().strftime('%A') == 'Thursday') and ((states.input_datetime.thustart_date_2.state  == states.input_datetime.thuend_date_2.state) or ((states.input_datetime.thustart_date_2.attributes.timestamp| int | timestamp_custom('%H%M', False)|int)|string <= now().strftime('%H%M') and (states.input_datetime.thuend_date_2.attributes.timestamp| int | timestamp_custom('%H%M', False)|int)|string >= now().strftime('%H%M'))) }}"
+
+    fri_2:
+      value_template: "{{ ((is_state('input_boolean.fri_2', 'on'))) and (now().strftime('%A') == 'Friday') and ((states.input_datetime.fristart_date_2.state  == states.input_datetime.friend_date_2.state) or ((states.input_datetime.fristart_date_2.attributes.timestamp| int | timestamp_custom('%H%M', False)|int)|string <= now().strftime('%H%M') and (states.input_datetime.friend_date_2.attributes.timestamp| int | timestamp_custom('%H%M', False)|int)|string >= now().strftime('%H%M'))) }}"
+
+    sat_2:
+      value_template: "{{ ((is_state('input_boolean.sat_2', 'on'))) and (now().strftime('%A') == 'Saturday') and ((states.input_datetime.satstart_date_2.state  == states.input_datetime.satend_date_2.state) or ((states.input_datetime.satstart_date_2.attributes.timestamp| int | timestamp_custom('%H%M', False)|int)|string <= now().strftime('%H%M') and (states.input_datetime.satend_date_2.attributes.timestamp| int | timestamp_custom('%H%M', False)|int)|string >= now().strftime('%H%M'))) }}"
+
+
+    smtwtfs_2:
+      friendly_name: "Status"
+      value_template: >-
+         {{
+            is_state('binary_sensor.sun_2', 'on')  or  
+            is_state('binary_sensor.mon_2', 'on')  or  
+            is_state('binary_sensor.tue_2', 'on')  or  
+            is_state('binary_sensor.wed_2', 'on')  or  
+            is_state('binary_sensor.thu_2', 'on')  or  
+            is_state('binary_sensor.fri_2', 'on')  or  
+            is_state('binary_sensor.sat_2', 'on')   
+         }}
+
+    
+    access_count_2:
+      friendly_name: "Access Count"
+      value_template: >-
+         {{
+            (is_state('input_boolean.front_door_accesslimit_2', 'off'))  or  
+            (states.input_number.front_door_accesscount_2.state | int > 0)
+         }}
+
+
+    front_door_active_2:
+      friendly_name: "Status"
+      value_template: >-
+         {{
+            is_state('binary_sensor.front_door_enabled_2', 'on')  and  
+            is_state('binary_sensor.access_count_2', 'on')  and  
+            is_state('binary_sensor.front_door_daterange_2', 'on') and
+            is_state('binary_sensor.smtwtfs_2', 'on')  
+         }}
+      device_class: connectivity
+
+
+###################  sensor:  ####################  
+
