@@ -7,12 +7,6 @@ input_number:
     max: 100
     step: 1
     unit_of_measurement: "Openings Left"
-  front_door_accesscount_1:
-    name: Access Count
-    min: 0
-    max: 100
-    step: 1
-    unit_of_measurement: "Openings Left"
 
 #################  input_datetime:  ##############  
 input_datetime:
