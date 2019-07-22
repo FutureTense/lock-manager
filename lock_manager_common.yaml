@@ -3,20 +3,55 @@
 ##################################################  
 
 
+
+###############  input_boolean:  #################  
+input_boolean:
+  lock_notifications:
+    name: "Lock Notifications"
+  dooraccess_notifications:
+    name: "Door Notifications"
+
+
+
+############## binary_sensor:  ####################  
+binary_sensor:
+- platform: template
+  sensors:
+  
+    vision_security_zd2105us_5_recessed_door_sensor_access_control_frontdoor:
+      value_template: "{{ is_state('sensor.vision_security_zd2105us_5_recessed_door_sensor_access_control_frontdoor', '22') }}"
+      friendly_name: "Front Door"
+      device_class: door
+
+    vision_security_zd2105us_5_recessed_door_sensor_burglar_frontdoor:
+      value_template: "{{ is_state('sensor.vision_security_zd2105us_5_recessed_door_sensor_burglar_frontdoor', '3') }}"
+      friendly_name: "Front Door Sensor Tamper"
+      device_class: safety
+
 ###################  sensor:  ####################  
 sensor:
 
 - platform: template
   sensors:
-    frontdoor_report:
-      friendly_name: 'Front Door Report'
+
+
+
+    frontdoor_statusreport:
+      friendly_name: 'Front Status Report'
       value_template: >
-          {% set number = states('sensor.lock_front_door_deadbolt_alarm_level') %}
-          {% set alarm_type_value = states('sensor.lock_front_door_deadbolt_alarm_type') %}
-          {% set entity_id = 'input_text.front_door_name_' + number %}
-          {% set user = 'Master' if number == '0' else states(entity_id) %}
-          {% set alarm_type_value = '24' if (as_timestamp(now())-as_timestamp(states.lock.front_door_lock.last_changed)) < 15 and (as_timestamp(now())-as_timestamp(states.sensor.lock_front_door_deadbolt_alarm_type.last_changed)) > 15  and (states.lock.lock_front_door_lock.state) == 'locked' else alarm_type_value %}
-          {% set alarm_type_value = '25' if (as_timestamp(now())-as_timestamp(states.lock.front_door_lock.last_changed)) < 15 and (as_timestamp(now())-as_timestamp(states.sensor.lock_front_door_deadbolt_alarm_type.last_changed)) > 15  and (states.lock.lock_front_door_lock.state) == 'unlocked' else alarm_type_value %}
+          {% set number = states('sensor.schlage_allegion_be469_touchscreen_deadbolt_alarm_level_frontdoor') %}
+          {% set alarm_type_value = states('sensor.schlage_allegion_be469_touchscreen_deadbolt_alarm_type_frontdoor') %}
+
+          {% if ((as_timestamp(now())-as_timestamp(states.lock.schlage_allegion_be469_touchscreen_deadbolt_locked_frontdoor.last_changed)) < 15 and (as_timestamp(now())-as_timestamp(states.sensor.schlage_allegion_be469_touchscreen_deadbolt_alarm_type_frontdoor.last_changed)) > 15) %}
+
+          {%    if (states.lock.schlage_allegion_be469_touchscreen_deadbolt_locked_frontdoor.state) == 'locked' %}
+          {%       set alarm_type_value = '24' %}
+          {%    elif (states.lock.schlage_allegion_be469_touchscreen_deadbolt_locked_frontdoor.state) == 'unlocked' %}
+          {%       set alarm_type_value = '25' %}
+          {%    endif %}
+
+          {% endif %}
+          
           {% set alarm_type_general_actions = {
             '0':'No Status Reported',          
             '9':'Lock Jammed',
@@ -42,136 +77,208 @@ sensor:
             '112':'Code Changed',
             '113':'Duplicate Code' } %}
           {% if alarm_type_value in alarm_type_code_actions %}
-            {{ alarm_type_code_actions[alarm_type_value] }} (Code {{ number}})
-          {% elif alarm_type_value in alarm_type_lock_actions and number == '0' %}
-            {{ alarm_type_lock_actions[alarm_type_value] }} with Schlage Button
+            {{alarm_type_value}};{{ alarm_type_code_actions[alarm_type_value] }};{{number}}
           {% elif alarm_type_value in alarm_type_lock_actions  %}
-            {{ alarm_type_lock_actions[alarm_type_value] }} with Code {{ number }} ({{ user }})
+            {{alarm_type_value}};{{ alarm_type_lock_actions[alarm_type_value] }};{{number}}
           {% elif alarm_type_value in alarm_type_general_actions %}
-            {{ alarm_type_general_actions[alarm_type_value] }}
+            {{alarm_type_value}};{{ alarm_type_general_actions[alarm_type_value] }}
           {% else %}
-            Unknown Alarm Type Value {{ states('sensor.lock_front_door_deadbolt_alarm_type') }}
+            {{-1}};Unknown Alarm Type Value {{ states('sensor.schlage_allegion_be469_touchscreen_deadbolt_alarm_type_frontdoor') }}
           {% endif %}
-
-    frontdoor_code:
-      friendly_name: 'Last Person to unlock with Keypad (Front Door)'
-      value_template: >
-        {% set number = states('sensor.lock_front_door_deadbolt_alarm_level') %}
-        {% set entity_id = 'input_text.front_door_name_' + number %}
-        {% set user = 'Master' if number == '0' else states(entity_id) %}
-        {{ user }}
-
 
 ###################  automation:  ####################  
 automation:
 
-  - alias: Decrement access count
-    trigger:
-      platform: state
-      entity_id: sensor.frontdoor_report
-    condition:
-      condition: template
-      value_template: >-
-        {% set report = states.sensor.frontdoor_report.state %}
-        {% set codeslot = (report | regex_findall_index('(\d+)', ignorecase=True)) %}
-        {% set codetext = 'front_door_notify_' + codeslot | string %}
-        {% set codetext = 'front_door_accesslimit_' + codeslot | string %}
-        {% set code = states['input_boolean'][codetext].state %}
-        {% set unlocked = ( report| regex_match('Keypad Unlock with Code ' + codeslot, ignorecase=True) ) %}
-        {{ (code == "on") and unlocked }}
-    action:
-      - service: input_number.set_value
-        data_template:
-          entity_id: >-
-            {% set report = states.sensor.frontdoor_report.state %}
-            {% set codeslot = (report | regex_findall_index('(\d+)', ignorecase=True)) %}
-            {{ 'input_number.front_door_accesscount_' + codeslot | string }}
-          value: >-
-            {% set report = states.sensor.frontdoor_report.state %}
-            {% set codeslot = (report | regex_findall_index('(\d+)', ignorecase=True)) %}
-            {% set codetext = 'front_door_accesscount_' + codeslot | string %}
-            {% set accesscount = states['input_number'][codetext].state | int %}
-            {{ (accesscount - 1) }}
-  
-  
-  - alias: Notify front door access
-    trigger:
-      platform: state
-      entity_id: sensor.frontdoor_report
-    condition:
-      condition: template
-      value_template: >-
-         {% set report = states.sensor.frontdoor_report.state %}
-         {% set codeslot = (report | regex_findall_index('(\d+)', ignorecase=True)) %}
-         {% set codetext = 'front_door_notify_' + codeslot | string %}
-         {% set code = states['input_boolean'][codetext].state %}
-         {{ code == "on" }}
-    action:
-      - service: notify.notify
-        data_template:
-           title: "Front Door"
-           message: >-
-              {{ states.sensor.frontdoor_report.state }}
-           
-  - alias: Add Code
-    trigger:
-      entity_id: binary_sensor.front_door_active_1, binary_sensor.front_door_active_2, binary_sensor.front_door_active_3, binary_sensor.front_door_active_4, binary_sensor.front_door_active_5, binary_sensor.front_door_active_6 
-      platform: state
-      to: 'on'
-    action:
-      - service: lock.set_usercode
-        data_template:
-          node_id: >- 
-              {{states.lock.front_door_lock.attributes.node_id}}
-          code_slot: >-
-              {% set object_id = trigger.to_state.object_id %}
-              {% set code_slot = object_id[18:] %}
-              {{ code_slot  }}
-          usercode: >-
-              {% set object_id = trigger.to_state.object_id %}
-              {% set code_slot = object_id[18:] %}    
-              {% set codetext = 'front_door_pin_' + code_slot | string %}
-              {% set code = states['input_text'][codetext].state %}
-              {{ code | string }}
-  
-  - alias: Update Code
-    trigger:
-      entity_id: input_text.front_door_pin_1, input_text.front_door_pin_2, input_text.front_door_pin_3, input_text.front_door_pin_4, input_text.front_door_pin_5, input_text.front_door_pin_6
-      platform: state
-    condition:
-      condition: template
-      value_template: >-
-          {{  trigger.from_state.state != trigger.to_state.state }}
-    action:
-      - service: persistent_notification.create
-        data_template:
-          title: "LOCK MANAGER"
-          message: >-
-            {% set object_id = trigger.to_state.object_id %}
-            {% set codeslot = object_id[15:] %}
-            {{ 'You changed the PIN for code ' + codeslot | string + '. Please enable it in order to make it active.'}}
-      - service: input_boolean.turn_off
-        data_template:
-          entity_id: >-
-            {% set object_id = trigger.to_state.object_id %}
-            {% set codeslot = object_id[15:] %}
-            {{ 'input_boolean.front_door_enabled_' + codeslot | string }}
-  
-  - alias: Clear Code
-    trigger:
-      entity_id: binary_sensor.front_door_active_1, binary_sensor.front_door_active_2, binary_sensor.front_door_active_3, binary_sensor.front_door_active_4,binary_sensor.front_door_active_5, binary_sensor.front_door_active_6 
-      platform: state
-      to: 'off'
-    action:
-      - service: lock.set_usercode
-        data_template:
-          node_id: >- 
-              {{states.lock.front_door_lock.attributes.node_id}}
-          code_slot: >-
-              {% set object_id = trigger.to_state.object_id %}
-              {% set code_slot = object_id[18:] %}
-              {{ code_slot  }}
-          usercode: >-
-              {{ range(1000, 9999) | random | int }}
-  
+    - alias: Lock Notifications
+      trigger:
+        platform: state
+        entity_id: sensor.frontdoor_statusreport
+      condition:
+        - condition: state
+          entity_id: input_boolean.lock_notifications
+          state: 'on'
+        - condition: template
+          value_template: >-
+            {% set report = states.sensor.frontdoor_statusreport.state %}
+            {% set a = report.split(';') %}
+            {% if (a|length) != 3 or (a[2] == "0") %} 
+              {{ true }}
+            {% else %}
+              {{ false }}
+            {% endif %}
+      action:
+        - service: notify.notify
+          data_template:
+            title: "Sensor Status Report"
+            message: >-
+              {% set report = states.sensor.frontdoor_statusreport.state %}
+              {% set a = report.split(';') %}
+              {% set msg = "ID:" + a[0] + " MSG:" + a[1] %}
+              {% if (a|length) == 3 %}
+              {%   set msg = msg + " SLOT:" + a[2] %}
+              {% endif %}
+              {{ a[1] }}
+    
+    - alias: User Lock Notifications
+      trigger:
+        platform: state
+        entity_id: sensor.frontdoor_statusreport
+      condition:
+        - condition: template
+          value_template: >-
+            {% set report = states.sensor.frontdoor_statusreport.state %}
+            {% set a = report.split(';') %}
+            {% if (a|length) == 3 and (a[2] | int > 0) %} 
+              {{ true }}
+            {% else %}
+              {{ false }}
+            {% endif %}
+        - condition: template
+          value_template: >-
+            {% set report = states.sensor.frontdoor_statusreport.state %}
+            {% set a = report.split(';') %}
+            {% set entity_id = 'frontdoor_notify_' + a[2] %}
+            {% set notify = states['input_boolean'][entity_id].state %}
+            {{ notify == "on" }}
+      action:
+        - service: notify.notify
+          data_template:
+            title: >- 
+              {% set report = states.sensor.frontdoor_statusreport.state %}
+              {% set a = report.split(';') %}
+              {{ a[1] }}
+            message: >-
+              {% set report = states.sensor.frontdoor_statusreport.state %}
+              {% set a = report.split(';') %}
+              {% set entity_id = 'input_text.frontdoor_name_' + a[2] %}
+              {% set user = states(entity_id) %}
+              {{ user }}
 
+###############################
+    - alias: Front Door Sensor Close
+      trigger:
+        entity_id: binary_sensor.vision_security_zd2105us_5_recessed_door_sensor_access_control_frontdoor
+        platform: state
+        to: 'off'
+      condition:
+        - condition: state
+          entity_id: input_boolean.dooraccess_notifications
+          state: 'on'
+      action:
+        - service: notify.notify
+          data:
+            title: "Front Door"    
+            message: "Closed"
+
+    - alias: Front Door Sensor Opened
+      trigger:
+        entity_id: binary_sensor.vision_security_zd2105us_5_recessed_door_sensor_access_control_frontdoor
+        platform: state
+        to: 'on'
+      condition:
+        - condition: state
+          entity_id: input_boolean.dooraccess_notifications
+          state: 'on'
+      action:
+        - service: notify.notify
+          data:
+            title: "Front Door"    
+            message: "Opened"
+    
+    - alias: Add Code
+      trigger:
+        entity_id: binary_sensor.frontdoor_active_1, binary_sensor.frontdoor_active_2, binary_sensor.frontdoor_active_3, binary_sensor.frontdoor_active_4, binary_sensor.frontdoor_active_5, binary_sensor.frontdoor_active_6 
+        platform: state
+        to: 'on'
+      action:
+        - service: lock.set_usercode
+          data_template:
+            node_id: >- 
+                {{states.lock.schlage_allegion_be469_touchscreen_deadbolt_locked_frontdoor.attributes.node_id}}
+            code_slot: >-
+                {% set object_id = trigger.to_state.object_id %}
+                {% set index = 17 %}
+                {% set code_slot = object_id[index:] %}
+                {{ code_slot  }}
+            usercode: >-
+                {% set object_id = trigger.to_state.object_id %}
+                {% set index = 17 %}
+                {% set code_slot = object_id[index:] %}    
+                {% set codetext = 'frontdoor_pin_' + code_slot | string %}
+                {% set code = states['input_text'][codetext].state %}
+                {{ code | string }}
+    
+    - alias: Update Code
+      trigger:
+        entity_id: input_text.frontdoor_pin_1, input_text.frontdoor_pin_2, input_text.frontdoor_pin_3, input_text.frontdoor_pin_4, input_text.frontdoor_pin_5, input_text.frontdoor_pin_6
+        platform: state
+      condition:
+        condition: template
+        value_template: >-
+            {{  trigger.from_state.state != trigger.to_state.state }}
+      action:
+        - service: persistent_notification.create
+          data_template:
+            title: "LOCK MANAGER"
+            message: >-
+              {% set object_id = trigger.to_state.object_id %}
+              {% set index = 14 %}
+              {% set code_slot = object_id[index:] %}
+              {{ 'You changed the PIN for code  ' + code_slot | string + '. Please enable it in order to make it active.'}}
+        - service: input_boolean.turn_off
+          data_template:
+            entity_id: >-
+              {% set object_id = trigger.to_state.object_id %}
+              {% set index = 14 %}
+              {% set code_slot = object_id[index:] %}
+              {{ 'input_boolean.frontdoor_enabled_' + code_slot | string }}
+    
+    - alias: Clear Code
+      trigger:
+        entity_id: binary_sensor.frontdoor_active_1, binary_sensor.frontdoor_active_2, binary_sensor.frontdoor_active_3, binary_sensor.frontdoor_active_4,binary_sensor.frontdoor_active_5, binary_sensor.frontdoor_active_6 
+        platform: state
+        to: 'off'
+      action:
+        # - service: lock.clear_usercode
+        #   data_template:
+        #     node_id: >- 
+        #         {{states.lock.schlage_allegion_be469_touchscreen_deadbolt_locked_frontdoor.attributes.node_id}}
+        #     code_slot: >-
+        #         {% set object_id = trigger.to_state.object_id %}
+        #         {% set index = 17 %}
+        #         {% set code_slot = object_id[inex:] %}
+        #         {{ code_slot  }}
+        - service: lock.set_usercode
+          data_template:
+            node_id: >- 
+              {{states.lock.schlage_allegion_be469_touchscreen_deadbolt_locked_frontdoor.attributes.node_id}}
+            code_slot: >-
+              {% set index = 17 %}
+              {% set object_id = trigger.to_state.object_id %}
+              {% set code_slot = object_id[index:] %}
+              {{ code_slot  }}
+            usercode: >-
+              {{ range(1000, 9999) | random | int }}
+
+    - alias: Decrement access count
+      trigger:
+        platform: state
+        entity_id: sensor.frontdoor_statusreport
+      condition:
+        condition: template
+        value_template: >-
+          {% set report = states.sensor.frontdoor_statusreport.state %}
+          {% set a = report.split(';') %}
+          {% if (a|length) == 3 and (a[2] | int > 0) %} 
+             {{ (a[0] | int == 19) }}
+          {% else %}
+            {{ false }}
+          {% endif %}
+      action:
+        - service: input_number.decrement
+          data_template:
+            entity_id: >-
+              {% set report = states.sensor.frontdoor_statusreport.state %}
+              {% set a = report.split(';') %}
+              {{ 'input_number.frontdoor_accesscount_' + a[2] }}
+          

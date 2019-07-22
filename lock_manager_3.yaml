@@ -1,7 +1,7 @@
 
 ############  input_number:  #####################  
 input_number:
-  front_door_accesscount_3:
+  frontdoor_accesscount_3:
     name: Access Count
     min: 0
     max: 100
@@ -86,22 +86,22 @@ input_datetime:
 
 ####################  input_text:  ###############  
 input_text:
-  front_door_name_3:
+  frontdoor_name_3:
     name: 'Name'
-  front_door_pin_3:
+  frontdoor_pin_3:
     name: 'PIN'
 
 #################  input_boolean: ################  
 input_boolean:
-  front_door_notify_3:
+  frontdoor_notify_3:
     name: 'Notifications'
-  front_door_daterange_3:
+  frontdoor_daterange_3:
     name: 'Use Date Range'
-  front_door_smtwtfs_3:
+  frontdoor_smtwtfs_3:
     name: 'Use SMTWTFS'
-  front_door_enabled_3:
+  frontdoor_enabled_3:
     name: 'Enabled'
-  front_door_accesslimit_3:
+  frontdoor_accesslimit_3:
     name: 'Limit Access Count'
     initial: off
 
@@ -139,11 +139,11 @@ binary_sensor:
 - platform: template
   sensors:
 
-    front_door_enabled_3:
-      value_template: "{{ is_state('input_boolean.front_door_enabled_3', 'on') }}"
+    frontdoor_enabled_3:
+      value_template: "{{ is_state('input_boolean.frontdoor_enabled_3', 'on') }}"
 
-    front_door_daterange_3:
-      value_template: "{{ ((is_state('input_boolean.front_door_daterange_3', 'off') or (states.input_datetime.start_date_3.attributes.timestamp| int | timestamp_custom('%Y%m%d', False)|int)|string <= now().strftime('%Y%m%d')) and (states.input_datetime.end_date_3.attributes.timestamp| int | timestamp_custom('%Y%m%d', False)|int)|string >=  now().strftime('%Y%m%d'))}}"
+    frontdoor_daterange_3:
+      value_template: "{{ (is_state('input_boolean.frontdoor_daterange_3', 'off') or ((states.input_datetime.start_date_3.attributes.timestamp| int | timestamp_custom('%Y%m%d', False)|int)|string <= now().strftime('%Y%m%d')) and (states.input_datetime.end_date_3.attributes.timestamp| int | timestamp_custom('%Y%m%d', False)|int)|string >=  now().strftime('%Y%m%d'))}}"
 
     sun_3:
       value_template: "{{ ((is_state('input_boolean.sun_3', 'on'))) and (now().strftime('%A') == 'Sunday') and ((states.input_datetime.sunstart_date_3.state  == states.input_datetime.sunend_date_3.state) or ((states.input_datetime.sunstart_date_3.attributes.timestamp| int | timestamp_custom('%H%M', False)|int)|string <= now().strftime('%H%M') and (states.input_datetime.sunend_date_3.attributes.timestamp| int | timestamp_custom('%H%M', False)|int)|string >= now().strftime('%H%M'))) }}"
@@ -185,18 +185,18 @@ binary_sensor:
       friendly_name: "Access Count"
       value_template: >-
          {{
-            (is_state('input_boolean.front_door_accesslimit_3', 'off'))  or  
-            (states.input_number.front_door_accesscount_3.state | int > 0)
+            (is_state('input_boolean.frontdoor_accesslimit_3', 'off'))  or  
+            (states.input_number.frontdoor_accesscount_3.state | int > 0)
          }}
 
 
-    front_door_active_3:
+    frontdoor_active_3:
       friendly_name: "Status"
       value_template: >-
          {{
-            is_state('binary_sensor.front_door_enabled_3', 'on')  and  
+            is_state('binary_sensor.frontdoor_enabled_3', 'on')  and  
             is_state('binary_sensor.access_count_3', 'on')  and  
-            is_state('binary_sensor.front_door_daterange_3', 'on') and
+            is_state('binary_sensor.frontdoor_daterange_3', 'on') and
             is_state('binary_sensor.smtwtfs_3', 'on')  
          }}
       device_class: connectivity

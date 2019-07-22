@@ -7,7 +7,7 @@ For more information, please see the topic for this package at the [Home Assista
 
 Download the files and put into your Home Assistant place them in the `packages` directory.  If it doesn't already exist, you will need to create it.  For more information see [packages](https://www.home-assistant.io/docs/configuration/packages/).  I suggest putting all of these files in a directory called `lockmanager` so your directory structure should look something like: `.../homeassistant/packages/lockmanager`
 
-**N.B.**  This package expects your lock to have the entity_id of `lock.front_door_lock` so you can either rename the entity_id of your lock in Home Assistant or do a global replace in the package files. 
+**N.B.**  This package expects your lock to have the entity_id of `lock.schlage_allegion_be469_touchscreen_deadbolt_locked_frontdoor` so you can either rename the entity_id of your lock in Home Assistant or do a global replace in the package files. 
 
 The following files are included: 
 * lock_manager_common.yaml
