@@ -5,16 +5,14 @@ For more information, please see the topic for this package at the [Home Assista
 
 ## Installation
 
+Download the files and put into your Home Assistant place them in the `packages` directory.  If it doesn't already exist, you will need to create it.  For more information see [packages](https://www.home-assistant.io/docs/configuration/packages/).  I suggest putting all of these files in a directory called `lockmanager` so your directory structure should look something like: `.../homeassistant/packages/lockmanager`
+
 This package uses a Schlage BE469 Z-Wave Door lock and an (optional) [Monoprice Z-Wave Plus Recessed Door/Window Sensor (Model #15268)](https://www.monoprice.com/product?p_id=15268) door sensor.
 
-When you add the devices to your Z-Wvave network via the inlusion mode, use the Home Assistant Entity Registry and rename each entity that belongs to the device and append `_frontdoor` to it.  Example
+**N.B.**  When you add the devices to your Z-Wvave network via the inlusion mode, use the Home Assistant Entity Registry and rename each entity that belongs to the device and append `_frontdoor` to it.  Example
 
 `zwave.vision_security_zd2105us_5_recessed_door_window_sensor` would be renamed to `zwave.vision_security_zd2105us_5_recessed_door_window_sensor_frontdoor` 
 `sensor.schlage_allegion_be469_touchscreen_deadbolt_alarm_level` would be renamed to `sensor.schlage_allegion_be469_touchscreen_deadbolt_alarm_level_frontdoor`
-
-Download the files and put into your Home Assistant place them in the `packages` directory.  If it doesn't already exist, you will need to create it.  For more information see [packages](https://www.home-assistant.io/docs/configuration/packages/).  I suggest putting all of these files in a directory called `lockmanager` so your directory structure should look something like: `.../homeassistant/packages/lockmanager`
-
-**N.B.**  This package expects your lock to have the entity_id of `lock.schlage_allegion_be469_touchscreen_deadbolt_locked_frontdoor` so you can either rename the entity_id of your lock in Home Assistant or do a global replace in the package files. 
 
 The following files are included: 
 * lock_manager_common.yaml
@@ -54,3 +52,4 @@ The application makes heavy usage of binary_sensors.  Each code slot in the syst
 **Date Range**  This sensor, if enabled by it's boolean toggle will be enabled only if the current system date is between the dates specified in the date fields.
 
 **Sunday - Saturday**  These sensors are enabled by default.  If you disable any of them, then the PIN won't work on that day.  When enabled, the PIN will only work if the current system time falls between the specified time periods.  If the periods are equal, then the PIN will work for the entire day.
+
