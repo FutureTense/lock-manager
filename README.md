@@ -7,12 +7,14 @@ For more information, please see the topic for this package at the [Home Assista
 
 Download the files and put into your Home Assistant place them in the `packages` directory.  If it doesn't already exist, you will need to create it.  For more information see [packages](https://www.home-assistant.io/docs/configuration/packages/).  I suggest putting all of these files in a directory called `lockmanager` so your directory structure should look something like: `.../homeassistant/packages/lockmanager`
 
-This package uses a Schlage BE469 Z-Wave Door lock and an (optional) [Monoprice Z-Wave Plus Recessed Door/Window Sensor (Model #15268)](https://www.monoprice.com/product?p_id=15268) door sensor.
+This package uses a Schlage BE469 Z-Wave Door lock and an (optional) [Monoprice Z-Wave Plus Recessed Door/Window Sensor (Model #15268)](https://www.monoprice.com/product?p_id=15268) door sensor.  If you aren't using the Monoprice or similar open/closed door sensor, you can just hide the assoicated entities in Lovelace.
 
-**N.B.**  When you add the devices to your Z-Wvave network via the inlusion mode, use the Home Assistant Entity Registry and rename each entity that belongs to the device and append `_frontdoor` to it.  Example
+**N.B.**  When you add the devices to your Z-Wvave network via the inlusion mode, use the Home Assistant Entity Registry and rename each entity that belongs to the device and append `_frontdoor` to it.  For example:
 
 `zwave.vision_security_zd2105us_5_recessed_door_window_sensor` would be renamed to `zwave.vision_security_zd2105us_5_recessed_door_window_sensor_frontdoor` 
 `sensor.schlage_allegion_be469_touchscreen_deadbolt_alarm_level` would be renamed to `sensor.schlage_allegion_be469_touchscreen_deadbolt_alarm_level_frontdoor`
+
+Just to be safe, you should rename *every* entity in the entity registry.  The easiest thing to do is to paste `_frontdoor` after each item in the registry.  Do a global search for the "base" name and make sure everything looks correct.  So for the Schlage BE469, that would be **schlage_allegion_be469_touchscreen_deadbolt**, and for the Monoprice door sensor, that is **vision_security_zd2105us_5_recessed_door_window_sensor**.
 
 The following files are included: 
 * lock_manager_common.yaml
