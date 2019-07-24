@@ -1,10 +1,19 @@
-  - 'badges[]': null
+  - title: 'Door Lock Information, Codes and Configuration'
+    path: keypad
+    icon: 'mdi:lock-smart'
+    panel: false
+    badges:
+      - input_boolean.lock_notifications
+      - input_boolean.dooraccess_notifications
+      - input_boolean.garageacess_notifications
     cards:
-      - cards:
+      - type: vertical-stack
+        cards:
           - content: |
               ## Code 1
             type: markdown
-          - entities:
+          - type: entities
+            entities:
               - entity: input_text.frontdoor_name_1
               - entity: input_text.frontdoor_pin_1
               - entity: input_boolean.frontdoor_enabled_1
@@ -12,47 +21,52 @@
               - type: divider
               - entity: binary_sensor.frontdoor_active_1
               - type: divider
-              - entity: input_boolean.frontdoor_accesslimit_1
-              - entity: input_number.frontdoor_accesscount_1
-              - type: divider
-              - entity: input_boolean.frontdoor_daterange_1
-              - entity: input_datetime.start_date_1
-              - entity: input_datetime.end_date_1
-              - type: divider
-              - input_boolean.sun_1
-              - input_datetime.sunstart_date_1
-              - input_datetime.sunend_date_1
-              - type: divider
-              - input_boolean.mon_1
-              - input_datetime.monstart_date_1
-              - input_datetime.monend_date_1
-              - type: divider
-              - input_boolean.tue_1
-              - input_datetime.tuestart_date_1
-              - input_datetime.tueend_date_1
-              - type: divider
-              - input_boolean.wed_1
-              - input_datetime.wedstart_date_1
-              - input_datetime.wedend_date_1
-              - type: divider
-              - input_boolean.thu_1
-              - input_datetime.thustart_date_1
-              - input_datetime.thuend_date_1
-              - type: divider
-              - input_boolean.fri_1
-              - input_datetime.fristart_date_1
-              - input_datetime.friend_date_1
-              - type: divider
-              - input_boolean.sat_1
-              - input_datetime.satstart_date_1
-              - input_datetime.satend_date_1
-            type: entities
-        type: vertical-stack
-      - cards:
+              - type: 'custom:fold-entity-row'
+                head:
+                  type: section
+                  label: Access Options
+                entities:
+                  - entity: input_boolean.frontdoor_accesslimit_1
+                  - entity: input_number.frontdoor_accesscount_1
+                  - type: divider
+                  - entity: input_boolean.frontdoor_daterange_1
+                  - entity: input_datetime.start_date_1
+                  - entity: input_datetime.end_date_1
+                  - type: divider
+                  - input_boolean.sun_1
+                  - input_datetime.sunstart_date_1
+                  - input_datetime.sunend_date_1
+                  - type: divider
+                  - input_boolean.mon_1
+                  - input_datetime.monstart_date_1
+                  - input_datetime.monend_date_1
+                  - type: divider
+                  - input_boolean.tue_1
+                  - input_datetime.tuestart_date_1
+                  - input_datetime.tueend_date_1
+                  - type: divider
+                  - input_boolean.wed_1
+                  - input_datetime.wedstart_date_1
+                  - input_datetime.wedend_date_1
+                  - type: divider
+                  - input_boolean.thu_1
+                  - input_datetime.thustart_date_1
+                  - input_datetime.thuend_date_1
+                  - type: divider
+                  - input_boolean.fri_1
+                  - input_datetime.fristart_date_1
+                  - input_datetime.friend_date_1
+                  - type: divider
+                  - input_boolean.sat_1
+                  - input_datetime.satstart_date_1
+                  - input_datetime.satend_date_1
+      - type: vertical-stack
+        cards:
           - content: |
               ## Code 2
             type: markdown
-          - entities:
+          - type: entities
+            entities:
               - entity: input_text.frontdoor_name_2
               - entity: input_text.frontdoor_pin_2
               - entity: input_boolean.frontdoor_enabled_2
@@ -60,47 +74,52 @@
               - type: divider
               - entity: binary_sensor.frontdoor_active_2
               - type: divider
-              - entity: input_boolean.frontdoor_accesslimit_2
-              - entity: input_number.frontdoor_accesscount_2
-              - type: divider
-              - entity: input_boolean.frontdoor_daterange_2
-              - entity: input_datetime.start_date_2
-              - entity: input_datetime.end_date_2
-              - type: divider
-              - input_boolean.sun_2
-              - input_datetime.sunstart_date_2
-              - input_datetime.sunend_date_2
-              - type: divider
-              - input_boolean.mon_2
-              - input_datetime.monstart_date_2
-              - input_datetime.monend_date_2
-              - type: divider
-              - input_boolean.tue_2
-              - input_datetime.tuestart_date_2
-              - input_datetime.tueend_date_2
-              - type: divider
-              - input_boolean.wed_2
-              - input_datetime.wedstart_date_2
-              - input_datetime.wedend_date_2
-              - type: divider
-              - input_boolean.thu_2
-              - input_datetime.thustart_date_2
-              - input_datetime.thuend_date_2
-              - type: divider
-              - input_boolean.fri_2
-              - input_datetime.fristart_date_2
-              - input_datetime.friend_date_2
-              - type: divider
-              - input_boolean.sat_2
-              - input_datetime.satstart_date_2
-              - input_datetime.satend_date_2
-            type: entities
-        type: vertical-stack
-      - cards:
+              - type: 'custom:fold-entity-row'
+                head:
+                  type: section
+                  label: Access Options
+                entities:
+                  - entity: input_boolean.frontdoor_accesslimit_2
+                  - entity: input_number.frontdoor_accesscount_2
+                  - type: divider
+                  - entity: input_boolean.frontdoor_daterange_2
+                  - entity: input_datetime.start_date_2
+                  - entity: input_datetime.end_date_2
+                  - type: divider
+                  - input_boolean.sun_2
+                  - input_datetime.sunstart_date_2
+                  - input_datetime.sunend_date_2
+                  - type: divider
+                  - input_boolean.mon_2
+                  - input_datetime.monstart_date_2
+                  - input_datetime.monend_date_2
+                  - type: divider
+                  - input_boolean.tue_2
+                  - input_datetime.tuestart_date_2
+                  - input_datetime.tueend_date_2
+                  - type: divider
+                  - input_boolean.wed_2
+                  - input_datetime.wedstart_date_2
+                  - input_datetime.wedend_date_2
+                  - type: divider
+                  - input_boolean.thu_2
+                  - input_datetime.thustart_date_2
+                  - input_datetime.thuend_date_2
+                  - type: divider
+                  - input_boolean.fri_2
+                  - input_datetime.fristart_date_2
+                  - input_datetime.friend_date_2
+                  - type: divider
+                  - input_boolean.sat_2
+                  - input_datetime.satstart_date_2
+                  - input_datetime.satend_date_2
+      - type: vertical-stack
+        cards:
           - content: |
               ## Code 3
             type: markdown
-          - entities:
+          - type: entities
+            entities:
               - entity: input_text.frontdoor_name_3
               - entity: input_text.frontdoor_pin_3
               - entity: input_boolean.frontdoor_enabled_3
@@ -108,47 +127,52 @@
               - type: divider
               - entity: binary_sensor.frontdoor_active_3
               - type: divider
-              - entity: input_boolean.frontdoor_accesslimit_3
-              - entity: input_number.frontdoor_accesscount_3
-              - type: divider
-              - entity: input_boolean.frontdoor_daterange_3
-              - entity: input_datetime.start_date_3
-              - entity: input_datetime.end_date_3
-              - type: divider
-              - input_boolean.sun_3
-              - input_datetime.sunstart_date_3
-              - input_datetime.sunend_date_3
-              - type: divider
-              - input_boolean.mon_3
-              - input_datetime.monstart_date_3
-              - input_datetime.monend_date_3
-              - type: divider
-              - input_boolean.tue_3
-              - input_datetime.tuestart_date_3
-              - input_datetime.tueend_date_3
-              - type: divider
-              - input_boolean.wed_3
-              - input_datetime.wedstart_date_3
-              - input_datetime.wedend_date_3
-              - type: divider
-              - input_boolean.thu_3
-              - input_datetime.thustart_date_3
-              - input_datetime.thuend_date_3
-              - type: divider
-              - input_boolean.fri_3
-              - input_datetime.fristart_date_3
-              - input_datetime.friend_date_3
-              - type: divider
-              - input_boolean.sat_3
-              - input_datetime.satstart_date_3
-              - input_datetime.satend_date_3
-            type: entities
-        type: vertical-stack
-      - cards:
+              - type: 'custom:fold-entity-row'
+                head:
+                  type: section
+                  label: Access Options
+                entities:
+                  - entity: input_boolean.frontdoor_accesslimit_3
+                  - entity: input_number.frontdoor_accesscount_3
+                  - type: divider
+                  - entity: input_boolean.frontdoor_daterange_3
+                  - entity: input_datetime.start_date_3
+                  - entity: input_datetime.end_date_3
+                  - type: divider
+                  - input_boolean.sun_3
+                  - input_datetime.sunstart_date_3
+                  - input_datetime.sunend_date_3
+                  - type: divider
+                  - input_boolean.mon_3
+                  - input_datetime.monstart_date_3
+                  - input_datetime.monend_date_3
+                  - type: divider
+                  - input_boolean.tue_3
+                  - input_datetime.tuestart_date_3
+                  - input_datetime.tueend_date_3
+                  - type: divider
+                  - input_boolean.wed_3
+                  - input_datetime.wedstart_date_3
+                  - input_datetime.wedend_date_3
+                  - type: divider
+                  - input_boolean.thu_3
+                  - input_datetime.thustart_date_3
+                  - input_datetime.thuend_date_3
+                  - type: divider
+                  - input_boolean.fri_3
+                  - input_datetime.fristart_date_3
+                  - input_datetime.friend_date_3
+                  - type: divider
+                  - input_boolean.sat_3
+                  - input_datetime.satstart_date_3
+                  - input_datetime.satend_date_3
+      - type: vertical-stack
+        cards:
           - content: |
               ## Code 4
             type: markdown
-          - entities:
+          - type: entities
+            entities:
               - entity: input_text.frontdoor_name_4
               - entity: input_text.frontdoor_pin_4
               - entity: input_boolean.frontdoor_enabled_4
@@ -156,47 +180,52 @@
               - type: divider
               - entity: binary_sensor.frontdoor_active_4
               - type: divider
-              - entity: input_boolean.frontdoor_accesslimit_4
-              - entity: input_number.frontdoor_accesscount_4
-              - type: divider
-              - entity: input_boolean.frontdoor_daterange_4
-              - entity: input_datetime.start_date_4
-              - entity: input_datetime.end_date_4
-              - type: divider
-              - input_boolean.sun_4
-              - input_datetime.sunstart_date_4
-              - input_datetime.sunend_date_4
-              - type: divider
-              - input_boolean.mon_4
-              - input_datetime.monstart_date_4
-              - input_datetime.monend_date_4
-              - type: divider
-              - input_boolean.tue_4
-              - input_datetime.tuestart_date_4
-              - input_datetime.tueend_date_4
-              - type: divider
-              - input_boolean.wed_4
-              - input_datetime.wedstart_date_4
-              - input_datetime.wedend_date_4
-              - type: divider
-              - input_boolean.thu_4
-              - input_datetime.thustart_date_4
-              - input_datetime.thuend_date_4
-              - type: divider
-              - input_boolean.fri_4
-              - input_datetime.fristart_date_4
-              - input_datetime.friend_date_4
-              - type: divider
-              - input_boolean.sat_4
-              - input_datetime.satstart_date_4
-              - input_datetime.satend_date_4
-            type: entities
-        type: vertical-stack
-      - cards:
+              - type: 'custom:fold-entity-row'
+                head:
+                  type: section
+                  label: Access Options
+                entities:
+                  - entity: input_boolean.frontdoor_accesslimit_4
+                  - entity: input_number.frontdoor_accesscount_4
+                  - type: divider
+                  - entity: input_boolean.frontdoor_daterange_4
+                  - entity: input_datetime.start_date_4
+                  - entity: input_datetime.end_date_4
+                  - type: divider
+                  - input_boolean.sun_4
+                  - input_datetime.sunstart_date_4
+                  - input_datetime.sunend_date_4
+                  - type: divider
+                  - input_boolean.mon_4
+                  - input_datetime.monstart_date_4
+                  - input_datetime.monend_date_4
+                  - type: divider
+                  - input_boolean.tue_4
+                  - input_datetime.tuestart_date_4
+                  - input_datetime.tueend_date_4
+                  - type: divider
+                  - input_boolean.wed_4
+                  - input_datetime.wedstart_date_4
+                  - input_datetime.wedend_date_4
+                  - type: divider
+                  - input_boolean.thu_4
+                  - input_datetime.thustart_date_4
+                  - input_datetime.thuend_date_4
+                  - type: divider
+                  - input_boolean.fri_4
+                  - input_datetime.fristart_date_4
+                  - input_datetime.friend_date_4
+                  - type: divider
+                  - input_boolean.sat_4
+                  - input_datetime.satstart_date_4
+                  - input_datetime.satend_date_4
+      - type: vertical-stack
+        cards:
           - content: |
               ## Code 5
             type: markdown
-          - entities:
+          - type: entities
+            entities:
               - entity: input_text.frontdoor_name_5
               - entity: input_text.frontdoor_pin_5
               - entity: input_boolean.frontdoor_enabled_5
@@ -204,47 +233,52 @@
               - type: divider
               - entity: binary_sensor.frontdoor_active_5
               - type: divider
-              - entity: input_boolean.frontdoor_accesslimit_5
-              - entity: input_number.frontdoor_accesscount_5
-              - type: divider
-              - entity: input_boolean.frontdoor_daterange_5
-              - entity: input_datetime.start_date_5
-              - entity: input_datetime.end_date_5
-              - type: divider
-              - input_boolean.sun_5
-              - input_datetime.sunstart_date_5
-              - input_datetime.sunend_date_5
-              - type: divider
-              - input_boolean.mon_5
-              - input_datetime.monstart_date_5
-              - input_datetime.monend_date_5
-              - type: divider
-              - input_boolean.tue_5
-              - input_datetime.tuestart_date_5
-              - input_datetime.tueend_date_5
-              - type: divider
-              - input_boolean.wed_5
-              - input_datetime.wedstart_date_5
-              - input_datetime.wedend_date_5
-              - type: divider
-              - input_boolean.thu_5
-              - input_datetime.thustart_date_5
-              - input_datetime.thuend_date_5
-              - type: divider
-              - input_boolean.fri_5
-              - input_datetime.fristart_date_5
-              - input_datetime.friend_date_5
-              - type: divider
-              - input_boolean.sat_5
-              - input_datetime.satstart_date_5
-              - input_datetime.satend_date_5
-            type: entities
-        type: vertical-stack
-      - cards:
+              - type: 'custom:fold-entity-row'
+                head:
+                  type: section
+                  label: Access Options
+                entities:
+                  - entity: input_boolean.frontdoor_accesslimit_5
+                  - entity: input_number.frontdoor_accesscount_5
+                  - type: divider
+                  - entity: input_boolean.frontdoor_daterange_5
+                  - entity: input_datetime.start_date_5
+                  - entity: input_datetime.end_date_5
+                  - type: divider
+                  - input_boolean.sun_5
+                  - input_datetime.sunstart_date_5
+                  - input_datetime.sunend_date_5
+                  - type: divider
+                  - input_boolean.mon_5
+                  - input_datetime.monstart_date_5
+                  - input_datetime.monend_date_5
+                  - type: divider
+                  - input_boolean.tue_5
+                  - input_datetime.tuestart_date_5
+                  - input_datetime.tueend_date_5
+                  - type: divider
+                  - input_boolean.wed_5
+                  - input_datetime.wedstart_date_5
+                  - input_datetime.wedend_date_5
+                  - type: divider
+                  - input_boolean.thu_5
+                  - input_datetime.thustart_date_5
+                  - input_datetime.thuend_date_5
+                  - type: divider
+                  - input_boolean.fri_5
+                  - input_datetime.fristart_date_5
+                  - input_datetime.friend_date_5
+                  - type: divider
+                  - input_boolean.sat_5
+                  - input_datetime.satstart_date_5
+                  - input_datetime.satend_date_5
+      - type: vertical-stack
+        cards:
           - content: |
               ## Code 6
             type: markdown
-          - entities:
+          - type: entities
+            entities:
               - entity: input_text.frontdoor_name_6
               - entity: input_text.frontdoor_pin_6
               - entity: input_boolean.frontdoor_enabled_6
@@ -252,43 +286,42 @@
               - type: divider
               - entity: binary_sensor.frontdoor_active_6
               - type: divider
-              - entity: input_boolean.frontdoor_accesslimit_6
-              - entity: input_number.frontdoor_accesscount_6
-              - type: divider
-              - entity: input_boolean.frontdoor_daterange_6
-              - entity: input_datetime.start_date_6
-              - entity: input_datetime.end_date_6
-              - type: divider
-              - input_boolean.sun_6
-              - input_datetime.sunstart_date_6
-              - input_datetime.sunend_date_6
-              - type: divider
-              - input_boolean.mon_6
-              - input_datetime.monstart_date_6
-              - input_datetime.monend_date_6
-              - type: divider
-              - input_boolean.tue_6
-              - input_datetime.tuestart_date_6
-              - input_datetime.tueend_date_6
-              - type: divider
-              - input_boolean.wed_6
-              - input_datetime.wedstart_date_6
-              - input_datetime.wedend_date_6
-              - type: divider
-              - input_boolean.thu_6
-              - input_datetime.thustart_date_6
-              - input_datetime.thuend_date_6
-              - type: divider
-              - input_boolean.fri_6
-              - input_datetime.fristart_date_6
-              - input_datetime.friend_date_6
-              - type: divider
-              - input_boolean.sat_6
-              - input_datetime.satstart_date_6
-              - input_datetime.satend_date_6
-            type: entities
-        type: vertical-stack
-    icon: 'mdi:lock-smart'
-    panel: false
-    path: keypad
-    title: 'Door Lock Information, Codes and Configuration'
+              - type: 'custom:fold-entity-row'
+                head:
+                  type: section
+                  label: Access Options
+                entities:
+                  - entity: input_boolean.frontdoor_accesslimit_6
+                  - entity: input_number.frontdoor_accesscount_6
+                  - type: divider
+                  - entity: input_boolean.frontdoor_daterange_6
+                  - entity: input_datetime.start_date_6
+                  - entity: input_datetime.end_date_6
+                  - type: divider
+                  - input_boolean.sun_6
+                  - input_datetime.sunstart_date_6
+                  - input_datetime.sunend_date_6
+                  - type: divider
+                  - input_boolean.mon_6
+                  - input_datetime.monstart_date_6
+                  - input_datetime.monend_date_6
+                  - type: divider
+                  - input_boolean.tue_6
+                  - input_datetime.tuestart_date_6
+                  - input_datetime.tueend_date_6
+                  - type: divider
+                  - input_boolean.wed_6
+                  - input_datetime.wedstart_date_6
+                  - input_datetime.wedend_date_6
+                  - type: divider
+                  - input_boolean.thu_6
+                  - input_datetime.thustart_date_6
+                  - input_datetime.thuend_date_6
+                  - type: divider
+                  - input_boolean.fri_6
+                  - input_datetime.fristart_date_6
+                  - input_datetime.friend_date_6
+                  - type: divider
+                  - input_boolean.sat_6
+                  - input_datetime.satstart_date_6
+                  - input_datetime.satend_date_6

@@ -24,12 +24,22 @@ Instead of creating six sets of entities, it found it was much easier to create 
 
 #### Adding more user codes
 
-The easiest way to add another user code "slot" is to modify the `copy6.sh` script.  For example, suppose you wish to add a 7th slot.  Open `copy6.sh` in your favorite editor and add the following:
+The easiest way to add another user code "slot" is to modify the `copy6.sh` script.  For example, suppose you wish to add a 7th slot.  Open `copy6.sh` in your favorite editor and change the loop variable to specify the number of "slots" to setup.  So to create 8 slots, change `6` to `8`.  Save and then run the script and then restart Home Assistant.  This script will also create a file named `lovelace` which will contain the lovlace code for a "page" of your 8 slots.  If you want to modify the lovelace code, make the changes in `lovelace.code` and that will be used by `copy6.sh` when setting up the lovelace code.
 
-    cp lock_manager_1.yaml lock_manager_7.yaml
-    sed -i 's/_1/_7/g' lock_manager_7.yaml
- 
-Save and then run the script and then restart Home Assistant.  Now you will have entities for the 7th slot.  To add the UI elements, open the first slot with the UI editor and copy the contents and paste into an editor.  Replace `_1` with `_7`.  Click the `+` icon in the UI and add a "manual card".  Paste the contents of your code, save and you're done.
+You will also need to register the following "plug-ins" byt pasting the following into the lovelace "resoures" section at the top of your lovelcace file.
+
+    resources:
+        - url: /community_plugin/lovelace-card-mod/card-mod.js
+          type: module
+        - url: /community_plugin/lovelace-fold-entity-row/fold-entity-row.js
+          type: module
+        - url: /community_plugin/lovelace-card-tools/card-tools.js
+          type: js
+
+The easiest way to add these plugins is using the [Home Assistant Community Store](https://community.home-assistant.io/t/custom-component-hacs/121727).  You will need to go to "Settings" and add the following repositories in order to download the plugins:
+
+* https://github.com/thomasloven/lovelace-auto-entities
+* https://github.com/thomasloven/lovelace-card-tools
 
 #### Usage
 

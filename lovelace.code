@@ -1,0 +1,53 @@
+      - type: vertical-stack
+        cards:
+          - content: |
+              ## Code X
+            type: markdown
+          - type: entities
+            entities:
+              - entity: input_text.frontdoor_name_X
+              - entity: input_text.frontdoor_pin_X
+              - entity: input_boolean.frontdoor_enabled_X
+              - entity: input_boolean.frontdoor_notify_X
+              - type: divider
+              - entity: binary_sensor.frontdoor_active_X
+              - type: divider
+              - type: 'custom:fold-entity-row'
+                head:
+                  type: section
+                  label: Access Options
+                entities:
+                  - entity: input_boolean.frontdoor_accesslimit_X
+                  - entity: input_number.frontdoor_accesscount_X
+                  - type: divider
+                  - entity: input_boolean.frontdoor_daterange_X
+                  - entity: input_datetime.start_date_X
+                  - entity: input_datetime.end_date_X
+                  - type: divider
+                  - input_boolean.sun_X
+                  - input_datetime.sunstart_date_X
+                  - input_datetime.sunend_date_X
+                  - type: divider
+                  - input_boolean.mon_X
+                  - input_datetime.monstart_date_X
+                  - input_datetime.monend_date_X
+                  - type: divider
+                  - input_boolean.tue_X
+                  - input_datetime.tuestart_date_X
+                  - input_datetime.tueend_date_X
+                  - type: divider
+                  - input_boolean.wed_X
+                  - input_datetime.wedstart_date_X
+                  - input_datetime.wedend_date_X
+                  - type: divider
+                  - input_boolean.thu_X
+                  - input_datetime.thustart_date_X
+                  - input_datetime.thuend_date_X
+                  - type: divider
+                  - input_boolean.fri_X
+                  - input_datetime.fristart_date_X
+                  - input_datetime.friend_date_X
+                  - type: divider
+                  - input_boolean.sat_X
+                  - input_datetime.satstart_date_X
+                  - input_datetime.satend_date_X

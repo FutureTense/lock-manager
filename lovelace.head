@@ -1,0 +1,9 @@
+  - title: 'Door Lock Information, Codes and Configuration'
+    path: keypad
+    icon: 'mdi:lock-smart'
+    panel: false
+    badges:
+      - input_boolean.lock_notifications
+      - input_boolean.dooraccess_notifications
+      - input_boolean.garageacess_notifications
+    cards:
