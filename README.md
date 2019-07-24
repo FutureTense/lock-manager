@@ -22,7 +22,7 @@ The following files are included:
 * lock_manager_1.yaml - lock_manager_6.yaml
 * copy6.sh
 
-Instead of creating six sets of entities, it found it was much easier to create `lock_manager_1.yaml` and copy that file to `lock_manager_2.yaml`, etc. and modify those files.  The script `copy6.sh` will do that for you.  It simply copies `lock_manager_1.yaml` to `lock_manager_2.yaml` through `lock_manager_6.yaml` and then uses `sed` to replace `_1` to `_2` through `_6`.  Anytime `lock_manager_1.yaml` is modified, run the script to ensure the changes are propagated.  The file `lock_manager_common.yaml` as you might suspect, is code that is common to every entity in the package.  The contents of `lovelace` is the yaml code for displaying the six keypad codes.  In the lovelace editor UI, use the `raw config editor` option to display your entire lovelace yaml.  Go to the end of the file and paste the contents of `lovelace`.
+Instead of creating six sets of entities, it found it was much easier to create `lock_manager_1.yaml` and copy that file to `lock_manager_2.yaml`, etc. and modify those files.  Anytime `lock_manager_1.yaml` is modified, run the script to ensure the changes are propagated.  The file `lock_manager_common.yaml` as you might suspect, is code that is common to every entity in the package.  The contents of `lovelace` is the yaml code for displaying the six keypad codes.  In the lovelace editor UI, use the `raw config editor` option to display your entire lovelace yaml.  Go to the end of the file and paste the contents of `lovelace`.
 
 #### Adding more user codes
 
