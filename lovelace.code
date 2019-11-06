@@ -15,8 +15,10 @@
               - type: 'custom:fold-entity-row'
                 head:
                   type: section
-                  label: Access Options
+                  label: Advanced Options
                 entities:
+                  - entity: input_boolean.reset_advanced_X
+                  - type: divider
                   - entity: input_boolean.frontdoor_accesslimit_X
                   - entity: input_number.frontdoor_accesscount_X
                   - type: divider

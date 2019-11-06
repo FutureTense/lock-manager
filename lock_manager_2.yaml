@@ -104,6 +104,9 @@ input_boolean:
   frontdoor_accesslimit_2:
     name: 'Limit Access Count'
     initial: off
+  reset_advanced_2:
+    name: 'Reset Advanaced Options'
+    initial: off
 
   sun_2:
     name: 'Sunday'
@@ -133,6 +136,134 @@ input_boolean:
     name: 'Saturday'
     initial: on
 
+################  automation: #################  
+automation:
+
+- alias: reset_advanced_2
+  trigger:
+    entity_id: input_boolean.reset_advanced_2
+    platform: state
+    to: 'on'
+  action:
+    
+    - service: input_number.set_value
+      data_template:
+        entity_id: input_number.frontdoor_accesscount_2
+        value: "0"
+      
+    - service: input_datetime.set_datetime
+      entity_id: input_datetime.sunstart_date_2
+      data_template:
+        time: >
+          {{  (("00:00")  | timestamp_custom("%H:%M"))  }}      
+    - service: input_datetime.set_datetime
+      entity_id: input_datetime.sunend_date_2
+      data_template:
+        time: >
+          {{  (("00:00")  | timestamp_custom("%H:%M"))  }}      
+    - service: input_datetime.set_datetime
+      entity_id: input_datetime.monstart_date_2
+      data_template:
+        time: >
+          {{  (("00:00")  | timestamp_custom("%H:%M"))  }}      
+    - service: input_datetime.set_datetime
+      entity_id: input_datetime.monend_date_2
+      data_template:
+        time: >
+          {{  (("00:00")  | timestamp_custom("%H:%M"))  }}      
+    - service: input_datetime.set_datetime
+      entity_id: input_datetime.tuestart_date_2
+      data_template:
+        time: >
+          {{  (("00:00")  | timestamp_custom("%H:%M"))  }}      
+    - service: input_datetime.set_datetime
+      entity_id: input_datetime.tueend_date_2
+      data_template:
+        time: >
+          {{  (("00:00")  | timestamp_custom("%H:%M"))  }}      
+    - service: input_datetime.set_datetime
+      entity_id: input_datetime.wedstart_date_2
+      data_template:
+        time: >
+          {{  (("00:00")  | timestamp_custom("%H:%M"))  }}      
+    - service: input_datetime.set_datetime
+      entity_id: input_datetime.wedend_date_2
+      data_template:
+        time: >
+          {{  (("00:00")  | timestamp_custom("%H:%M"))  }}      
+    - service: input_datetime.set_datetime
+      entity_id: input_datetime.thustart_date_2
+      data_template:
+        time: >
+          {{  (("00:00")  | timestamp_custom("%H:%M"))  }}      
+    - service: input_datetime.set_datetime
+      entity_id: input_datetime.thuend_date_2
+      data_template:
+        time: >
+          {{  (("00:00")  | timestamp_custom("%H:%M"))  }}      
+    - service: input_datetime.set_datetime
+      entity_id: input_datetime.fristart_date_2
+      data_template:
+        time: >
+          {{  (("00:00")  | timestamp_custom("%H:%M"))  }}      
+    - service: input_datetime.set_datetime
+      entity_id: input_datetime.friend_date_2
+      data_template:
+        time: >
+          {{  (("00:00")  | timestamp_custom("%H:%M"))  }}      
+    - service: input_datetime.set_datetime
+      entity_id: input_datetime.satstart_date_2
+      data_template:
+        time: >
+          {{  (("00:00")  | timestamp_custom("%H:%M"))  }}      
+    - service: input_datetime.set_datetime
+      entity_id: input_datetime.satend_date_2
+      data_template:
+        time: >
+          {{  (("00:00")  | timestamp_custom("%H:%M"))  }}      
+          
+    - service: input_datetime.set_datetime
+      entity_id: input_datetime.start_date_2
+      data_template:
+        date: >
+          {{  (("1980-01-01")  | timestamp_custom("%Y %m %d"))  }}      
+          
+    - service: input_datetime.set_datetime
+      entity_id: input_datetime.end_date_2
+      data_template:
+        date: >
+          {{  (("1980-01-01")  | timestamp_custom("%Y %m %d"))  }}      
+
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.frontdoor_daterange_2
+
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.frontdoor_accesslimit_2
+      
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.reset_advanced_2
+      
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.sun_2
+      
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.mon_2
+      
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.tue_2
+      
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.wed_2
+      
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.thu_2
+      
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.fri_2
+      
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.sat_2
+      
 ################  binary_sensor: #################  
 binary_sensor:
 
@@ -146,25 +277,53 @@ binary_sensor:
       value_template: "{{ (is_state('input_boolean.frontdoor_daterange_2', 'off') or ((states.input_datetime.start_date_2.attributes.timestamp| int | timestamp_custom('%Y%m%d', False)|int)|string <= now().strftime('%Y%m%d')) and (states.input_datetime.end_date_2.attributes.timestamp| int | timestamp_custom('%Y%m%d', False)|int)|string >=  now().strftime('%Y%m%d'))}}"
 
     sun_2:
-      value_template: "{{ ((is_state('input_boolean.sun_2', 'on'))) and (now().strftime('%A') == 'Sunday') and ((states.input_datetime.sunstart_date_2.state  == states.input_datetime.sunend_date_2.state) or ((states.input_datetime.sunstart_date_2.attributes.timestamp| int | timestamp_custom('%H%M', False)|int)|string <= now().strftime('%H%M') and (states.input_datetime.sunend_date_2.attributes.timestamp| int | timestamp_custom('%H%M', False)|int)|string >= now().strftime('%H%M'))) }}"
+      entity_id:
+        - sensor.time
+        - input_datetime.sunstart_date_2
+        - input_datetime.sunend_date_2
+      value_template: "{{ ((is_state('input_boolean.sun_2', 'on'))) and (strptime(states('sensor.date'), '%Y-%m-%d').strftime('%A') == 'Sunday') and ((states.input_datetime.sunstart_date_2.state  == states.input_datetime.sunend_date_2.state) or ((states('sensor.time') >= states('input_datetime.sunstart_date_2')[0:5]) and (states('sensor.time') <= states('input_datetime.sunend_date_2')[0:5]))) }}"
 
     mon_2:
-      value_template: "{{ ((is_state('input_boolean.mon_2', 'on'))) and (now().strftime('%A') == 'Monday') and ((states.input_datetime.monstart_date_2.state  == states.input_datetime.monend_date_2.state) or ((states.input_datetime.monstart_date_2.attributes.timestamp| int | timestamp_custom('%H%M', False)|int)|string <= now().strftime('%H%M') and (states.input_datetime.monend_date_2.attributes.timestamp| int | timestamp_custom('%H%M', False)|int)|string >= now().strftime('%H%M'))) }}"
+      entity_id:
+        - sensor.time
+        - input_datetime.monstart_date_2
+        - input_datetime.monend_date_2
+      value_template: "{{ ((is_state('input_boolean.mon_2', 'on'))) and (strptime(states('sensor.date'), '%Y-%m-%d').strftime('%A') == 'Monday') and ((states.input_datetime.monstart_date_2.state  == states.input_datetime.monend_date_2.state) or ((states('sensor.time') >= states('input_datetime.monstart_date_2')[0:5]) and (states('sensor.time') <= states('input_datetime.monend_date_2')[0:5]))) }}"
 
     tue_2:
-      value_template: "{{ ((is_state('input_boolean.tue_2', 'on'))) and (now().strftime('%A') == 'Tuesday') and ((states.input_datetime.tuestart_date_2.state  == states.input_datetime.tueend_date_2.state) or ((states.input_datetime.tuestart_date_2.attributes.timestamp| int | timestamp_custom('%H%M', False)|int)|string <= now().strftime('%H%M') and (states.input_datetime.tueend_date_2.attributes.timestamp| int | timestamp_custom('%H%M', False)|int)|string >= now().strftime('%H%M'))) }}"
+      entity_id:
+        - sensor.time
+        - input_datetime.tuestart_date_2
+        - input_datetime.tueend_date_2
+      value_template: "{{ ((is_state('input_boolean.tue_2', 'on'))) and (strptime(states('sensor.date'), '%Y-%m-%d').strftime('%A') == 'Tuesday') and ((states.input_datetime.tuestart_date_2.state  == states.input_datetime.tueend_date_2.state) or ((states('sensor.time') >= states('input_datetime.tuestart_date_2')[0:5]) and (states('sensor.time') <= states('input_datetime.tueend_date_2')[0:5]))) }}"
 
     wed_2:
-      value_template: "{{ ((is_state('input_boolean.wed_2', 'on'))) and (now().strftime('%A') == 'Wednesday') and ((states.input_datetime.wedstart_date_2.state  == states.input_datetime.wedend_date_2.state) or ((states.input_datetime.wedstart_date_2.attributes.timestamp| int | timestamp_custom('%H%M', False)|int)|string <= now().strftime('%H%M') and (states.input_datetime.wedend_date_2.attributes.timestamp| int | timestamp_custom('%H%M', False)|int)|string >= now().strftime('%H%M'))) }}"
+      entity_id:
+        - sensor.time
+        - input_datetime.wedstart_date_2
+        - input_datetime.wedend_date_2
+      value_template: "{{ ((is_state('input_boolean.wed_2', 'on'))) and (strptime(states('sensor.date'), '%Y-%m-%d').strftime('%A') == 'Wednesday') and ((states.input_datetime.wedstart_date_2.state  == states.input_datetime.wedend_date_2.state) or ((states('sensor.time') >= states('input_datetime.wedstart_date_2')[0:5]) and (states('sensor.time') <= states('input_datetime.wedend_date_2')[0:5]))) }}"
 
     thu_2:
-      value_template: "{{ ((is_state('input_boolean.thu_2', 'on'))) and (now().strftime('%A') == 'Thursday') and ((states.input_datetime.thustart_date_2.state  == states.input_datetime.thuend_date_2.state) or ((states.input_datetime.thustart_date_2.attributes.timestamp| int | timestamp_custom('%H%M', False)|int)|string <= now().strftime('%H%M') and (states.input_datetime.thuend_date_2.attributes.timestamp| int | timestamp_custom('%H%M', False)|int)|string >= now().strftime('%H%M'))) }}"
+      entity_id:
+        - sensor.time
+        - input_datetime.thustart_date_2
+        - input_datetime.thuend_date_2
+      value_template: "{{ ((is_state('input_boolean.thu_2', 'on'))) and (strptime(states('sensor.date'), '%Y-%m-%d').strftime('%A') == 'Thursday') and ((states.input_datetime.thustart_date_2.state  == states.input_datetime.thuend_date_2.state) or ((states('sensor.time') >= states('input_datetime.thustart_date_2')[0:5]) and (states('sensor.time') <= states('input_datetime.thuend_date_2')[0:5]))) }}"
 
     fri_2:
-      value_template: "{{ ((is_state('input_boolean.fri_2', 'on'))) and (now().strftime('%A') == 'Friday') and ((states.input_datetime.fristart_date_2.state  == states.input_datetime.friend_date_2.state) or ((states.input_datetime.fristart_date_2.attributes.timestamp| int | timestamp_custom('%H%M', False)|int)|string <= now().strftime('%H%M') and (states.input_datetime.friend_date_2.attributes.timestamp| int | timestamp_custom('%H%M', False)|int)|string >= now().strftime('%H%M'))) }}"
+      entity_id:
+        - sensor.time
+        - input_datetime.fristart_date_2
+        - input_datetime.friend_date_2
+      value_template: "{{ ((is_state('input_boolean.fri_2', 'on'))) and (strptime(states('sensor.date'), '%Y-%m-%d').strftime('%A') == 'Friday') and ((states.input_datetime.fristart_date_2.state  == states.input_datetime.friend_date_2.state) or ((states('sensor.time') >= states('input_datetime.fristart_date_2')[0:5]) and (states('sensor.time') <= states('input_datetime.friend_date_2')[0:5]))) }}"
 
     sat_2:
-      value_template: "{{ ((is_state('input_boolean.sat_2', 'on'))) and (now().strftime('%A') == 'Saturday') and ((states.input_datetime.satstart_date_2.state  == states.input_datetime.satend_date_2.state) or ((states.input_datetime.satstart_date_2.attributes.timestamp| int | timestamp_custom('%H%M', False)|int)|string <= now().strftime('%H%M') and (states.input_datetime.satend_date_2.attributes.timestamp| int | timestamp_custom('%H%M', False)|int)|string >= now().strftime('%H%M'))) }}"
+      entity_id:
+        - sensor.time
+        - input_datetime.satstart_date_2
+        - input_datetime.satend_date_2
+      value_template: "{{ ((is_state('input_boolean.sat_2', 'on'))) and (strptime(states('sensor.date'), '%Y-%m-%d').strftime('%A') == 'Saturday') and ((states.input_datetime.satstart_date_2.state  == states.input_datetime.satend_date_2.state) or ((states('sensor.time') >= states('input_datetime.satstart_date_2')[0:5]) and (states('sensor.time') <= states('input_datetime.satend_date_2')[0:5]))) }}"
 
 
     smtwtfs_2:

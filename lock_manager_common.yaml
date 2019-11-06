@@ -95,8 +95,8 @@ automation:
         entity_id: sensor.frontdoor_statusreport
       condition:
         - condition: state
-          entity_id: input_boolean.lock_notifications
-          state: 'on'
+          entity_id: 'binary_sensor.allow_automation'
+          state: 'on' 
         - condition: template
           value_template: >-
             {% set report = states.sensor.frontdoor_statusreport.state %}
@@ -107,8 +107,9 @@ automation:
               {{ false }}
             {% endif %}
       action:
-        - service: notify.notify
+        - service: script.conditional_notify
           data_template:
+            boolean: input_boolean.lock_notifications
             title: "Sensor Status Report"
             message: >-
               {% set report = states.sensor.frontdoor_statusreport.state %}
@@ -124,6 +125,9 @@ automation:
         platform: state
         entity_id: sensor.frontdoor_statusreport
       condition:
+        - condition: state
+          entity_id: 'binary_sensor.allow_automation'
+          state: 'on' 
         - condition: template
           value_template: >-
             {% set report = states.sensor.frontdoor_statusreport.state %}
@@ -141,8 +145,9 @@ automation:
             {% set notify = states['input_boolean'][entity_id].state %}
             {{ notify == "on" }}
       action:
-        - service: notify.notify
+        - service: script.conditional_notify
           data_template:
+            boolean: input_boolean.lock_notifications
             title: >- 
               {% set report = states.sensor.frontdoor_statusreport.state %}
               {% set a = report.split(';') %}
@@ -156,36 +161,42 @@ automation:
 
 ###############################
     - alias: Front Door Sensor Close
+      condition:
+        - condition: state
+          entity_id: 'binary_sensor.allow_automation'
+          state: 'on' 
       trigger:
         entity_id: binary_sensor.vision_security_zd2105us_5_recessed_door_window_sensor_access_control_frontdoor
         platform: state
         to: 'off'
-      condition:
-        - condition: state
-          entity_id: input_boolean.dooraccess_notifications
-          state: 'on'
       action:
-        - service: notify.notify
-          data:
+        - service: script.conditional_notify
+          data_template:
+            boolean: input_boolean.dooraccess_notifications
             title: "Front Door"    
             message: "Closed"
 
     - alias: Front Door Sensor Opened
+      condition:
+        - condition: state
+          entity_id: 'binary_sensor.allow_automation'
+          state: 'on' 
       trigger:
         entity_id: binary_sensor.vision_security_zd2105us_5_recessed_door_window_sensor_access_control_frontdoor
         platform: state
         to: 'on'
-      condition:
-        - condition: state
-          entity_id: input_boolean.dooraccess_notifications
-          state: 'on'
       action:
-        - service: notify.notify
-          data:
+        - service: script.conditional_notify
+          data_template:
+            boolean: input_boolean.dooraccess_notifications
             title: "Front Door"    
             message: "Opened"
     
     - alias: Add Code
+      condition:
+        - condition: state
+          entity_id: 'binary_sensor.allow_automation'
+          state: 'on' 
       trigger:
         entity_id: binary_sensor.frontdoor_active_1, binary_sensor.frontdoor_active_2, binary_sensor.frontdoor_active_3, binary_sensor.frontdoor_active_4, binary_sensor.frontdoor_active_5, binary_sensor.frontdoor_active_6 
         platform: state
@@ -213,13 +224,16 @@ automation:
         entity_id: input_text.frontdoor_pin_1, input_text.frontdoor_pin_2, input_text.frontdoor_pin_3, input_text.frontdoor_pin_4, input_text.frontdoor_pin_5, input_text.frontdoor_pin_6
         platform: state
       condition:
-        condition: template
-        value_template: >-
-          {% set object_id = trigger.to_state.object_id %}
-          {% set index = 14 %}
-          {% set code_slot = object_id[index:] %}
-          {% set b = 'input_boolean.frontdoor_enabled_' + code_slot | string %}
-          {{ is_state(b, 'on') and (trigger.from_state.state != trigger.to_state.state)}}
+        - condition: state
+          entity_id: 'binary_sensor.allow_automation'
+          state: 'on' 
+        - condition: template
+          value_template: >-
+            {% set object_id = trigger.to_state.object_id %}
+            {% set index = 14 %}
+            {% set code_slot = object_id[index:] %}
+            {% set b = 'input_boolean.frontdoor_enabled_' + code_slot | string %}
+            {{ is_state(b, 'on') and (trigger.from_state.state != trigger.to_state.state)}}
       action:
         - service: persistent_notification.create
           data_template:
@@ -238,6 +252,10 @@ automation:
               {{ 'input_boolean.frontdoor_enabled_' + code_slot | string }}
     
     - alias: Clear Code
+      condition:
+        - condition: state
+          entity_id: 'binary_sensor.allow_automation'
+          state: 'on' 
       trigger:
         entity_id: binary_sensor.frontdoor_active_1, binary_sensor.frontdoor_active_2, binary_sensor.frontdoor_active_3, binary_sensor.frontdoor_active_4,binary_sensor.frontdoor_active_5, binary_sensor.frontdoor_active_6 
         platform: state
@@ -269,15 +287,18 @@ automation:
         platform: state
         entity_id: sensor.frontdoor_statusreport
       condition:
-        condition: template
-        value_template: >-
-          {% set report = states.sensor.frontdoor_statusreport.state %}
-          {% set a = report.split(';') %}
-          {% if (a|length) == 3 and (a[2] | int > 0) %} 
-             {{ (a[0] | int == 19) }}
-          {% else %}
-            {{ false }}
-          {% endif %}
+        - condition: state
+          entity_id: 'binary_sensor.allow_automation'
+          state: 'on' 
+        - condition: template
+          value_template: >-
+            {% set report = states.sensor.frontdoor_statusreport.state %}
+            {% set a = report.split(';') %}
+            {% if (a|length) == 3 and (a[2] | int > 0) %} 
+               {{ (a[0] | int == 19) }}
+            {% else %}
+              {{ false }}
+            {% endif %}
       action:
         - service: input_number.decrement
           data_template:
@@ -285,4 +306,3 @@ automation:
               {% set report = states.sensor.frontdoor_statusreport.state %}
               {% set a = report.split(';') %}
               {{ 'input_number.frontdoor_accesscount_' + a[2] }}
-          
