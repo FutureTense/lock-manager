@@ -1,9 +1,15 @@
-  - title: 'Door Lock Information, Codes and Configuration'
-    path: keypad
+  - title: 'LOCKNAME Codes and Configuration'
+    path: keypad-LOCKNAME
     icon: 'mdi:lock-smart'
     panel: false
     badges:
-      - input_boolean.lock_notifications
-      - input_boolean.dooraccess_notifications
-      - input_boolean.garageacess_notifications
+      - input_boolean.LOCKNAME_lock_notifications
+      - input_boolean.LOCKNAME_dooraccess_notifications
+      - input_boolean.LOCKNAME_garageacess_notifications
+      - entity: >-
+          lock.LOCKFACTORYNAMEPREFIX_locked_LOCKNAME
+      - entity: >-
+          binary_sensor.SENSORFACTORYNAMEPREFIX_access_control_SENSORNAME
+      - entity: >-
+          GARAGEDOORENTITYID
     cards:

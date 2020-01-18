@@ -5,30 +5,46 @@ For more information, please see the topic for this package at the [Home Assista
 
 ## Installation
 
-Download the files and put into your Home Assistant place them in the `packages` directory.  If it doesn't already exist, you will need to create it.  For more information see [packages](https://www.home-assistant.io/docs/configuration/packages/).  I suggest putting all of these files in a directory called `lockmanager` so your directory structure should look something like: `.../homeassistant/packages/lockmanager`
+Download the files and put into your Home Assistant place them in the `packages\lockmanager` directory.  If `packages` doesn't already exist, you will need to create it.  For more information see [packages](https://www.home-assistant.io/docs/configuration/packages/).  When finished your directory structure should look something like: `.../homeassistant/packages/lockmanager`
 
-This package uses a Schlage BE469 Z-Wave Door lock and an (optional) [Monoprice Z-Wave Plus Recessed Door/Window Sensor (Model #15268)](https://www.monoprice.com/product?p_id=15268) door sensor.  If you aren't using the Monoprice or similar open/closed door sensor, you can just hide the assoicated entities in Lovelace.
+This package uses a Schlage BE469 Z-Wave Door lock and an (optional) [Monoprice Z-Wave Plus Recessed Door/Window Sensor (Model #15268)](https://www.monoprice.com/product?p_id=15268) door sensor, and accepts a `cover` for a garage. If you aren't using the Monoprice or similar open/closed door sensor, you can just hide the assoicated entities in the generated lovelace file.  Likewise you can remove the garage cover. In fact, if wish to modify the lovelace used for all locks, you can edit the `lovelace.head` and `lovelace.code` files which are used to generate a lovelace view for your lock.
 
-**N.B.**  When you add the devices to your Z-Wvave network via the inlusion mode, use the Home Assistant Entity Registry and rename each entity that belongs to the device and append `_frontdoor` to it.  For example:
+**N.B.**  After you add your devices (Zwave lock, door sensor) to your Z-Wvave network via the inlusion mode, use the Home Assistant Entity Registry and rename each entity that belongs to the device and append `_LOCKNAME` to it.  For example, if you are calling your lock `FrontDoor`, you will want to append _FrontDoor to each entity of the device.
 
-`zwave.vision_security_zd2105us_5_recessed_door_window_sensor` would be renamed to `zwave.vision_security_zd2105us_5_recessed_door_window_sensor_frontdoor` 
-`sensor.schlage_allegion_be469_touchscreen_deadbolt_alarm_level` would be renamed to `sensor.schlage_allegion_be469_touchscreen_deadbolt_alarm_level_frontdoor`
+`sensor.schlage_allegion_be469_touchscreen_deadbolt_alarm_level` 
+would become 
+`sensor.schlage_allegion_be469_touchscreen_deadbolt_alarm_level_frontdoor`
 
-Just to be safe, you should rename *every* entity in the entity registry.  The easiest thing to do is to paste `_frontdoor` after each item in the registry.  Do a global search for the "base" name and make sure everything looks correct.  So for the Schlage BE469, that would be **schlage_allegion_be469_touchscreen_deadbolt**, and for the Monoprice door sensor, that is **vision_security_zd2105us_5_recessed_door_window_sensor**.
+While you are appending each entity, examine the entities of your new devices carefully.  You need to identify the "lowest common demominator" of the device.  This would be the text that is part of *every* entity that exists in the entity registry.  You need to do this for the lock, and door sensor if you have one.  Save these "base" names in a notepad file for later.  So for the Schlage BE469, that would be **schlage_allegion_be469zp_connect_smart_deadbolt**, and for the Monoprice door sensor, it is **vision_security_zd2105us_5_recessed_door_window_sensor**.  The Schlage base names can and do change when they release versions.  So it is not only possible, but likley the base name shown here is different than yours, so pay attention.
 
-The following files are included: 
-* lock_manager_common.yaml
-* lovelace
-* lock_manager_1.yaml - lock_manager_6.yaml
-* copy6.sh
+Make sure you rename *every* associated entity in the entity registry.  The easiest way to do this is take the base name you found, and put it in the search bar of the entity registry.  This will show all of the entities you need to rename.  Just go down the list and append `_FrontDoor` (assuming that's the name you chose) at the end of each entity.
 
-Instead of creating six sets of entities, it found it was much easier to create `lock_manager_1.yaml` and copy that file to `lock_manager_2.yaml`, etc. and modify those files.  The script `copy6.sh` will do that for you.  It simply copies `lock_manager_1.yaml` to `lock_manager_2.yaml` through `lock_manager_6.yaml` and then uses `sed` to replace `_1` to `_2` through `_6`.  Anytime `lock_manager_1.yaml` is modified, run the script to ensure the changes are propagated.  The file `lock_manager_common.yaml` as you might suspect, is code that is common to every entity in the package.  The contents of `lovelace` is the yaml code for displaying the six keypad codes.  In the lovelace editor UI, use the `raw config editor` option to display your entire lovelace yaml.  Go to the end of the file and paste the contents of `lovelace`.
+Open `FrontDoor.ini` in a text editor.  
 
-#### Adding more user codes
+* Change the value of `numcodes` to the number of PIN slots you want for this lock.  Don't go crazy and set this value too high as it could slow your browser down.  You can always add more codes later so you might want to keep the default value of (6).
+* Set `lockname`.  I suggest using the name of the door the lock is in, such as "FrontDoor" (no spaces or special characters)
+* Set `lockfactoryname`.  This is the "base" name you saved above
+* Set `sensorname` and `sensorfactoryname` just as you did for the lock.  If you don't have a sensor, just put some dummy values in.  You can remove the sensors from the GUI later.
+* Set `garageentityid`.  If you have a garage door opener in your network and you want it to appear on your lock page, put it's entity_id here.  Like the sensor, don't leave this value blank.  This too can be removed from the GUI.
 
-The easiest way to add another user code "slot" is to modify the `copy6.sh` script.  For example, suppose you wish to add a 7th slot.  Open `copy6.sh` in your favorite editor and change the loop variable to specify the number of "slots" to setup.  So to create 8 slots, change `6` to `8`.  Save and then run the script and then restart Home Assistant.  This script will also create a file named `lovelace` which will contain the lovlace code for a "page" of your 8 slots.  If you want to modify the lovelace code, make the changes in `lovelace.code` and that will be used by `copy6.sh` when setting up the lovelace code.
+Save the file.  If you have multiple locks, make a copy of the ini file and set the values as you just did for your first lock.  Make sure you append this door's name (eg _BackDoor) to this lock's entities using the entity register.
 
-You will also need to register the following "plug-ins" byt pasting the following into the lovelace "resoures" section at the top of your lovelcace file.
+Make the setup.sh script executable by typing:
+
+> chmod +x script.sh
+
+Now execute the script by typing:
+
+> ./script.sh
+
+If all goes well, you will see a success message for each `ini` file you have in that directory.  You will also see a new directory for each lock.  So if you had two ini files, one with FrontDoor and the other with BackDoor, you should see two directories with those names.  Inside of each of those directories will be a file called `<lockname>_lovelace`.  Open that file in a text editor and select the entire contents and copy to the clipboard.
+
+> (Open file) Ctrl-A (select all) Ctrl-C (copy)
+
+Open Home Assistant and open the LoveLace editor by clicking the elipses on the top right of the screen, and then select "Configure UI".  Click the elipses again and click "Raw config editor".  Scroll down to the bottom of the screen and then paste your clipboard.  This will paste a new View for your lock.  Click the Save button then click the X to exit.
+
+
+You will also need to register the following plug-ins by pasting the following into the lovelace "resoures" section at the top of your lovelcace file.
 
     resources:
         - url: /community_plugin/lovelace-card-mod/card-mod.js
@@ -64,4 +80,3 @@ The application makes heavy usage of binary_sensors.  Each code slot in the syst
 **Date Range**  This sensor, if enabled by it's boolean toggle will be enabled only if the current system date is between the dates specified in the date fields.
 
 **Sunday - Saturday**  These sensors are enabled by default.  If you disable any of them, then the PIN won't work on that day.  When enabled, the PIN will only work if the current system time falls between the specified time periods.  If the periods are equal, then the PIN will work for the entire day.
-
