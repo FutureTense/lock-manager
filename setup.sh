@@ -50,6 +50,10 @@ do
 	garageentityid=${configuration_lockmanager[garageentityid]}
 	numcodes=${configuration_lockmanager[numcodes]}
 
+	ACTUAL_LOCK_NAME=${configuration_lockmanager[lockname]}
+    lockname=$(echo "$ACTUAL_LOCK_NAME" | awk '{print tolower($0)}')
+	lockfilename=$(echo "$ACTUAL_LOCK_NAME" | awk '{print tolower($0)}')
+
 	if (false)
 	then
 	   echo $lockname
@@ -58,6 +62,7 @@ do
 	   echo $sensorfactoryname
 	   echo $garageentityid 
 	   echo $numcodes
+	   echo $ACTUAL_LOCK_NAME
 	fi
 
 	if test -z "$numcodes" || test -z "$lockname" || test -z "$lockfactoryname" || test -z "$sensorname" || test -z "$sensorfactoryname" || test -z "$garageentityid"
@@ -66,7 +71,7 @@ do
 	fi
 
 
-	activelockheader="binary_sensor.LOCKNAME_active_" #ACTIVELOCKHEADER
+	activelockheader="binary_sensor.active_LOCKNAME_" #ACTIVELOCKHEADER
 	activelockheaderENTITIES=
 
 	inputlockpinheader="input_text.LOCKNAME_pin_" #INPUTLOCKPINHEADER
@@ -83,13 +88,16 @@ do
 	   fi
 	done
 
-	dlmc=$lockname"_lock_manager_common.yaml"
-	ll=$lockname"_lovelace"
+	dlmc=$lockfilename"_lock_manager_common.yaml"
+#	dlmc=$(echo "$dlmc" | awk '{print tolower($0)}')	
+	ll=$lockfilename"_lovelace"
+#	ll=$(echo "$ll" | awk '{print tolower($0)}')	
 
 	rm lovelace 2> /dev/null
 	for ((i=1; i<=$numcodes; i++))
 	do
-	   dm=$lockname"_lock_manager_"$i."yaml"
+	   dm=$lockfilename"_lock_manager_"$i."yaml"
+#       dm=$(echo "$dm" | awk '{print tolower($0)}')	
 	   cp lock_manager.txt $dm
 	   cp lovelace.code lovelace.$i
 	   if [ $i -eq 1 ]
@@ -101,6 +109,7 @@ do
 	      sed -i s/INPUTLOCKPINHEADER/"$inputlockpinheaderENTITIES"/g $dlmc # INPUTLOCKPINHEADER
 	      sed -i s/ACTIVELOCKHEADER/"$activelockheaderENTITIES"/g $dlmc # ACTIVELOCKHEADER
 	      sed -i s/LOCKNAME/$lockname/g $dlmc
+	      sed -i s/CASE_LOCK_NAME/$ACTUAL_LOCK_NAME/g $dlmc
 	      sed -i s/LOCKFACTORYNAMEPREFIX/$lockfactoryname/g $dlmc
 	      sed -i s/SENSORNAME/$sensorname/g $dlmc
 	      sed -i s/SENSORFACTORYNAMEPREFIX/$sensorfactoryname/g $dlmc
@@ -109,6 +118,8 @@ do
 	      sed -i s/INPUTLOCKPINHEADER/"$inputlockpinheaderENTITIES"/g $ll # INPUTLOCKPINHEADER
 	      sed -i s/ACTIVELOCKHEADER/"$activelockheaderENTITIES"/g $ll # ACTIVELOCKHEADER
 	      sed -i s/LOCKNAME/$lockname/g $ll
+	      #read -p "Press enter to continue"
+	      sed -i s/CASE_LOCK_NAME/$ACTUAL_LOCK_NAME/g $ll
 	      sed -i s/LOCKFACTORYNAMEPREFIX/$lockfactoryname/g $ll
 	      sed -i s/SENSORNAME/$sensorname/g $ll
 	      sed -i s/SENSORFACTORYNAMEPREFIX/$sensorfactoryname/g $ll
@@ -118,21 +129,23 @@ do
 
 	   sed -i s/TEMPLATENUM/$i/g $dm
 	   sed -i s/LOCKNAME/$lockname/g $dm
+       sed -i s/CASE_LOCK_NAME/$ACTUAL_LOCK_NAME/g $dm
 	   sed -i s/FACTORYNAMEPREFIX/$factoryname/g $dm
 
 	   sed -i s/LOCKNAME/$lockname/g lovelace.$i
-	   sed -i s/X/$i/g lovelace.$i
+	   sed -i s/CASE_LOCK_NAME/$ACTUAL_LOCK_NAME/g lovelace.$i
+	   sed -i s/TEMPLATENUM/$i/g lovelace.$i
 	   cat lovelace.$i >> $ll
 	   rm lovelace.$i
 	done
 
 
-	echo creating $lockname
-	rm -rf $lockname
-	mkdir $lockname
+	echo creating $lockfilename
+	rm -rf $lockfilename
+	mkdir $lockfilename
 
-	mv $lockname*.yaml $lockname
-	mv $ll $lockname\
+	mv *.yaml $lockfilename
+	mv $ll $lockfilename\
 
 done
 

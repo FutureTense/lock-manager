@@ -120,7 +120,7 @@ script:
 ###################  automation:  ####################  
 automation:
 
-    - alias: Lock Notifications
+    - alias: CASE_LOCK_NAME Notifications
       trigger:
         platform: state
         entity_id: sensor.LOCKNAME_statusreport
@@ -151,7 +151,7 @@ automation:
               {% endif %}
               {{ a[1] }}
     
-    - alias: User Lock Notifications
+    - alias: CASE_LOCK_NAME User Notifications
       trigger:
         platform: state
         entity_id: sensor.LOCKNAME_statusreport
@@ -172,7 +172,7 @@ automation:
           value_template: >-
             {% set report = states.sensor.LOCKNAME_statusreport.state %}
             {% set a = report.split(';') %}
-            {% set entity_id = 'LOCKNAME_notify_' + a[2] %}
+            {% set entity_id = 'notify_LOCKNAME_' + a[2] %}
             {% set notify = states['input_boolean'][entity_id].state %}
             {{ notify == "on" }}
       action:
@@ -222,7 +222,7 @@ automation:
             title: "SENSORNAME"    
             message: "Opened"
     
-    - alias: Add Code
+    - alias: CASE_LOCK_NAME Add Code
       condition:
         - condition: state
           entity_id: 'binary_sensor.allow_automation'
@@ -249,7 +249,7 @@ automation:
                 {% set code = states['input_text'][codetext].state %}
                 {{ code | string }}
     
-    - alias: Update Code
+    - alias: CASE_LOCK_NAME Update Code
       trigger:
         entity_id: INPUTLOCKPINHEADER
         platform: state
@@ -262,12 +262,12 @@ automation:
             {% set object_id = trigger.to_state.object_id %}
             {% set index = 14 %}
             {% set code_slot = object_id[index:] %}
-            {% set b = 'input_boolean.LOCKNAME_enabled_' + code_slot | string %}
+            {% set b = 'input_boolean.enabled_LOCKNAME_' + code_slot | string %}
             {{ is_state(b, 'on') and (trigger.from_state.state != trigger.to_state.state)}}
       action:
         - service: persistent_notification.create
           data_template:
-            title: "LOCK MANAGER"
+            title: "LOCKNAME LOCK MANAGER"
             message: >-
               {% set object_id = trigger.to_state.object_id %}
               {% set index = 14 %}
@@ -279,9 +279,9 @@ automation:
               {% set object_id = trigger.to_state.object_id %}
               {% set index = 14 %}
               {% set code_slot = object_id[index:] %}
-              {{ 'input_boolean.LOCKNAME_enabled_' + code_slot | string }}
+              {{ 'input_boolean.enabled_LOCKNAME_' + code_slot | string }}
     
-    - alias: Reset Lock LOCKNAME
+    - alias: Reset CASE_LOCK_NAME
       condition:
         - condition: state
           entity_id: 'binary_sensor.allow_automation'
@@ -296,7 +296,7 @@ automation:
         - service: input_boolean.turn_off
           entity_id: input_boolean.LOCKNAME_reset_lock
     
-    - alias: Clear Code
+    - alias: CASE_LOCK_NAME Clear Code
       condition:
         - condition: state
           entity_id: 'binary_sensor.allow_automation'
@@ -327,7 +327,7 @@ automation:
             usercode: >-
               {{ range(1000, 9999) | random | int }}
 
-    - alias: Decrement access count
+    - alias: CASE_LOCK_NAME Decrement Access Count
       trigger:
         platform: state
         entity_id: sensor.LOCKNAME_statusreport
@@ -350,4 +350,4 @@ automation:
             entity_id: >-
               {% set report = states.sensor.LOCKNAME_statusreport.state %}
               {% set a = report.split(';') %}
-              {{ 'input_number.LOCKNAME_accesscount_' + a[2] }}
+              {{ 'input_number.accesscount_LOCKNAME_' + a[2] }}

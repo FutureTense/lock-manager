@@ -1,4 +1,4 @@
-  - title: 'LOCKNAME Codes and Configuration'
+  - title: 'CASE_LOCK_NAME Codes and Configuration'
     path: keypad-LOCKNAME
     icon: 'mdi:lock-smart'
     panel: false

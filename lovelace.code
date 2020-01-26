@@ -1,55 +1,55 @@
       - type: vertical-stack
         cards:
           - content: |
-              ## Code X
+              ## Code TEMPLATENUM
             type: markdown
           - type: entities
             entities:
-              - entity: input_text.LOCKNAME_name_X
-              - entity: input_text.LOCKNAME_pin_X
-              - entity: input_boolean.LOCKNAME_enabled_X
-              - entity: input_boolean.LOCKNAME_notify_X
+              - entity: input_text.LOCKNAME_name_TEMPLATENUM
+              - entity: input_text.LOCKNAME_pin_TEMPLATENUM
+              - entity: input_boolean.enabled_LOCKNAME_TEMPLATENUM
+              - entity: input_boolean.notify_LOCKNAME_TEMPLATENUM
               - type: divider
-              - entity: binary_sensor.LOCKNAME_active_X
+              - entity: binary_sensor.active_LOCKNAME_TEMPLATENUM
               - type: divider
               - type: 'custom:fold-entity-row'
                 head:
                   type: section
                   label: Advanced Options
                 entities:
-                  - entity: input_boolean.reset_advanced_X
+                  - entity: input_boolean.reset_advanced_LOCKNAME_TEMPLATENUM
                   - type: divider
-                  - entity: input_boolean.LOCKNAME_accesslimit_X
-                  - entity: input_number.LOCKNAME_accesscount_X
+                  - entity: input_boolean.accesslimit_LOCKNAME_TEMPLATENUM
+                  - entity: input_number.accesscount_LOCKNAME_TEMPLATENUM
                   - type: divider
-                  - entity: input_boolean.LOCKNAME_daterange_X
-                  - entity: input_datetime.start_date_X
-                  - entity: input_datetime.end_date_X
+                  - entity: input_boolean.daterange_LOCKNAME_TEMPLATENUM
+                  - entity: input_datetime.start_date_LOCKNAME_TEMPLATENUM
+                  - entity: input_datetime.end_date_LOCKNAME_TEMPLATENUM
                   - type: divider
-                  - input_boolean.sun_X
-                  - input_datetime.sunstart_date_X
-                  - input_datetime.sunend_date_X
+                  - input_boolean.sun_LOCKNAME_TEMPLATENUM
+                  - input_datetime.sun_start_date_LOCKNAME_TEMPLATENUM
+                  - input_datetime.sun_end_date_LOCKNAME_TEMPLATENUM
                   - type: divider
-                  - input_boolean.mon_X
-                  - input_datetime.monstart_date_X
-                  - input_datetime.monend_date_X
+                  - input_boolean.mon_LOCKNAME_TEMPLATENUM
+                  - input_datetime.mon_start_date_LOCKNAME_TEMPLATENUM
+                  - input_datetime.mon_end_date_LOCKNAME_TEMPLATENUM
                   - type: divider
-                  - input_boolean.tue_X
-                  - input_datetime.tuestart_date_X
-                  - input_datetime.tueend_date_X
+                  - input_boolean.tue_LOCKNAME_TEMPLATENUM
+                  - input_datetime.tue_start_date_LOCKNAME_TEMPLATENUM
+                  - input_datetime.tue_end_date_LOCKNAME_TEMPLATENUM
                   - type: divider
-                  - input_boolean.wed_X
-                  - input_datetime.wedstart_date_X
-                  - input_datetime.wedend_date_X
+                  - input_boolean.wed_LOCKNAME_TEMPLATENUM
+                  - input_datetime.wed_start_date_LOCKNAME_TEMPLATENUM
+                  - input_datetime.wed_end_date_LOCKNAME_TEMPLATENUM
                   - type: divider
-                  - input_boolean.thu_X
-                  - input_datetime.thustart_date_X
-                  - input_datetime.thuend_date_X
+                  - input_boolean.thu_LOCKNAME_TEMPLATENUM
+                  - input_datetime.thu_start_date_LOCKNAME_TEMPLATENUM
+                  - input_datetime.thu_end_date_LOCKNAME_TEMPLATENUM
                   - type: divider
-                  - input_boolean.fri_X
-                  - input_datetime.fristart_date_X
-                  - input_datetime.friend_date_X
+                  - input_boolean.fri_LOCKNAME_TEMPLATENUM
+                  - input_datetime.fri_start_date_LOCKNAME_TEMPLATENUM
+                  - input_datetime.fri_end_date_LOCKNAME_TEMPLATENUM
                   - type: divider
-                  - input_boolean.sat_X
-                  - input_datetime.satstart_date_X
-                  - input_datetime.satend_date_X
+                  - input_boolean.sat_LOCKNAME_TEMPLATENUM
+                  - input_datetime.sat_start_date_LOCKNAME_TEMPLATENUM
+                  - input_datetime.sat_end_date_LOCKNAME_TEMPLATENUM
