@@ -59,6 +59,89 @@ The easiest way to add these plugins is using the [Home Assistant Community Stor
 * https://github.com/thomasloven/lovelace-auto-entities
 * https://github.com/thomasloven/lovelace-card-tools
 
+
+#### Additional Setup (Optional, but strongly reccomened)
+
+Before your lock will respond to automations, you will need to add a couple of things to your existing configuration.  The first is you need to add the following `input_booleans`:
+
+```
+allow_automation_execution:
+  name: 'Allow Automation'
+  initial: off
+
+input_boolean.system_ready:
+  name: 'System Ready'
+  initial: off
+  
+```
+
+and you will also need to add this `binary_sensor`
+
+
+```
+    allow_automation:
+      friendly_name: "Allow Automation"
+      value_template: "{{ is_state('input_boolean.allow_automation_execution', 'on') }}"
+
+    system_ready:
+      friendly_name: "System ready"
+      value_template: "{{ is_state('input_boolean.system_ready', 'on') }}"
+      device_class: moving
+```
+
+`binary_sensor.allow_automation` is used *extensivly* throught the project.  If you examine the code, you see it will refert to the `input_boolean.allow_automation_execution`.  The reasons for a seperate input_boolean and binary_sensor are beyond the scope of this document.  But the reason they exist is worth a discussion.
+
+When Home Assistant starts up, several of this project's automations will be called, which if you have notificatins on will send unnecessary notifications.  The allow_automations boolean will prevent those automations from firing.  However, in order for this to work you stil need to add a few more things.
+
+Add the following to you Home Asssistant Automations (not in this project!)
+
+```
+- alias: homeassistant start-up
+  initial_state: true
+  trigger:
+    platform: homeassistant
+    event: start
+  action:
+    - service: script.turn_on
+      entity_id: script.customstartup
+      
+- alias: Zwave_loaded_Start_System
+  initial_state: true
+  trigger:
+    - platform: event
+      event_type: zwave.network_ready
+    - platform: event
+      event_type: zwave.network_complete
+    - platform: event
+      event_type: zwave.network_complete_some_dead
+  action:
+    - service: script.turn_on
+      entity_id: script.system_cleanup
+```
+
+and likewise, add the following to your scripts:
+
+
+```
+system_cleanup:
+  sequence:
+    #- service: homekit.start If you use homekit, uncomment this statement
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.system_ready
+    - service: input_boolean.turn_on
+      data:
+        entity_id: 'input_boolean.allow_automation_execution'
+
+customstartup:
+  sequence:
+    - service: input_boolean.turn_off
+      data:
+        entity_id: 'input_boolean.allow_automation_execution'
+      # You can add other "startup" code here if you wish
+```
+
+This ensures that your input_boolean.allow_automation_exectuion is turned off at startup.  After your Zwave devices have been loaded, script.system_cleanup is called, which will enable this boolean and allow your automations to execute.  As it takes some time for your Zwave devices to actually load, use binary_sensor.system_ready sensor on the GUI so the end user knows when everything is ready to go.
+
 #### Usage
 
 The application makes heavy usage of binary_sensors.  Each code slot in the system has it's own `Status` binary_sensor.  Whenever the status of that sensor changes, the application will either *add* or *remove* the PIN associated with that slot from the lock.  The `Status` sensor takes the results of the following binary_sensors and combines them using the `and` operator.  Note, these sensors are not visible in the UI.
