@@ -31,11 +31,19 @@ Save the file.  If you have multiple locks, make a copy of the ini file and set 
 
 Make the setup.sh script executable by typing:
 
-> chmod +x script.sh
+> chmod +x setup.sh
 
 Now execute the script by typing:
 
-> ./script.sh
+> ./setup.sh
+
+**N.B.** This script requires certain string manipulation utilites.  If you get an error like
+
+    lock_manager.ini is incomplete or does not exist
+
+Then you are probably missing the **gawk** utility.  To install it run
+
+> sudo apt install gawk
 
 If all goes well, you will see a success message for each `ini` file you have in that directory.  You will also see a new directory for each lock.  So if you had two ini files, one with FrontDoor and the other with BackDoor, you should see two directories with those names.  Inside of each of those directories will be a file called `<lockname>_lovelace`.  Open that file in a text editor and select the entire contents and copy to the clipboard.
 
