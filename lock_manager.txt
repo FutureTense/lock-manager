@@ -103,8 +103,8 @@ input_boolean:
   accesslimit_LOCKNAME_TEMPLATENUM:
     name: 'Limit Access Count'
     initial: off
-  reset_advanced_LOCKNAME_TEMPLATENUM:
-    name: 'Reset Advanaced Options'
+  reset_codeslot_LOCKNAME_TEMPLATENUM:
+    name: 'Reset Code Slot'
     initial: off
 
   sun_LOCKNAME_TEMPLATENUM:
@@ -136,43 +136,58 @@ input_boolean:
     initial: on
 
   sun_inc_LOCKNAME_TEMPLATENUM:
-    name: 'include'
+    name: 'include (on)/exclude (off)'
     initial: on
 
   mon_inc_LOCKNAME_TEMPLATENUM:
-    name: 'include'
+    name: 'include (on)/exclude (off)'
     initial: on
 
   tue_inc_LOCKNAME_TEMPLATENUM:
-    name: 'include'
+    name: 'include (on)/exclude (off)'
     initial: on
 
   wed_inc_LOCKNAME_TEMPLATENUM:
-    name: 'include'
+    name: 'include (on)/exclude (off)'
     initial: on
 
   thu_inc_LOCKNAME_TEMPLATENUM:
-    name: 'include'
+    name: 'include (on)/exclude (off)'
     initial: on
 
   fri_inc_LOCKNAME_TEMPLATENUM:
-    name: 'include'
+    name: 'include (on)/exclude (off)'
     initial: on
 
   sat_inc_LOCKNAME_TEMPLATENUM:
-    name: 'include'
+    name: 'include (on)/exclude (off)'
     initial: on
-
 
 ################  automation: #################  
 automation:
 
-- alias: reset_advanced_CASE_LOCK_NAME_TEMPLATENUM
+- alias: reset_codeslot_LOCK_NAME_TEMPLATENUM
   trigger:
-    entity_id: input_boolean.reset_advanced_LOCKNAME_TEMPLATENUM
+    entity_id: input_boolean.reset_codeslot_LOCKNAME_TEMPLATENUM
     platform: state
     to: 'on'
   action:
+
+    - service: input_text.set_value
+      data_template:
+        entity_id: input_text.LOCKNAME_name_TEMPLATENUM
+        value: ""
+    - service: input_text.set_value
+      data_template:
+        entity_id: input_text.LOCKNAME_pin_TEMPLATENUM
+        value: ""
+
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.notify_LOCKNAME_TEMPLATENUM
+
+    - service: input_boolean.turn_off
+      entity_id: input_boolean.enabled_LOCKNAME_TEMPLATENUM
+  
     - service: input_number.set_value
       data_template:
         entity_id: input_number.accesscount_LOCKNAME_TEMPLATENUM
@@ -268,8 +283,8 @@ automation:
       entity_id: input_boolean.accesslimit_LOCKNAME_TEMPLATENUM
       
     - service: input_boolean.turn_off
-      entity_id: input_boolean.reset_advanced_LOCKNAME_TEMPLATENUM
-      
+      entity_id: input_boolean.reset_codeslot_LOCKNAME_TEMPLATENUM
+
     - service: input_boolean.turn_on
       entity_id: input_boolean.sun_LOCKNAME_TEMPLATENUM
       
@@ -290,6 +305,28 @@ automation:
       
     - service: input_boolean.turn_on
       entity_id: input_boolean.sat_LOCKNAME_TEMPLATENUM
+
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.sun_inc_LOCKNAME_TEMPLATENUM
+
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.mon_inc_LOCKNAME_TEMPLATENUM
+
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.tue_inc_LOCKNAME_TEMPLATENUM
+
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.wed_inc_LOCKNAME_TEMPLATENUM
+
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.thu_inc_LOCKNAME_TEMPLATENUM
+
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.fri_inc_LOCKNAME_TEMPLATENUM
+
+    - service: input_boolean.turn_on
+      entity_id: input_boolean.sat_inc_LOCKNAME_TEMPLATENUM
+
       
 ################  binary_sensor: #################  
 binary_sensor:
@@ -303,56 +340,56 @@ binary_sensor:
     daterange_LOCKNAME_TEMPLATENUM:
       value_template: "{{ (is_state('input_boolean.daterange_LOCKNAME_TEMPLATENUM', 'off') or ((states.input_datetime.start_date_LOCKNAME_TEMPLATENUM.attributes.timestamp| int | timestamp_custom('%Y%m%d', False)|int)|string <= now().strftime('%Y%m%d')) and (states.input_datetime.end_date_LOCKNAME_TEMPLATENUM.attributes.timestamp| int | timestamp_custom('%Y%m%d', False)|int)|string >=  now().strftime('%Y%m%d'))}}"
 
+
     sun_LOCKNAME_TEMPLATENUM:
-      entity_id:
+      entity_id:    
         - sensor.time
         - input_datetime.sun_start_date_LOCKNAME_TEMPLATENUM
         - input_datetime.sun_end_date_LOCKNAME_TEMPLATENUM
-      value_template: "{{ ((is_state('input_boolean.sun_LOCKNAME_TEMPLATENUM', 'on'))) and (strptime(states('sensor.date'), '%Y-%m-%d').strftime('%A') == 'Sunday') and (is_state('input_boolean.sun_inc_LOCKNAME_TEMPLATENUM', 'on')) == ( (states.input_datetime.sun_start_date_LOCKNAME_TEMPLATENUM.state  == states.input_datetime.sun_end_date_LOCKNAME_TEMPLATENUM.state) or ((states('sensor.time') >= states('input_datetime.sun_start_date_LOCKNAME_TEMPLATENUM')[0:5]) and (states('sensor.time') <= states('input_datetime.sun_end_date_LOCKNAME_TEMPLATENUM')[0:5])) )}}"
+      value_template: "{{ (( is_state('input_boolean.sun_LOCKNAME_TEMPLATENUM', 'on'))) and (strptime(states('sensor.date'), '%Y-%m-%d').strftime('%a') | lower == 'sun') and (is_state('input_boolean.sun_inc_LOCKNAME_TEMPLATENUM', 'on')) == ((states.input_datetime.sun_start_date_LOCKNAME_TEMPLATENUM.state == states.input_datetime.sun_end_date_LOCKNAME_TEMPLATENUM.state) or ((states('sensor.time') >= states('input_datetime.sun_start_date_LOCKNAME_TEMPLATENUM')[0:5]) and (states('sensor.time') <= states('input_datetime.sun_end_date_LOCKNAME_TEMPLATENUM')[0:5])) )}}"
 
     mon_LOCKNAME_TEMPLATENUM:
-      entity_id:
+      entity_id:    
         - sensor.time
         - input_datetime.mon_start_date_LOCKNAME_TEMPLATENUM
         - input_datetime.mon_end_date_LOCKNAME_TEMPLATENUM
-      value_template: "{{ ((is_state('input_boolean.mon_LOCKNAME_TEMPLATENUM', 'on'))) and (strptime(states('sensor.date'), '%Y-%m-%d').strftime('%A') == 'Monday') and (is_state('input_boolean.mon_inc_LOCKNAME_TEMPLATENUM', 'on')) == ( (states.input_datetime.mon_start_date_LOCKNAME_TEMPLATENUM.state  == states.input_datetime.mon_end_date_LOCKNAME_TEMPLATENUM.state) or ((states('sensor.time') >= states('input_datetime.mon_start_date_LOCKNAME_TEMPLATENUM')[0:5]) and (states('sensor.time') <= states('input_datetime.mon_end_date_LOCKNAME_TEMPLATENUM')[0:5])) )}}"
+      value_template: "{{ (( is_state('input_boolean.mon_LOCKNAME_TEMPLATENUM', 'on'))) and (strptime(states('sensor.date'), '%Y-%m-%d').strftime('%a') | lower == 'mon') and (is_state('input_boolean.mon_inc_LOCKNAME_TEMPLATENUM', 'on')) == ((states.input_datetime.mon_start_date_LOCKNAME_TEMPLATENUM.state == states.input_datetime.mon_end_date_LOCKNAME_TEMPLATENUM.state) or ((states('sensor.time') >= states('input_datetime.mon_start_date_LOCKNAME_TEMPLATENUM')[0:5]) and (states('sensor.time') <= states('input_datetime.mon_end_date_LOCKNAME_TEMPLATENUM')[0:5])) )}}"
 
     tue_LOCKNAME_TEMPLATENUM:
-      entity_id:
+      entity_id:    
         - sensor.time
         - input_datetime.tue_start_date_LOCKNAME_TEMPLATENUM
         - input_datetime.tue_end_date_LOCKNAME_TEMPLATENUM
-      value_template: "{{ ((is_state('input_boolean.tue_LOCKNAME_TEMPLATENUM', 'on'))) and (strptime(states('sensor.date'), '%Y-%m-%d').strftime('%A') == 'Tuesday') and (is_state('input_boolean.tue_inc_LOCKNAME_TEMPLATENUM', 'on')) == ( (states.input_datetime.tue_start_date_LOCKNAME_TEMPLATENUM.state  == states.input_datetime.tue_end_date_LOCKNAME_TEMPLATENUM.state) or ((states('sensor.time') >= states('input_datetime.tue_start_date_LOCKNAME_TEMPLATENUM')[0:5]) and (states('sensor.time') <= states('input_datetime.tue_end_date_LOCKNAME_TEMPLATENUM')[0:5])) )}}"
+      value_template: "{{ (( is_state('input_boolean.tue_LOCKNAME_TEMPLATENUM', 'on'))) and (strptime(states('sensor.date'), '%Y-%m-%d').strftime('%a') | lower == 'tue') and (is_state('input_boolean.tue_inc_LOCKNAME_TEMPLATENUM', 'on')) == ((states.input_datetime.tue_start_date_LOCKNAME_TEMPLATENUM.state == states.input_datetime.tue_end_date_LOCKNAME_TEMPLATENUM.state) or ((states('sensor.time') >= states('input_datetime.tue_start_date_LOCKNAME_TEMPLATENUM')[0:5]) and (states('sensor.time') <= states('input_datetime.tue_end_date_LOCKNAME_TEMPLATENUM')[0:5])) )}}"
 
     wed_LOCKNAME_TEMPLATENUM:
-      entity_id:
+      entity_id:    
         - sensor.time
         - input_datetime.wed_start_date_LOCKNAME_TEMPLATENUM
         - input_datetime.wed_end_date_LOCKNAME_TEMPLATENUM
-      value_template: "{{ ((is_state('input_boolean.wed_LOCKNAME_TEMPLATENUM', 'on'))) and (strptime(states('sensor.date'), '%Y-%m-%d').strftime('%A') == 'Wednesday') and (is_state('input_boolean.wed_inc_LOCKNAME_TEMPLATENUM', 'on')) == ( (states.input_datetime.wed_start_date_LOCKNAME_TEMPLATENUM.state  == states.input_datetime.wed_end_date_LOCKNAME_TEMPLATENUM.state) or ((states('sensor.time') >= states('input_datetime.wed_start_date_LOCKNAME_TEMPLATENUM')[0:5]) and (states('sensor.time') <= states('input_datetime.wed_end_date_LOCKNAME_TEMPLATENUM')[0:5])) )}}"
-
+      value_template: "{{ (( is_state('input_boolean.wed_LOCKNAME_TEMPLATENUM', 'on'))) and (strptime(states('sensor.date'), '%Y-%m-%d').strftime('%a') | lower == 'wed') and (is_state('input_boolean.wed_inc_LOCKNAME_TEMPLATENUM', 'on')) == ((states.input_datetime.wed_start_date_LOCKNAME_TEMPLATENUM.state == states.input_datetime.wed_end_date_LOCKNAME_TEMPLATENUM.state) or ((states('sensor.time') >= states('input_datetime.wed_start_date_LOCKNAME_TEMPLATENUM')[0:5]) and (states('sensor.time') <= states('input_datetime.wed_end_date_LOCKNAME_TEMPLATENUM')[0:5])) )}}"
 
     thu_LOCKNAME_TEMPLATENUM:
-      entity_id:
+      entity_id:    
         - sensor.time
         - input_datetime.thu_start_date_LOCKNAME_TEMPLATENUM
         - input_datetime.thu_end_date_LOCKNAME_TEMPLATENUM
-      value_template: "{{ ((is_state('input_boolean.thu_LOCKNAME_TEMPLATENUM', 'on'))) and (strptime(states('sensor.date'), '%Y-%m-%d').strftime('%A') == 'Thursday') and (is_state('input_boolean.thu_inc_LOCKNAME_TEMPLATENUM', 'on')) == ( (states.input_datetime.thu_start_date_LOCKNAME_TEMPLATENUM.state  == states.input_datetime.thu_end_date_LOCKNAME_TEMPLATENUM.state) or ((states('sensor.time') >= states('input_datetime.thu_start_date_LOCKNAME_TEMPLATENUM')[0:5]) and (states('sensor.time') <= states('input_datetime.thu_end_date_LOCKNAME_TEMPLATENUM')[0:5])) )}}"
-
+      value_template: "{{ (( is_state('input_boolean.thu_LOCKNAME_TEMPLATENUM', 'on'))) and (strptime(states('sensor.date'), '%Y-%m-%d').strftime('%a') | lower == 'thu') and (is_state('input_boolean.thu_inc_LOCKNAME_TEMPLATENUM', 'on')) == ((states.input_datetime.thu_start_date_LOCKNAME_TEMPLATENUM.state == states.input_datetime.thu_end_date_LOCKNAME_TEMPLATENUM.state) or ((states('sensor.time') >= states('input_datetime.thu_start_date_LOCKNAME_TEMPLATENUM')[0:5]) and (states('sensor.time') <= states('input_datetime.thu_end_date_LOCKNAME_TEMPLATENUM')[0:5])) )}}"
 
     fri_LOCKNAME_TEMPLATENUM:
-      entity_id:
+      entity_id:    
         - sensor.time
         - input_datetime.fri_start_date_LOCKNAME_TEMPLATENUM
         - input_datetime.fri_end_date_LOCKNAME_TEMPLATENUM
-      value_template: "{{ ((is_state('input_boolean.fri_LOCKNAME_TEMPLATENUM', 'on'))) and (strptime(states('sensor.date'), '%Y-%m-%d').strftime('%A') == 'Friday') and (is_state('input_boolean.fri_inc_LOCKNAME_TEMPLATENUM', 'on')) == ( (states.input_datetime.fri_start_date_LOCKNAME_TEMPLATENUM.state  == states.input_datetime.fri_end_date_LOCKNAME_TEMPLATENUM.state) or ((states('sensor.time') >= states('input_datetime.fri_start_date_LOCKNAME_TEMPLATENUM')[0:5]) and (states('sensor.time') <= states('input_datetime.fri_end_date_LOCKNAME_TEMPLATENUM')[0:5])) )}}"
+      value_template: "{{ (( is_state('input_boolean.fri_LOCKNAME_TEMPLATENUM', 'on'))) and (strptime(states('sensor.date'), '%Y-%m-%d').strftime('%a') | lower == 'fri') and (is_state('input_boolean.fri_inc_LOCKNAME_TEMPLATENUM', 'on')) == ((states.input_datetime.fri_start_date_LOCKNAME_TEMPLATENUM.state == states.input_datetime.fri_end_date_LOCKNAME_TEMPLATENUM.state) or ((states('sensor.time') >= states('input_datetime.fri_start_date_LOCKNAME_TEMPLATENUM')[0:5]) and (states('sensor.time') <= states('input_datetime.fri_end_date_LOCKNAME_TEMPLATENUM')[0:5])) )}}"
 
     sat_LOCKNAME_TEMPLATENUM:
-      entity_id:
+      entity_id:    
         - sensor.time
         - input_datetime.sat_start_date_LOCKNAME_TEMPLATENUM
         - input_datetime.sat_end_date_LOCKNAME_TEMPLATENUM
-      value_template: "{{ ((is_state('input_boolean.sat_LOCKNAME_TEMPLATENUM', 'on'))) and (strptime(states('sensor.date'), '%Y-%m-%d').strftime('%A') == 'Saturday') and (is_state('input_boolean.sat_inc_LOCKNAME_TEMPLATENUM', 'on')) == ( (states.input_datetime.sat_start_date_LOCKNAME_TEMPLATENUM.state  == states.input_datetime.sat_end_date_LOCKNAME_TEMPLATENUM.state) or ((states('sensor.time') >= states('input_datetime.sat_start_date_LOCKNAME_TEMPLATENUM')[0:5]) and (states('sensor.time') <= states('input_datetime.sat_end_date_LOCKNAME_TEMPLATENUM')[0:5])) )}}"
+      value_template: "{{ (( is_state('input_boolean.sat_LOCKNAME_TEMPLATENUM', 'on'))) and (strptime(states('sensor.date'), '%Y-%m-%d').strftime('%a') | lower == 'sat') and (is_state('input_boolean.sat_inc_LOCKNAME_TEMPLATENUM', 'on')) == ((states.input_datetime.sat_start_date_LOCKNAME_TEMPLATENUM.state == states.input_datetime.sat_end_date_LOCKNAME_TEMPLATENUM.state) or ((states('sensor.time') >= states('input_datetime.sat_start_date_LOCKNAME_TEMPLATENUM')[0:5]) and (states('sensor.time') <= states('input_datetime.sat_end_date_LOCKNAME_TEMPLATENUM')[0:5])) )}}"
+
 
 
     smtwtfs_LOCKNAME_TEMPLATENUM:

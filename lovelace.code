@@ -4,6 +4,7 @@
               ## Code TEMPLATENUM
             type: markdown
           - type: entities
+            show_header_toggle: false
             entities:
               - entity: input_text.LOCKNAME_name_TEMPLATENUM
               - entity: input_text.LOCKNAME_pin_TEMPLATENUM
@@ -17,7 +18,7 @@
                   type: section
                   label: Advanced Options
                 entities:
-                  - entity: input_boolean.reset_advanced_LOCKNAME_TEMPLATENUM
+                  - entity: input_boolean.reset_codeslot_LOCKNAME_TEMPLATENUM
                   - type: divider
                   - entity: input_boolean.accesslimit_LOCKNAME_TEMPLATENUM
                   - entity: input_number.accesscount_LOCKNAME_TEMPLATENUM
