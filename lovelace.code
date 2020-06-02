@@ -12,6 +12,7 @@
               - entity: input_boolean.notify_LOCKNAME_TEMPLATENUM
               - type: divider
               - entity: binary_sensor.active_LOCKNAME_TEMPLATENUM
+                state_color: true
               - type: divider
               - type: 'custom:fold-entity-row'
                 head:
