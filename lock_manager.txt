@@ -166,7 +166,7 @@ input_boolean:
 ################  automation: #################  
 automation:
 
-- alias: reset_codeslot_LOCK_NAME_TEMPLATENUM
+- alias: reset_codeslot_LOCKNAME_TEMPLATENUM
   trigger:
     entity_id: input_boolean.reset_codeslot_LOCKNAME_TEMPLATENUM
     platform: state
