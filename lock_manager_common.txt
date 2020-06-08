@@ -148,7 +148,7 @@ automation:
               {{ true }}
             {% endif %}
       action:
-        - service: script.conditional_notify
+        - service: script.LOCKNAME_conditional_notify
           data_template:
             boolean: input_boolean.LOCKNAME_lock_notifications
             title: "Sensor Status Report"
@@ -210,7 +210,7 @@ automation:
         platform: state
         to: 'off'
       action:
-        - service: script.conditional_notify
+        - service: script.LOCKNAME_conditional_notify
           data_template:
             boolean: input_boolean.LOCKNAME_dooraccess_notifications
             title: "SENSORNAME"    
@@ -226,7 +226,7 @@ automation:
         platform: state
         to: 'on'
       action:
-        - service: script.conditional_notify
+        - service: script.LOCKNAME_conditional_notify
           data_template:
             boolean: input_boolean.LOCKNAME_dooraccess_notifications
             title: "SENSORNAME"    
