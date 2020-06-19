@@ -77,7 +77,7 @@ allow_automation_execution:
   name: 'Allow Automation'
   initial: off
 
-input_boolean.system_ready:
+system_ready:
   name: 'System Ready'
   initial: off
   
