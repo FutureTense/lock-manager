@@ -54,11 +54,11 @@ async def async_setup_entry(hass, config_entry):
             inputlockpinheader = "input_text." + lockname + "_pin_"
             activelockheader = "binary_sensor.active_" + lockname + "_"
             lockfactorynameprefix = (
-                entry.options[CONF_ENTITY_ID].split(".")[1].rsplit("_", 2)[0]
+                entry.options[CONF_ENTITY_ID].split(".")[1].rsplit("_", 1)[0]
             )
             sensorname = lockname
             sensorfactoryname = (
-                entry.options[CONF_SENSOR_NAME].split(".")[1].rsplit("_", 2)[0] or ""
+                entry.options[CONF_SENSOR_NAME].split(".")[1].rsplit("_", 1)[0] or ""
             )
 
             output_path = entry.options[CONF_PATH] + lockname + "/"
