@@ -1,9 +1,9 @@
 {
   "domain": "lock-manager",
   "name": "Lock Manager",
-  "documentation": "https://github.com/firstof9/lock-manager",
+  "documentation": "https://github.com/FutureTense/lock-manager",
   "dependencies": [],
-  "codeowners": ["@firstof9"],
+  "codeowners": ["@FutureTense", "@firstof9"],
   "config_flow": true,
   "requirements": []
 }
