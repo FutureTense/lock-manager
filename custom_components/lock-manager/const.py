@@ -1,5 +1,5 @@
 DOMAIN = "lock-manager"
-VERSION = "0.0.4"
+VERSION = "0.0.4-ozw"
 ISSUE_URL = "https://github.com/firstof9/lock-manager"
 
 # Configuration Properties
