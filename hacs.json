@@ -1,0 +1,6 @@
+{
+  "name": "lock-manager",
+  "domains": [],
+  "homeassistant": "0.110.0",
+  "iot_class": "Local Polling"
+}

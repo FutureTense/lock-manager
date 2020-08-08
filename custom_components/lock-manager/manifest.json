@@ -1,0 +1,9 @@
+{
+  "domain": "lock-manager",
+  "name": "Lock Manager",
+  "documentation": "https://github.com/firstof9/lock-manager",
+  "dependencies": [],
+  "codeowners": ["@firstof9"],
+  "config_flow": true,
+  "requirements": []
+}
