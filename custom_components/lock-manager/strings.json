@@ -1,0 +1,40 @@
+{
+  "config": {
+    "error": {
+      "invalid_path": "Please store the images in another directory."
+    },
+    "step": {
+      "user": {
+        "data": {
+          "entity_id": "Select your lock",
+          "slots": "Code Slots",
+          "start_from": "Start from code slot #",
+          "sensorname": "Door Sensor",
+          "lockname": "Lock Name (ie: frontdoor)",
+          "packages_path": "Path to packages directory"
+        },
+        "description": "Select the lock to setup and code slots to create.",
+        "title": "Lock Manager"
+      }
+    }
+  },
+  "options": {
+    "error": {
+      "invalid_path": "Please store the images in another directory."
+    },
+    "step": {
+      "init": {
+        "data": {
+          "entity_id": "Select your lock",
+          "slots": "Code Slots",
+          "start_from": "Start from code slot #",
+          "sensorname": "Door Sensor",
+          "lockname": "Lock Name (ie: frontdoor)",
+          "packages_path": "Path to packages directory"
+        },
+        "description": "Select the lock to setup and code slots to create.",
+        "title": "Lock Manager"
+      }
+    }
+  }
+}
