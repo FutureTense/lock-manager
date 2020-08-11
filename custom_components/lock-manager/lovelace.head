@@ -7,7 +7,7 @@
       - input_boolean.LOCKNAME_dooraccess_notifications
       - input_boolean.LOCKNAME_garageacess_notifications
       - entity: >-
-          lock.LOCKFACTORYNAMEPREFIX_LOCKNAME
+          LOCKENTITYNAME
       - entity: >-
           binary_sensor.SENSORFACTORYNAMEPREFIX_access_control_SENSORNAME
     cards:

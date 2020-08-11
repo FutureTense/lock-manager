@@ -6,6 +6,8 @@ from homeassistant.helpers import config_validation as cv, entity_platform
 import logging
 import os
 from .const import (
+    CONF_ALARM_LEVEL,
+    CONF_ALARM_TYPE,
     CONF_ENTITY_ID,
     CONF_LOCK_NAME,
     CONF_PATH,
@@ -39,9 +41,11 @@ async def async_setup_entry(hass, config_entry):
     )
 
     config_entry.options = config_entry.data
+    config_entry.add_update_listener(update_listener)
 
     async def _generate_package(service):
         """Generate the package files"""
+        _LOGGER.debug("DEBUG: %s", service)
         name = service.data[ATTR_NAME]
         entry = config_entry
         _LOGGER.debug("Starting file generation...")
@@ -53,13 +57,11 @@ async def async_setup_entry(hass, config_entry):
             lockname = entry.options[CONF_LOCK_NAME]
             inputlockpinheader = "input_text." + lockname + "_pin_"
             activelockheader = "binary_sensor.active_" + lockname + "_"
-            lockfactorynameprefix = (
-                entry.options[CONF_ENTITY_ID].split(".")[1].rsplit("_", 1)[0]
-            )
+            lockentityname = entry.options[CONF_ENTITY_ID]
             sensorname = lockname
-            sensorfactoryname = (
-                entry.options[CONF_SENSOR_NAME].split(".")[1].rsplit("_", 1)[0] or ""
-            )
+            doorsensorentityname = entry.options[CONF_SENSOR_NAME] or ""
+            sensoralarmlevel = entry.options[CONF_ALARM_LEVEL]
+            sensoralarmtype = entry.options[CONF_ALARM_TYPE]
 
             output_path = entry.options[CONF_PATH] + lockname + "/"
 
@@ -108,9 +110,11 @@ async def async_setup_entry(hass, config_entry):
                 "CASE_LOCK_NAME": lockname,
                 "INPUTLOCKPINHEADER": inputlockpinheaders,
                 "ACTIVELOCKHEADER": activelockheaders,
-                "LOCKFACTORYNAMEPREFIX": lockfactorynameprefix,
+                "LOCKENTITYNAME": lockentityname,
                 "SENSORNAME": sensorname,
-                "SENSORFACTORYNAMEPREFIX": sensorfactoryname,
+                "DOORSENSORENTITYNAME": doorsensorentityname,
+                "SENSORALARMTYPE": sensoralarmtype,
+                "SENSORALARMLEVEL": sensoralarmlevel,
             }
             # Replace variables in common file
             output = open(output_path + lockname + "_lock_manager_common.yaml", "w+",)
@@ -171,6 +175,9 @@ async def async_setup_entry(hass, config_entry):
         schema=vol.Schema({vol.Optional(ATTR_NAME): vol.Coerce(str)}),
     )
 
+    servicedata = {"lockname": config_entry.options[CONF_LOCK_NAME]}
+    await hass.services.async_call(DOMAIN, SERVICE_GENERATE_PACKAGE, servicedata)
+
     return True
 
 
@@ -183,3 +190,6 @@ async def async_unload_entry(hass, config_entry):
 async def update_listener(hass, entry):
     """Update listener."""
     entry.data = entry.options
+
+    servicedata = {"lockname": entry.options[CONF_LOCK_NAME]}
+    await hass.services.async_call(DOMAIN, SERVICE_GENERATE_PACKAGE, servicedata)

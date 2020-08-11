@@ -1,3 +1,7 @@
+## WARNING ##
+# This file is auotmaticly generated, any changes
+# will be overwritten.
+
 ##################################################  
 ################  COMMON ENTITIES  ###############  
 ##################################################  
@@ -12,21 +16,6 @@ input_boolean:
     name: "Garage Notifications"
   LOCKNAME_reset_lock:
     name: "LOCKNAME reset lock"
-
-############## binary_sensor:  ####################  
-binary_sensor:
-- platform: template
-  sensors:
-  
-    SENSORFACTORYNAMEPREFIX_access_control_SENSORNAME:
-      value_template: "{{ is_state('sensor.SENSORFACTORYNAMEPREFIX_access_control_SENSORNAME', '22') }}"
-      friendly_name: "SENSORNAME"
-      device_class: door
-
-    SENSORFACTORYNAMEPREFIX_burglar_SENSORNAME:
-      value_template: "{{ is_state('sensor.SENSORFACTORYNAMEPREFIX_burglar_SENSORNAME', '3') }}"
-      friendly_name: "SENSORNAME Sensor Tamper"
-      device_class: safety
 
 ###################  sensor:  ####################  
 sensor:
@@ -47,43 +36,58 @@ sensor:
     LOCKNAME_statusreport:
       friendly_name: 'LOCKNAME Status Report'
       value_template: >
-          {% set number = states('sensor.LOCKFACTORYNAMEPREFIX_alarm_level_LOCKNAME') %}
-          {% set alarm_type_value = states('sensor.LOCKFACTORYNAMEPREFIX_alarm_type_LOCKNAME') %}
-
-          {% if ((as_timestamp(now())-as_timestamp(states.lock.LOCKFACTORYNAMEPREFIX_LOCKNAME.last_changed)) < 15 and (as_timestamp(now())-as_timestamp(states.sensor.LOCKFACTORYNAMEPREFIX_alarm_type_LOCKNAME.last_changed)) > 15) %}
-
-          {%    if (states.lock.LOCKFACTORYNAMEPREFIX_LOCKNAME.state) == 'locked' %}
-          {%       set alarm_type_value = '24' %}
-          {%    elif (states.lock.LOCKFACTORYNAMEPREFIX_LOCKNAME.state) == 'unlocked' %}
-          {%       set alarm_type_value = '25' %}
-          {%    endif %}
-
-          {% endif %}
+          {% set number = states('SENSORALARMLEVEL') %}
+          {% set alarm_type_value = states('SENSORALARMTYPE') %}
           
-          {% set alarm_type_general_actions = {
-            '0':'No Status Reported',          
-            '9':'Lock Jammed',
-            '17':'Keypad Lock Jammed',
-            '21':'Manual Lock',
-            '22':'Manual Unlock',
-            '23':'HA Lock Jammed',
-            '24':'HA Lock',
-            '25':'HA Unlock',
-            '26':'Auto Lock Jammed',
-            '27':'Auto Lock',
-            '32':'All Codes Deleted',
-            '161':'Bad Code Entered',
-            '167':'Battery Low',
-            '168':'Battery Critical',
-            '169':'Battery Too Low To Operate Lock' } %}
-          {% set alarm_type_lock_actions = {
-            '18':'Keypad Lock',
-            '19':'Keypad Unlock',
-            '162':'Lock Code Attempt Outside of Schedule' } %}
-          {% set alarm_type_code_actions = {
-            '33':'Code Deleted',
-            '112':'Code Changed',
-            '113':'Duplicate Code' } %}
+          {% if 'alarm_type' in 'SENSORALARMTYPE' %}
+            {% set alarm_type_general_actions = {
+              '0':'No Status Reported',          
+              '9':'Lock Jammed',
+              '17':'Keypad Lock Jammed',
+              '21':'Manual Lock',
+              '22':'Manual Unlock',
+              '23':'HA Lock Jammed',
+              '24':'HA Lock',
+              '25':'HA Unlock',
+              '26':'Auto Lock Jammed',
+              '27':'Auto Lock',
+              '32':'All Codes Deleted',
+              '161':'Bad Code Entered',
+              '167':'Battery Low',
+              '168':'Battery Critical',
+              '169':'Battery Too Low To Operate Lock' } %}
+            {% set alarm_type_lock_actions = {
+              '18':'Keypad Lock',
+              '19':'Keypad Unlock',
+              '162':'Lock Code Attempt Outside of Schedule' } %}
+            {% set alarm_type_code_actions = {
+              '33':'Code Deleted',
+              '112':'Code Changed',
+              '113':'Duplicate Code' } %}
+
+          {% elif 'access_control' in 'SENSORALARMTYPE' %}
+            {% set alarm_type_general_actions = {
+              '1':'Manual Lock',          
+              '2':'Manual Unlock',
+              '3':'RF Lock',
+              '4':'RF Unlock',
+              '7':'Manual not fully locked',
+              '8':'RF not fully locked',
+              '9':'Auto Lock locked',
+              '10':'Auto Lock not fully locked',
+              '11':'Lock Jammed',
+              '16':'Keypad temporary disabled',
+              '17':'Keypad busy' } %}
+            {% set alarm_type_lock_actions = {
+              '5':'Keypad Lock',
+              '6':'Keypad Unlock' } %}
+            {% set alarm_type_code_actions = {
+              '12':'All User Codes Deleted',
+              '13':'Single Code Deleted',
+              '14':'New User Code Added',
+              '15':'Duplicate Code' } %}          
+          {% endif %}
+
           {% if alarm_type_value in alarm_type_code_actions %}
             {{alarm_type_value}};{{ alarm_type_code_actions[alarm_type_value] }};{{number}}
           {% elif alarm_type_value in alarm_type_lock_actions  %}
@@ -91,7 +95,7 @@ sensor:
           {% elif alarm_type_value in alarm_type_general_actions %}
             {{alarm_type_value}};{{ alarm_type_general_actions[alarm_type_value] }}
           {% else %}
-            {{-1}};Unknown Alarm Type Value {{ states('sensor.LOCKFACTORYNAMEPREFIX_alarm_type_LOCKNAME') }}
+            {{-1}};Unknown Alarm Type Value {{ states('SENSORALARMTYPE') }}
           {% endif %}
 
 ###################  script    :  ####################
@@ -117,15 +121,6 @@ script:
         data_template:   
           title: "{{title}}"
           message: "{{message}}"
-
-  LOCKNAME_manual_notify:
-    sequence:
-      - service: notify.my_devices
-        data_template:   
-          title: "{{title}}"
-          message: "{{message}}"
-    
-######################################################  
 
 ###################  automation:  ####################  
 automation:
@@ -206,7 +201,7 @@ automation:
           entity_id: 'binary_sensor.allow_automation'
           state: 'on' 
       trigger:
-        entity_id: binary_sensor.SENSORFACTORYNAMEPREFIX_access_control_SENSORNAME
+        entity_id: DOORSENSORENTITYNAME
         platform: state
         to: 'off'
       action:
@@ -222,7 +217,7 @@ automation:
           entity_id: 'binary_sensor.allow_automation'
           state: 'on' 
       trigger:
-        entity_id: binary_sensor.SENSORFACTORYNAMEPREFIX_access_control_SENSORNAME
+        entity_id: DOORSENSORENTITYNAME
         platform: state
         to: 'on'
       action:
@@ -245,7 +240,7 @@ automation:
         - service: lock.set_usercode
           data_template:
             node_id: >- 
-                {{states.lock.LOCKFACTORYNAMEPREFIX_LOCKNAME.attributes.node_id}}
+                {{states.LOCKENTITYNAME.attributes.node_id}}
             code_slot: >-
                 {% set object_id = trigger.to_state.object_id %}
                 {% set index = object_id.rfind('_') + 1 %}
@@ -328,7 +323,7 @@ automation:
         - service: lock.set_usercode
           data_template:
             node_id: >- 
-              {{states.lock.LOCKFACTORYNAMEPREFIX_LOCKNAME.attributes.node_id}}
+              {{states.LOCKENTITYNAME.attributes.node_id}}
             code_slot: >-
               {% set object_id = trigger.to_state.object_id %}
               {% set index = object_id.rfind('_') + 1 %}

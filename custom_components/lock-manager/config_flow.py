@@ -6,33 +6,36 @@ from collections import OrderedDict
 import voluptuous as vol
 import os
 
-import homeassistant.helpers.config_validation as cv
 from homeassistant.components.lock import DOMAIN as LOCK_DOMAIN
 from homeassistant.components.binary_sensor import DOMAIN as BINARY_DOMAIN
+from homeassistant.components.sensor import DOMAIN as SENSORS_DOMAIN
 from homeassistant.core import callback
 from homeassistant import config_entries
 from .const import (
-    DOMAIN,
-    CONF_PATH,
+    CONF_ALARM_TYPE,
+    CONF_ALARM_LEVEL,
     CONF_ENTITY_ID,
     CONF_LOCK_NAME,
+    CONF_PATH,
     CONF_SENSOR_NAME,
     CONF_SLOTS,
     CONF_START,
     DEFAULT_CODE_SLOTS,
     DEFAULT_PACKAGES_PATH,
     DEFAULT_START,
+    DOMAIN,
 )
 
 _LOGGER = logging.getLogger(__name__)
 
-# vol.Required(CONF_ENTITY_ID): cv.entity_domain(LOCK_DOMAIN)
 
-
-def _get_entities(entities):
+def _get_entities(entities, search=None):
     data = []
     for entity in entities:
+        if search is not None and not any(map(entity.entity_id.__contains__, search)):
+            continue
         data.append(entity.entity_id)
+
     return data
 
 
@@ -54,6 +57,12 @@ class LockManagerFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         self._errors = {}
         self._locks = _get_entities(self.hass.data[LOCK_DOMAIN].entities)
         self._doors = _get_entities(self.hass.data[BINARY_DOMAIN].entities)
+        self._alarm_type = _get_entities(
+            self.hass.data[SENSORS_DOMAIN].entities, ["alarm_type", "access_control"]
+        )
+        self._alarm_level = _get_entities(
+            self.hass.data[SENSORS_DOMAIN].entities, ["alarm_level", "user_code"]
+        )
 
         if user_input is not None:
             user_input[CONF_LOCK_NAME] = user_input[CONF_LOCK_NAME].lower()
@@ -85,6 +94,8 @@ class LockManagerFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         sensorname = ""
         packagepath = self.hass.config.path() + DEFAULT_PACKAGES_PATH
         start_from = DEFAULT_START
+        alarm_level = ""
+        alarm_type = ""
 
         if user_input is not None:
             if CONF_ENTITY_ID in user_input:
@@ -99,6 +110,10 @@ class LockManagerFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 packagepath = user_input[CONF_PATH]
             if CONF_START in user_input:
                 start_from = user_input[CONF_START]
+            if CONF_ALARM_LEVEL in user_input:
+                alarm_level = user_input[CONF_ALARM_LEVEL]
+            if CONF_ALARM_TYPE in user_input:
+                alarm_type = user_input[CONF_ALARM_TYPE]
 
         data_schema = OrderedDict()
         data_schema[vol.Required(CONF_ENTITY_ID, default=entity_id)] = vol.In(
@@ -109,6 +124,12 @@ class LockManagerFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         data_schema[vol.Required(CONF_LOCK_NAME, default=lockname)] = str
         data_schema[vol.Optional(CONF_SENSOR_NAME, default=sensorname)] = vol.In(
             self._doors
+        )
+        data_schema[vol.Optional(CONF_ALARM_LEVEL, default=alarm_level)] = vol.In(
+            self._alarm_level
+        )
+        data_schema[vol.Optional(CONF_ALARM_TYPE, default=alarm_type)] = vol.In(
+            self._alarm_type
         )
         data_schema[vol.Required(CONF_PATH, default=packagepath)] = str
         return self.async_show_form(
@@ -142,6 +163,13 @@ class LockManagerOptionsFlow(config_entries.OptionsFlow):
         self._errors = {}
         self._locks = _get_entities(self.hass.data[LOCK_DOMAIN].entities)
         self._doors = _get_entities(self.hass.data[BINARY_DOMAIN].entities)
+        self._sensors = _get_entities(self.hass.data[SENSORS_DOMAIN].entities)
+        self._alarm_type = _get_entities(
+            self.hass.data[SENSORS_DOMAIN].entities, ["alarm_type", "access_control"]
+        )
+        self._alarm_level = _get_entities(
+            self.hass.data[SENSORS_DOMAIN].entities, ["alarm_level", "user_code"]
+        )
 
         if user_input is not None:
             user_input[CONF_LOCK_NAME] = user_input[CONF_LOCK_NAME].lower()
@@ -171,6 +199,8 @@ class LockManagerOptionsFlow(config_entries.OptionsFlow):
         sensorname = self.config.options.get(CONF_SENSOR_NAME)
         packagepath = self.config.options.get(CONF_PATH)
         start_from = self.config.options.get(CONF_START)
+        alarm_level = self.config.options.get(CONF_ALARM_LEVEL)
+        alarm_type = self.config.options.get(CONF_ALARM_TYPE)
 
         if user_input is not None:
             if CONF_ENTITY_ID in user_input:
@@ -185,6 +215,10 @@ class LockManagerOptionsFlow(config_entries.OptionsFlow):
                 packagepath = user_input[CONF_PATH]
             if CONF_START in user_input:
                 start_from = user_input[CONF_START]
+            if CONF_ALARM_LEVEL in user_input:
+                alarm_level = user_input[CONF_ALARM_LEVEL]
+            if CONF_ALARM_TYPE in user_input:
+                alarm_type = user_input[CONF_ALARM_TYPE]
 
         data_schema = OrderedDict()
         data_schema[vol.Required(CONF_ENTITY_ID, default=entity_id)] = vol.In(
@@ -195,6 +229,12 @@ class LockManagerOptionsFlow(config_entries.OptionsFlow):
         data_schema[vol.Required(CONF_LOCK_NAME, default=lockname)] = str
         data_schema[vol.Optional(CONF_SENSOR_NAME, default=sensorname)] = vol.In(
             self._doors
+        )
+        data_schema[vol.Optional(CONF_ALARM_LEVEL, default=alarm_level)] = vol.In(
+            self._alarm_level
+        )
+        data_schema[vol.Optional(CONF_ALARM_TYPE, default=alarm_type)] = vol.In(
+            self._alarm_type
         )
         data_schema[vol.Required(CONF_PATH, default=packagepath)] = str
         return self.async_show_form(
