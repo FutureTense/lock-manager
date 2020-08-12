@@ -47,7 +47,7 @@ The easiest way to add these plugins is using the [Home Assistant Community Stor
 - https://github.com/thomasloven/lovelace-auto-entities
 - https://github.com/thomasloven/lovelace-card-tools
 
-#### Additional Setup (Optional, but strongly reccomened)
+#### Additional Setup
 
 Before your lock will respond to automations, you will need to add a couple of things to your existing configuration. The first is you need to add the following `input_booleans`:
 
@@ -129,7 +129,7 @@ This ensures that your input_boolean.allow_automation_exectuion is turned off at
 
 #### Usage
 
-The application makes heavy usage of binary_sensors. Each code slot in the system has it's own `Status` binary_sensor. Whenever the status of that sensor changes, the application will either _add_ or _remove_ the PIN associated with that slot from the lock. The `Status` sensor takes the results of the following binary_sensors and combines them using the `and` operator. Note, these sensors are not visible in the UI.
+The application makes heavy usage of binary*sensors. Each code slot in the system has it's own `Status` binary_sensor. Whenever the status of that sensor changes, the application will either \_add* or _remove_ the PIN associated with that slot from the lock. The `Status` sensor takes the results of the following binary_sensors and combines them using the `and` operator. Note, these sensors are not visible in the UI.
 
 - Enabled
 - Access Count
