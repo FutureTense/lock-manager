@@ -237,10 +237,9 @@ automation:
         platform: state
         to: 'on'
       action:
-        - service: lock.set_usercode
+        - service: ozw.set_usercode
           data_template:
-            node_id: >- 
-                {{states.LOCKENTITYNAME.attributes.node_id}}
+            entity_id: LOCKENTITYNAME
             code_slot: >-
                 {% set object_id = trigger.to_state.object_id %}
                 {% set index = object_id.rfind('_') + 1 %}
@@ -311,26 +310,14 @@ automation:
         platform: state
         to: 'off'
       action:
-        # - service: lock.clear_usercode
-        #   data_template:
-        #     node_id: >- 
-        #         {{states.lock.LOCKFACTORYNAMEPREFIX_LOCKNAME.attributes.node_id}}
-        #     code_slot: >-
-        #         {% set object_id = trigger.to_state.object_id %}
-        #         {% set index = object_id.rfind('_') + 1 %}
-        #         {% set code_slot = object_id[index:] %}
-        #         {{ code_slot  }}
-        - service: lock.set_usercode
+        - service: ozw.clear_usercode
           data_template:
-            node_id: >- 
-              {{states.LOCKENTITYNAME.attributes.node_id}}
+            entitiy_id: LOCKENTITYNAME
             code_slot: >-
-              {% set object_id = trigger.to_state.object_id %}
-              {% set index = object_id.rfind('_') + 1 %}
-              {% set code_slot = object_id[index:] %}
-              {{ code_slot  }}
-            usercode: >-
-              {{ range(1000, 9999) | random | int }}
+                {% set object_id = trigger.to_state.object_id %}
+                {% set index = object_id.rfind('_') + 1 %}
+                {% set code_slot = object_id[index:] %}
+                {{ code_slot  }}
 
     - alias: CASE_LOCK_NAME Decrement Access Count
       trigger:
