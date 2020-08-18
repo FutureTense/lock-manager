@@ -312,7 +312,7 @@ automation:
       action:
         - service: ozw.clear_usercode
           data_template:
-            entitiy_id: LOCKENTITYNAME
+            entity_id: LOCKENTITYNAME
             code_slot: >-
                 {% set object_id = trigger.to_state.object_id %}
                 {% set index = object_id.rfind('_') + 1 %}
