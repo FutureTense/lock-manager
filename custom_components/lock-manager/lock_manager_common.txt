@@ -336,7 +336,7 @@ automation:
             {% set report = states.sensor.LOCKNAME_statusreport.state %}
             {% set a = report.split(';') %}
             {% if (a|length) == 3 and (a[2] | int > 0) %} 
-               {{ (a[0] | int == 19) or (a[0] | int == 6)  }}
+               {{ (a[0] | int == 19) or (a[0] | int == 6)  }} 			#Keypad Unlock
             {% else %}
               {{ false }}
             {% endif %}
