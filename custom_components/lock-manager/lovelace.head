@@ -9,5 +9,5 @@
       - entity: >-
           LOCKENTITYNAME
       - entity: >-
-          binary_sensor.SENSORFACTORYNAMEPREFIX_access_control_SENSORNAME
+          DOORSENSORENTITYNAME
     cards:
