@@ -6,8 +6,8 @@
     "step": {
       "user": {
         "data": {
-          "alarm_level": "Alarm Level Sensor from lock",
-          "alarm_type": "Alarm Type Sensor from lock",
+          "alarm_level": "User Code Sensor (from lock)",
+          "alarm_type": "Access Control Sensor (from lock)",
           "entity_id": "Select your lock",
           "slots": "Code Slots",
           "start_from": "Start from code slot #",
@@ -27,6 +27,8 @@
     "step": {
       "init": {
         "data": {
+          "alarm_level": "User Code Sensor (from lock)",
+          "alarm_type": "Access Control Sensor (from lock)",
           "alarm_level": "Alarm Level Sensor from lock",
           "alarm_type": "Alarm Type Sensor from lock",
           "entity_id": "Select your lock",

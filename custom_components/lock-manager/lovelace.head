@@ -10,4 +10,5 @@
           LOCKENTITYNAME
       - entity: >-
           DOORSENSORENTITYNAME
+      - entity: sensor.LOCKNAME_statusreport
     cards:
