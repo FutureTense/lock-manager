@@ -36,12 +36,17 @@ sensor:
     LOCKNAME_statusreport:
       friendly_name: 'LOCKNAME Status Report'
       value_template: >
-          {% set number = states('SENSORALARMLEVEL') %}
-          {% set alarm_type_value = states('SENSORALARMTYPE') %}
-          
-          {% if 'alarm_type' in 'SENSORALARMTYPE' %}
+        {% set UC = 'SENSORALARMLEVEL' %}
+        {% set AC = 'SENSORALARMTYPE' %}
+
+        {% if (((as_timestamp(now()) - as_timestamp(states.UC.last_changed)) < 15) and ((as_timestamp(now()) - as_timestamp(states.AC.last_changed)) < 15)) %}
+
+          {% set usercode_value = states(UC) %}
+          {% set alarm_type_value = states(AC) %}
+
+          {% if 'alarm_type' in AC %}
             {% set alarm_type_general_actions = {
-              '0':'No Status Reported',          
+              '0':'No Status Reported',
               '9':'Lock Jammed',
               '17':'Keypad Lock Jammed',
               '21':'Manual Lock',
@@ -64,10 +69,9 @@ sensor:
               '33':'Code Deleted',
               '112':'Code Changed',
               '113':'Duplicate Code' } %}
-
-          {% elif 'access_control' in 'SENSORALARMTYPE' %}
+          {% elif 'access_control' in AC %}
             {% set alarm_type_general_actions = {
-              '1':'Manual Lock',          
+              '1':'Manual Lock',
               '2':'Manual Unlock',
               '3':'RF Lock',
               '4':'RF Unlock',
@@ -85,18 +89,19 @@ sensor:
               '12':'All User Codes Deleted',
               '13':'Single Code Deleted',
               '14':'New User Code Added',
-              '15':'Duplicate Code' } %}          
+              '15':'Duplicate Code' } %}
           {% endif %}
-
           {% if alarm_type_value in alarm_type_code_actions %}
-            {{alarm_type_value}};{{ alarm_type_code_actions[alarm_type_value] }};{{number}}
+            {{alarm_type_value}};{{ alarm_type_code_actions[alarm_type_value] }};{{usercode_value}}
           {% elif alarm_type_value in alarm_type_lock_actions  %}
-            {{alarm_type_value}};{{ alarm_type_lock_actions[alarm_type_value] }};{{number}}
+            {{alarm_type_value}};{{ alarm_type_lock_actions[alarm_type_value] }};{{usercode_value}}
           {% elif alarm_type_value in alarm_type_general_actions %}
             {{alarm_type_value}};{{ alarm_type_general_actions[alarm_type_value] }}
           {% else %}
-            {{-1}};Unknown Alarm Type Value {{ states('SENSORALARMTYPE') }}
+            {{-1}};Unknown Alarm Type Value {{ states(AC) }}
           {% endif %}
+        {% else %}
+        {% endif %}
 
 ###################  script    :  ####################
 script:
