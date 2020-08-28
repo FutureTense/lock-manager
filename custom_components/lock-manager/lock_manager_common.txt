@@ -242,9 +242,10 @@ automation:
         platform: state
         to: 'on'
       action:
-        - service: ozw.set_usercode
+        - service: lock.set_usercode
           data_template:
-            entity_id: LOCKENTITYNAME
+            node_id: >- 
+                {{states.lock.LOCKFACTORYNAMEPREFIX_LOCKNAME.attributes.node_id}}
             code_slot: >-
                 {% set object_id = trigger.to_state.object_id %}
                 {% set index = object_id.rfind('_') + 1 %}
@@ -257,7 +258,7 @@ automation:
                 {% set codetext = 'LOCKNAME_pin_' + code_slot | string %}
                 {% set code = states['input_text'][codetext].state %}
                 {{ code | string }}
-    
+
     - alias: CASE_LOCK_NAME Update Code
       trigger:
         entity_id: INPUTLOCKPINHEADER
@@ -289,7 +290,7 @@ automation:
               {% set index = object_id.rfind('_') + 1 %}
               {% set code_slot = object_id[index:] %}
               {{ 'input_boolean.enabled_LOCKNAME_' + code_slot | string }}
-    
+
     - alias: Reset CASE_LOCK_NAME
       condition:
         - condition: state
@@ -304,7 +305,7 @@ automation:
         - service: script.LOCKNAME_reset_lock
         - service: input_boolean.turn_off
           entity_id: input_boolean.LOCKNAME_reset_lock
-    
+
     - alias: CASE_LOCK_NAME Clear Code
       condition:
         - condition: state
@@ -315,14 +316,17 @@ automation:
         platform: state
         to: 'off'
       action:
-        - service: ozw.clear_usercode
+        - service: lock.set_usercode
           data_template:
-            entity_id: LOCKENTITYNAME
+            node_id: >- 
+              {{states.lock.LOCKFACTORYNAMEPREFIX_LOCKNAME.attributes.node_id}}
             code_slot: >-
-                {% set object_id = trigger.to_state.object_id %}
-                {% set index = object_id.rfind('_') + 1 %}
-                {% set code_slot = object_id[index:] %}
-                {{ code_slot  }}
+              {% set object_id = trigger.to_state.object_id %}
+              {% set index = object_id.rfind('_') + 1 %}
+              {% set code_slot = object_id[index:] %}
+              {{ code_slot  }}
+            usercode: >-
+              {{ range(1000, 9999) | random | int }}
 
     - alias: CASE_LOCK_NAME Decrement Access Count
       trigger:
