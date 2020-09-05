@@ -175,8 +175,8 @@ async def async_setup_entry(hass, config_entry):
         schema=vol.Schema({vol.Optional(ATTR_NAME): vol.Coerce(str)}),
     )
 
-    servicedata = {"lockname": config_entry.options[CONF_LOCK_NAME]}
-    await hass.services.async_call(DOMAIN, SERVICE_GENERATE_PACKAGE, servicedata)
+#    servicedata = {"lockname": config_entry.options[CONF_LOCK_NAME]}
+#    await hass.services.async_call(DOMAIN, SERVICE_GENERATE_PACKAGE, servicedata)
 
     return True
 
