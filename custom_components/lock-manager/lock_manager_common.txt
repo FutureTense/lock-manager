@@ -97,7 +97,6 @@ script:
 ###################  automation:  ####################  
 automation:
 
-
     - alias: LOCKNAME-ac-uc-sensors_last_changed_update
       initial_state: false
       trigger:
