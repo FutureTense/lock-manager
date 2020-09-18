@@ -97,6 +97,7 @@ script:
 ###################  automation:  ####################  
 automation:
 
+
     - alias: LOCKNAME-ac-uc-sensors_last_changed_update
       initial_state: false
       trigger:
@@ -147,7 +148,7 @@ automation:
     - alias: CASE_LOCK_NAME Locked state changed
       trigger:
         platform: state
-        entity_id: lock.be469zp_connect_smart_deadbolt_locked
+        entity_id: LOCKENTITYNAME
       condition:
         - condition: state
           entity_id: 'binary_sensor.allow_automation'
@@ -160,7 +161,7 @@ automation:
             {% set lockuser = states.input_number.LOCKNAME_lock_user.state %}
             {% set lockcmd = a[0] %}
             {% set lockuser = a[2] %}
-            {% set lockstate = states.lock.be469zp_connect_smart_deadbolt_locked.state %}
+            {% set lockstate = states.LOCKENTITYNAME.state %}
             {% if (lockstate=='locked') %}
             {%   set lockval=5          %}
             {% else                     %}
@@ -172,7 +173,7 @@ automation:
           data_template:
             entity_id: input_number.LOCKNAME_lock_command
             value: >-
-              {% set lockstate = states.lock.be469zp_connect_smart_deadbolt_locked.state %}
+              {% set lockstate = states.LOCKENTITYNAME.state %}
               {% if (lockstate=='locked') %}
                 {{ 66 }}
               {% else                     %}
@@ -374,7 +375,7 @@ automation:
       action:
         - service: ozw.set_usercode
           data_template:
-            entity_id: lock.be469zp_connect_smart_deadbolt_locked
+            entity_id: LOCKENTITYNAME
             code_slot: >-
                 {% set object_id = trigger.to_state.object_id %}
                 {% set index = object_id.rfind('_') + 1 %}
@@ -447,7 +448,7 @@ automation:
       action:
         - service: ozw.clear_usercode
           data_template:
-            entity_id: lock.be469zp_connect_smart_deadbolt_locked
+            entity_id: LOCKENTITYNAME
             code_slot: >-
                 {% set object_id = trigger.to_state.object_id %}
                 {% set index = object_id.rfind('_') + 1 %}
