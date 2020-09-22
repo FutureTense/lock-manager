@@ -1,5 +1,5 @@
 DOMAIN = "lock-manager"
-VERSION = "0.0.13-ozw"
+VERSION = "0.0.14-ozw"
 ISSUE_URL = "https://github.com/FutureTense/lock-manager"
 
 # Configuration Properties
@@ -14,5 +14,5 @@ CONF_START = "start_from"
 
 # Defaults
 DEFAULT_CODE_SLOTS = 10
-DEFAULT_PACKAGES_PATH = "/packages/lockmanager/"
+DEFAULT_PACKAGES_PATH = "/packages/lock-manager/"
 DEFAULT_START = 1

@@ -105,9 +105,9 @@ automation:
           seconds: '/1'
       action:
         - service: homeassistant.update_entity
-          entity_id: sensor.LOCKNAME_ac_last_changed
-        - service: homeassistant.update_entity
-          entity_id: sensor.LOCKNAME_uc_last_changed
+          entity_id:
+            - sensor.LOCKNAME_ac_last_changed
+            - sensor.LOCKNAME_uc_last_changed
 
     - alias: CASE_LOCK_NAME Lock Command
       trigger:
