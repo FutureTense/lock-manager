@@ -62,6 +62,7 @@ async def async_setup_entry(hass, config_entry):
             doorsensorentityname = entry.options[CONF_SENSOR_NAME] or ""
             sensoralarmlevel = entry.options[CONF_ALARM_LEVEL]
             sensoralarmtype = entry.options[CONF_ALARM_TYPE]
+            dummy = "foobar"
 
             output_path = entry.options[CONF_PATH] + lockname + "/"
 
@@ -118,7 +119,7 @@ async def async_setup_entry(hass, config_entry):
             }
             # Replace variables in common file
             output = open(output_path + lockname + "_lock_manager_common.yaml", "w+",)
-            infile = open(os.path.dirname(__file__) + "/lock_manager_common.txt", "r")
+            infile = open(os.path.dirname(__file__) + "/lock_manager_common.yaml", "r")
             with infile as file1:
                 for line in file1:
                     for src, target in replacements.items():
@@ -149,7 +150,7 @@ async def async_setup_entry(hass, config_entry):
                 output = open(
                     output_path + lockname + "_lock_manager_" + str(x) + ".yaml", "w+",
                 )
-                infile = open(os.path.dirname(__file__) + "/lock_manager.txt", "r")
+                infile = open(os.path.dirname(__file__) + "/lock_manager.yaml", "r")
                 with infile as file1:
                     for line in file1:
                         for src, target in replacements.items():
@@ -175,8 +176,8 @@ async def async_setup_entry(hass, config_entry):
         schema=vol.Schema({vol.Optional(ATTR_NAME): vol.Coerce(str)}),
     )
 
-    servicedata = {"lockname": config_entry.options[CONF_LOCK_NAME]}
-    await hass.services.async_call(DOMAIN, SERVICE_GENERATE_PACKAGE, servicedata)
+#    servicedata = {"lockname": config_entry.options[CONF_LOCK_NAME]}
+#    await hass.services.async_call(DOMAIN, SERVICE_GENERATE_PACKAGE, servicedata)
 
     return True
 
