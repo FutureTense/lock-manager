@@ -9,7 +9,7 @@
 ###############  input_text:  #################  
 input_text:
   LOCKNAME_status_report:
-    name: LOCKNAME Staus report
+    name: LOCKNAME Status report
     
 ###############  input_number:  #################  
 input_number:
@@ -98,16 +98,16 @@ script:
 automation:
 
 
-    - alias: LOCKNAME-ac-uc-sensors_last_changed_update
-      initial_state: false
-      trigger:
-        - platform: time_pattern
-          seconds: '/1'
-      action:
-        - service: homeassistant.update_entity
-          entity_id:
-            - sensor.LOCKNAME_ac_last_changed
-            - sensor.LOCKNAME_uc_last_changed
+    # - alias: CASE_LOCK_NAME-ac-uc-sensors_last_changed_update
+    #   initial_state: false
+    #   trigger:
+    #     - platform: time_pattern
+    #       seconds: '/1'
+    #   action:
+    #     - service: homeassistant.update_entity
+    #       entity_id:
+    #         - sensor.LOCKNAME_ac_last_changed
+    #         - sensor.LOCKNAME_uc_last_changed
 
     - alias: CASE_LOCK_NAME Lock Command
       trigger:
@@ -117,9 +117,6 @@ automation:
         - condition: state
           entity_id: 'binary_sensor.allow_automation'
           state: 'on' 
-        # - condition: numeric_state
-        #   entity_id: 'sensor.ac_last_changed'
-        #   below: 5
       action:
         - service: input_number.set_value
           data_template:
@@ -135,17 +132,14 @@ automation:
         - condition: state
           entity_id: 'binary_sensor.allow_automation'
           state: 'on'
-        # - condition: numeric_state
-        #   entity_id: 'sensor.uc_last_changed'
-        #   below: 5
       action:
         - service: input_number.set_value
           data_template:
             entity_id: input_number.LOCKNAME_lock_user
             value: >-
               {{ states.SENSORALARMLEVEL.state | int}}
-        
-    - alias: CASE_LOCK_NAME Locked state changed
+
+    - alias: CASE_LOCK_NAME Locked State Changed
       trigger:
         platform: state
         entity_id: LOCKENTITYNAME
@@ -155,30 +149,33 @@ automation:
           state: 'on' 
         - condition: template
           value_template: >-
-            {% set report = states.input_text.LOCKNAME_status_report.state %}
-            {% set a = report.split(';') %}
-            {% set lockcmd = states.input_number.LOCKNAME_lock_command.state %}
-            {% set lockuser = states.input_number.LOCKNAME_lock_user.state %}
-            {% set lockcmd = a[0] %}
-            {% set lockuser = a[2] %}
-            {% set lockstate = states.LOCKENTITYNAME.state %}
-            {% if (lockstate=='locked') %}
-            {%   set lockval=5          %}
-            {% else                     %}
-            {%   set lockval=6          %}
-            {% endif                    %}
-            {{ ((lockcmd | int) != (lockval | int)) and (lockuser | int ==0)}}
+            {% set lockuser =  states.SENSORALARMLEVEL.state | int %}
+            {% set lockcmd = states.SENSORALARMTYPE.state | int %}
+
+            {{ lockuser | int == 0 and lockcmd | int != 5 and lockcmd | int != 6}}
       action:
+        - delay: '00:00:01'
+        # - service: persistent_notification.create
+        #   data_template:
+        #     title: 'ALERT'
+        #     message: >
+        #       {% set lockcmd = states.SENSORALARMTYPE.state | int %}
+        #       {% set lockstate = states.LOCKENTITYNAME.state %}
+        #       {% set lockuser =  states.SENSORALARMLEVEL.state | int %}
+        #       {{ lockcmd }} {{lockstate}} {{lockuser}}
         - service: input_number.set_value
           data_template:
             entity_id: input_number.LOCKNAME_lock_command
             value: >-
+              {% set lockcmd = states.SENSORALARMTYPE.state | int %}
               {% set lockstate = states.LOCKENTITYNAME.state %}
-              {% if (lockstate=='locked') %}
-                {{ 66 }}
-              {% else                     %}
-                {{ 77 }}
-              {% endif                    %}
+              {% if (lockstate == 'locked') %}
+                 66
+              {% elif (lockstate == 'unlocked') %}
+                 77
+              {% else %}
+                 {{ lockcmd | int}}
+              {% endif %}
 
     - alias: CASE_LOCK_NAME Status Report
       trigger:
@@ -189,6 +186,7 @@ automation:
           entity_id: 'binary_sensor.allow_automation'
           state: 'on' 
       action:
+        - delay: '00:00:00'
         - service: input_text.set_value
           data_template:
             entity_id: input_text.LOCKNAME_status_report
@@ -208,9 +206,9 @@ automation:
                   '17':'Keypad Lock Jammed',
                   '21':'Manual Lock',
                   '22':'Manual Unlock',
-                  '23':'HA Lock Jammed',
-                  '24':'HA Lock',
-                  '25':'HA Unlock',
+                  '23':'RF Lock Jammed',
+                  '24':'RF Lock',
+                  '25':'RF Unlock',
                   '26':'Auto Lock Jammed',
                   '27':'Auto Lock',
                   '32':'All Codes Deleted',
@@ -256,15 +254,15 @@ automation:
                 {{alarm_type_value}};{{ alarm_type_general_actions[alarm_type_value] }};{{usercode_value}}
               {% else %}
                 {% if (alarm_type_value | int==66) %}
-                  {{66}};HA - Locked;{{0}}
+                  {{66}};RF Locked;{{0}}
                 {% elif (alarm_type_value | int==77) %}
-                  {{77}};HA - Unlocked;{{0}}
+                  {{77}};RF Unlocked;{{0}}
                 {% else %}
                   {{999}};Unknown Alarm Type Value;{{usercode_value}}
                 {% endif %}
               {% endif %}
 
-    - alias: CASE_LOCK_NAME Notifications
+    - alias: CASE_LOCK_NAME Lock Notifications
       trigger:
         platform: state
         entity_id: input_text.LOCKNAME_status_report
@@ -272,17 +270,16 @@ automation:
         - condition: state
           entity_id: 'binary_sensor.allow_automation'
           state: 'on' 
-        # - condition: template
-        #   value_template: >-
-        #     {% set report = states.input_text.LOCKNAME_status_report.state %}
-        #     {% set a = report.split(';') %}
-        #     {% if (a|length) != 3 or (a[2] == "0") %} 
-        #       {{ true }}
-        #     {% else %}
-        #       {{ true }}
-        #     {% endif %}
+        - condition: template
+          value_template: >-
+            {% set report = states.input_text.LOCKNAME_status_report.state %}
+            {% set a = report.split(';') %}
+            {% if (a|length) != 3 or (a[2] == "0") %} 
+              {{ true }}
+            {% else %}
+              {{ true }}
+            {% endif %}
       action:
-        - delay: '00:00:01'
         - service: script.LOCKNAME_conditional_notify
           data_template:
             boolean: input_boolean.LOCKNAME_lock_notifications
@@ -317,7 +314,6 @@ automation:
             {% set notify = states['input_boolean'][entity_id].state %}
             {{ notify == "on" }}
       action:
-        - delay: '00:00:01'
         - service: script.LOCKNAME_manual_notify
           data_template:
             title: >- 
@@ -330,7 +326,7 @@ automation:
               {% set entity_id = 'input_text.LOCKNAME_name_' + a[2] %}
               {% set user = states(entity_id) %}
               {{ user }}
-
+              
     - alias: CASE_LOCK_NAME Sensor Close
       condition:
         - condition: state

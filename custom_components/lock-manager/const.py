@@ -1,5 +1,5 @@
 DOMAIN = "lock-manager"
-VERSION = "0.0.14-ozw"
+VERSION = "0.0.15-ozw"
 ISSUE_URL = "https://github.com/FutureTense/lock-manager"
 
 # Configuration Properties
