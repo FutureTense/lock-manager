@@ -5,5 +5,6 @@
   "dependencies": [],
   "codeowners": ["@FutureTense", "@firstof9"],
   "config_flow": true,
+  "issue_tracker": "https://github.com/FutureTense/lock-manager/issues",
   "requirements": []
 }
