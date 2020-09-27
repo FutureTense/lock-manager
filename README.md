@@ -67,6 +67,8 @@ You need to create an integration for each lock you want to control.  Select Con
 
     The default `/config/packages/lock-manager` should suffice.
 
+## Add the lovelace code
+
 If all goes well, you will also see a new directory (by default `<your config directory/packages/lock-manager/>`) for each lock with `yaml` and a lovelace files. So if you add two integrations, one with FrontDoor and the other with BackDoor, you should see two directories with those names. Inside of each of those directories will be a file called `<lockname>_lovelace`. Open that file in a text editor and select the entire contents and copy to the clipboard.
 
 > (Open file) Ctrl-A (select all) Ctrl-C (copy)
