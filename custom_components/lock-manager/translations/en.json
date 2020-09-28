@@ -33,9 +33,8 @@
           "slots": "Code Slots",
           "start_from": "Start from code slot #",
           "sensorname": "Door Sensor",
-          "lockname": "Lock VVV Name (ie: frontdoor)",
-          "packages_path": "Path to packages directory",
-          "dummy": "dummy entry"
+          "lockname": "Lock Name (ie: frontdoor)",
+          "packages_path": "Path to packages directory"
         },
         "description": "Select the lock to setup and code slots to create.",
         "title": "Lock Manager"
