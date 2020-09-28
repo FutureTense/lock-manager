@@ -139,7 +139,7 @@ automation:
             value: >-
               {{ states.SENSORALARMLEVEL.state | int}}
 
-    - alias: CASE_LOCK_NAME Locked State Changed
+    - alias: CASE_LOCK_NAME RF Locked State Changed
       trigger:
         platform: state
         entity_id: LOCKENTITYNAME
@@ -151,18 +151,9 @@ automation:
           value_template: >-
             {% set lockuser =  states.SENSORALARMLEVEL.state | int %}
             {% set lockcmd = states.SENSORALARMTYPE.state | int %}
-
-            {{ lockuser | int == 0 and lockcmd | int != 5 and lockcmd | int != 6}}
+            {% set timediff = (as_timestamp(now()) - as_timestamp(states.SENSORALARMTYPE.last_changed)) | float %}
+            {{ lockuser | int == 0 and timediff > 2 }}
       action:
-        - delay: '00:00:01'
-        # - service: persistent_notification.create
-        #   data_template:
-        #     title: 'ALERT'
-        #     message: >
-        #       {% set lockcmd = states.SENSORALARMTYPE.state | int %}
-        #       {% set lockstate = states.LOCKENTITYNAME.state %}
-        #       {% set lockuser =  states.SENSORALARMLEVEL.state | int %}
-        #       {{ lockcmd }} {{lockstate}} {{lockuser}}
         - service: input_number.set_value
           data_template:
             entity_id: input_number.LOCKNAME_lock_command
@@ -172,10 +163,15 @@ automation:
               {% if (lockstate == 'locked') %}
                  66
               {% elif (lockstate == 'unlocked') %}
-                 77
+                 67
               {% else %}
                  {{ lockcmd | int}}
               {% endif %}
+
+# {% set doordiff = as_timestamp(now()) - as_timestamp(states.lock.be469zp_connect_smart_deadbolt_locked.last_changed) %}
+# {% set contdiff = as_timestamp(now()) - as_timestamp(states.sensor.be469zp_connect_smart_deadbolt_access_control.last_changed) %}
+# {% set atv = 24 if (doordiff) < 15 and (contdiff) > 15 and (states.lock.be469zp_connect_smart_deadbolt_locked.state) == 'locked' else alarm_type_value %}
+# {% set atv = 25 if (doordiff) < 15 and (contdiff) > 15 and (states.lock.be469zp_connect_smart_deadbolt_locked.state) == 'unlocked' else alarm_type_value %}
 
     - alias: CASE_LOCK_NAME Status Report
       trigger:
@@ -186,7 +182,6 @@ automation:
           entity_id: 'binary_sensor.allow_automation'
           state: 'on' 
       action:
-        - delay: '00:00:00'
         - service: input_text.set_value
           data_template:
             entity_id: input_text.LOCKNAME_status_report
@@ -198,9 +193,24 @@ automation:
   
               {% set usercode_value = states.input_number.LOCKNAME_lock_user.state | int | string  %}
               {% set alarm_type_value = states.input_number.LOCKNAME_lock_command.state | int | string %}
+
+              {% set atv = 0 %}
+              {% if (alarm_type_value | int == 66 or alarm_type_value | int == 67) %}
+                {% if 'alarm_type' in AC %}
+                   {% set atv = alarm_type_value | int - 42 %}
+                {% elif 'access_control' in AC %}
+                   {% set atv = alarm_type_value | int - 63 %}
+                {% endif %}
+              {% endif %}
+              {% if atv != 0 %}
+                 {% set alarm_type_value = atv %}
+              {% endif %}
+              
+              {% set alarm_type_value = alarm_type_value | string %}
               
               {% if 'alarm_type' in AC %}
                 {% set alarm_type_general_actions = {
+                  '999':'Kwikset',
                   '0':'No Status Reported',
                   '9':'Lock Jammed',
                   '17':'Keypad Lock Jammed',
@@ -226,6 +236,7 @@ automation:
                   '113':'Duplicate Code' } %}
               {% elif 'access_control' in AC %}
                 {% set alarm_type_general_actions = {
+                  '999':'Schlage',
                   '1':'Manual Lock',
                   '2':'Manual Unlock',
                   '3':'RF Lock',
@@ -253,13 +264,7 @@ automation:
               {% elif alarm_type_value in alarm_type_general_actions %}
                 {{alarm_type_value}};{{ alarm_type_general_actions[alarm_type_value] }};{{usercode_value}}
               {% else %}
-                {% if (alarm_type_value | int==66) %}
-                  {{66}};RF Locked;{{0}}
-                {% elif (alarm_type_value | int==77) %}
-                  {{77}};RF Unlocked;{{0}}
-                {% else %}
-                  {{999}};Unknown Alarm Type Value;{{usercode_value}}
-                {% endif %}
+                {{alarm_type_value}};{{alarm_type_value}}-Unknown Alarm Type Value;{{usercode_value}}
               {% endif %}
 
     - alias: CASE_LOCK_NAME Lock Notifications
