@@ -357,51 +357,49 @@ automation:
           message: "Opened"
 
   - alias: CASE_LOCK_NAME Add Code
-    condition:
-      - condition: state
-        entity_id: "binary_sensor.allow_automation"
-        state: "on"
     trigger:
       entity_id: binary_sensor.active_LOCKNAME_1,binary_sensor.active_LOCKNAME_2,binary_sensor.active_LOCKNAME_3,binary_sensor.active_LOCKNAME_4,binary_sensor.active_LOCKNAME_5,binary_sensor.active_LOCKNAME_6
       platform: state
       to: "on"
     action:
       - choose:
-         - conditions: >
-            {{ USINGOZW }}
-           sequence: 
-            - service: ozw.set_usercode
-              data_template:
-                entity_id: LOCKENTITYNAME
-                code_slot: >-
-                  {% set object_id = trigger.to_state.object_id %}
-                  {% set index = object_id.rfind('_') + 1 %}
-                  {% set code_slot = object_id[index:] %}
-                  {{ code_slot  }}
-                usercode: >-
-                  {% set object_id = trigger.to_state.object_id %}
-                  {% set index = object_id.rfind('_') + 1 %}
-                  {% set code_slot = object_id[index:] %}    
-                  {% set codetext = 'LOCKNAME_pin_' + code_slot | string %}
-                  {% set code = states['input_text'][codetext].state %}
-                  {{ code | string }}
-      default:
-        - service: lock.set_usercode
-          data_template:
-            node_id: >-
-              {{ state_attr('LOCKENTITYNAME','node_id') }}
-            code_slot: >-
-              {% set object_id = trigger.to_state.object_id %}
-              {% set index = object_id.rfind('_') + 1 %}
-              {% set code_slot = object_id[index:] %}
-              {{ code_slot  }}
-            usercode: >-
-              {% set object_id = trigger.to_state.object_id %}
-              {% set index = object_id.rfind('_') + 1 %}
-              {% set code_slot = object_id[index:] %}    
-              {% set codetext = 'LOCKNAME_pin_' + code_slot | string %}
-              {% set code = states['input_text'][codetext].state %}
-              {{ code | string }}        
+          - conditions: >
+              {{ USINGOZW and state('binary_sensor.allow_automation') == "on" }}
+            sequence:
+              - service: ozw.set_usercode
+                data_template:
+                  entity_id: LOCKENTITYNAME
+                  code_slot: >-
+                    {% set object_id = trigger.to_state.object_id %}
+                    {% set index = object_id.rfind('_') + 1 %}
+                    {% set code_slot = object_id[index:] %}
+                    {{ code_slot  }}
+                  usercode: >-
+                    {% set object_id = trigger.to_state.object_id %}
+                    {% set index = object_id.rfind('_') + 1 %}
+                    {% set code_slot = object_id[index:] %}    
+                    {% set codetext = 'LOCKNAME_pin_' + code_slot | string %}
+                    {% set code = states['input_text'][codetext].state %}
+                    {{ code | string }}
+          - conditions: >
+              {{ USINGOZW == False and state('binary_sensor.allow_automation') == "on" }}
+            sequence:
+              - service: lock.set_usercode
+                data_template:
+                  node_id: >-
+                    {{ state_attr('LOCKENTITYNAME','node_id') }}
+                  code_slot: >-
+                    {% set object_id = trigger.to_state.object_id %}
+                    {% set index = object_id.rfind('_') + 1 %}
+                    {% set code_slot = object_id[index:] %}
+                    {{ code_slot  }}
+                  usercode: >-
+                    {% set object_id = trigger.to_state.object_id %}
+                    {% set index = object_id.rfind('_') + 1 %}
+                    {% set code_slot = object_id[index:] %}    
+                    {% set codetext = 'LOCKNAME_pin_' + code_slot | string %}
+                    {% set code = states['input_text'][codetext].state %}
+                    {{ code | string }}
 
   - alias: CASE_LOCK_NAME Update Code
     trigger:
@@ -451,10 +449,6 @@ automation:
         entity_id: input_boolean.LOCKNAME_reset_lock
 
   - alias: CASE_LOCK_NAME Clear Code
-    condition:
-      - condition: state
-        entity_id: "binary_sensor.allow_automation"
-        state: "on"
     trigger:
       entity_id: binary_sensor.active_LOCKNAME_1,binary_sensor.active_LOCKNAME_2,binary_sensor.active_LOCKNAME_3,binary_sensor.active_LOCKNAME_4,binary_sensor.active_LOCKNAME_5,binary_sensor.active_LOCKNAME_6
       platform: state
@@ -462,7 +456,7 @@ automation:
     action:
       - choose:
           - conditions: >
-              {{ USINGOZW }}
+              {{ USINGOZW and state('binary_sensor.allow_automation') == "on" }}
             sequence:
               - service: ozw.clear_usercode
                 data_template:
@@ -472,18 +466,20 @@ automation:
                     {% set index = object_id.rfind('_') + 1 %}
                     {% set code_slot = object_id[index:] %}
                     {{ code_slot  }}
-      default:
-        - service: lock.set_usercode
-          data_template:
-            node_id: >-
-              {{ state_attr('LOCKENTITYNAME','node_id') }}
-            code_slot: >-
-              {% set object_id = trigger.to_state.object_id %}
-              {% set index = object_id.rfind('_') + 1 %}
-              {% set code_slot = object_id[index:] %}
-              {{ code_slot  }}
-            usercode: >-
-              {{ range(1000, 9999) | random | int }}
+          - conditions: >
+              {{ USINGOZW == False and state('binary_sensor.allow_automation') == "on" }}
+            sequence:
+              - service: lock.set_usercode
+                data_template:
+                  node_id: >-
+                    {{ state_attr('LOCKENTITYNAME','node_id') }}
+                  code_slot: >-
+                    {% set object_id = trigger.to_state.object_id %}
+                    {% set index = object_id.rfind('_') + 1 %}
+                    {% set code_slot = object_id[index:] %}
+                    {{ code_slot  }}
+                  usercode: >-
+                    {{ range(1000, 9999) | random | int }}
 
   - alias: CASE_LOCK_NAME Decrement Access Count
     trigger:
