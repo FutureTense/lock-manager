@@ -1,5 +1,5 @@
 DOMAIN = "lock-manager"
-VERSION = "0.0.18-ozw"
+VERSION = "0.0.19"
 ISSUE_URL = "https://github.com/FutureTense/lock-manager"
 
 # Configuration Properties
@@ -11,6 +11,7 @@ CONF_LOCK_NAME = "lockname"
 CONF_SENSOR_NAME = "sensorname"
 CONF_SLOTS = "slots"
 CONF_START = "start_from"
+CONF_OZW = "using_ozw"
 
 # Defaults
 DEFAULT_CODE_SLOTS = 10
