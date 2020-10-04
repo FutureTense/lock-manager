@@ -18,6 +18,7 @@ from .const import (
     DOMAIN,
     VERSION,
     ISSUE_URL,
+    PLATFORM,
 )
 import voluptuous as vol
 
@@ -177,6 +178,10 @@ async def async_setup_entry(hass, config_entry):
         SERVICE_GENERATE_PACKAGE,
         _generate_package,
         schema=vol.Schema({vol.Optional(ATTR_NAME): vol.Coerce(str)}),
+    )
+
+    hass.async_create_task(
+        hass.config_entries.async_forward_entry_setup(config_entry, PLATFORM)
     )
 
     #    servicedata = {"lockname": config_entry.options[CONF_LOCK_NAME]}

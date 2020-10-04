@@ -1,6 +1,7 @@
 DOMAIN = "lock-manager"
 VERSION = "0.0.19"
 ISSUE_URL = "https://github.com/FutureTense/lock-manager"
+PLATFORM = "sensor"
 
 # Configuration Properties
 CONF_ALARM_LEVEL = "alarm_level"
