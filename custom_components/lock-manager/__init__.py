@@ -1,4 +1,4 @@
-"""Lock Manager Integration."""
+"""lock-manager Integration."""
 
 import fileinput
 from homeassistant.core import callback

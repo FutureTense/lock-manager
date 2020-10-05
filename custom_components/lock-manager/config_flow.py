@@ -150,7 +150,7 @@ class LockManagerFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
 
 class LockManagerOptionsFlow(config_entries.OptionsFlow):
-    """Options flow for Lock Manager."""
+    """Options flow for lock-manager."""
 
     def __init__(self, config_entry):
         """Initialize."""

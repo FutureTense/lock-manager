@@ -14,7 +14,7 @@
           "packages_path": "Path to packages directory"
         },
         "description": "Select the lock to setup and code slots to create.",
-        "title": "Lock Manager"
+        "title": "lock-manager"
       }
     }
   },
@@ -33,7 +33,7 @@
           "packages_path": "Path to packages directory"
         },
         "description": "Select the lock to setup and code slots to create.",
-        "title": "Lock Manager"
+        "title": "lock-manager"
       }
     }
   }
