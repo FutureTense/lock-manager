@@ -364,7 +364,7 @@ automation:
     action:
       - choose:
           - conditions: >
-              {{ USINGOZW and state('binary_sensor.allow_automation') == "on" }}
+              {{ USINGOZW and states('binary_sensor.allow_automation') == "on" }}
             sequence:
               - service: ozw.set_usercode
                 data_template:
@@ -382,7 +382,7 @@ automation:
                     {% set code = states['input_text'][codetext].state %}
                     {{ code | string }}
           - conditions: >
-              {{ USINGOZW == False and state('binary_sensor.allow_automation') == "on" }}
+              {{ USINGOZW == False and states('binary_sensor.allow_automation') == "on" }}
             sequence:
               - service: lock.set_usercode
                 data_template:
@@ -456,7 +456,7 @@ automation:
     action:
       - choose:
           - conditions: >
-              {{ USINGOZW and state('binary_sensor.allow_automation') == "on" }}
+              {{ USINGOZW and states('binary_sensor.allow_automation') == "on" }}
             sequence:
               - service: ozw.clear_usercode
                 data_template:
@@ -467,7 +467,7 @@ automation:
                     {% set code_slot = object_id[index:] %}
                     {{ code_slot  }}
           - conditions: >
-              {{ USINGOZW == False and state('binary_sensor.allow_automation') == "on" }}
+              {{ USINGOZW == False and states('binary_sensor.allow_automation') == "on" }}
             sequence:
               - service: lock.set_usercode
                 data_template:

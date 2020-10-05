@@ -63,7 +63,7 @@ async def async_setup_entry(hass, config_entry):
             doorsensorentityname = entry.options[CONF_SENSOR_NAME] or ""
             sensoralarmlevel = entry.options[CONF_ALARM_LEVEL]
             sensoralarmtype = entry.options[CONF_ALARM_TYPE]
-            using_ozw = entry.options[CONF_OZW]
+            using_ozw = f"{entry.options[CONF_OZW]}"
             dummy = "foobar"
 
             output_path = entry.options[CONF_PATH] + lockname + "/"
