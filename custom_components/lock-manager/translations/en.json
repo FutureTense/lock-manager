@@ -13,7 +13,8 @@
           "start_from": "Start from code slot #",
           "sensorname": "Door Sensor",
           "lockname": "Lock Name (ie: frontdoor)",
-          "packages_path": "Path to packages directory"
+          "packages_path": "Path to packages directory",
+          "using_ozw": "Using OZW?"
         },
         "description": "Select the lock to setup and code slots to create.",
         "title": "lock-manager"
@@ -34,7 +35,8 @@
           "start_from": "Start from code slot #",
           "sensorname": "Door Sensor",
           "lockname": "Lock Name (ie: frontdoor)",
-          "packages_path": "Path to packages directory"
+          "packages_path": "Path to packages directory",
+          "using_ozw": "Using OZW?"
         },
         "description": "Select the lock to setup and code slots to create.",
         "title": "lock-manager"
