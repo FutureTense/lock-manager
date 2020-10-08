@@ -41,6 +41,10 @@ async def async_setup_entry(hass, config_entry):
         VERSION,
         ISSUE_URL,
     )
+    generate_package = config_entry.data[
+        CONF_GENERATE
+    ]  # grab the bool before we nuke it
+    del config_entry.data[CONF_GENERATE]  # delete the bool
     config_entry.options = config_entry.data
     config_entry.add_update_listener(update_listener)
 
@@ -180,7 +184,7 @@ async def async_setup_entry(hass, config_entry):
     )
 
     # if the use turned on the bool generate the files
-    if config_entry.options[CONF_GENERATE]:
+    if generate_package:
         servicedata = {"lockname": config_entry.options[CONF_LOCK_NAME]}
         await hass.services.async_call(DOMAIN, SERVICE_GENERATE_PACKAGE, servicedata)
 
@@ -195,6 +199,7 @@ async def async_unload_entry(hass, config_entry):
 
 async def update_listener(hass, entry):
     """Update listener."""
+    del entry.options[CONF_GENERATE]  # we don't want to save this bool
     entry.data = entry.options
 
     servicedata = {"lockname": entry.options[CONF_LOCK_NAME]}
