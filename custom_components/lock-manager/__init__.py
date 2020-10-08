@@ -9,6 +9,7 @@ from .const import (
     CONF_ALARM_LEVEL,
     CONF_ALARM_TYPE,
     CONF_ENTITY_ID,
+    CONF_GENERATE,
     CONF_LOCK_NAME,
     CONF_OZW,
     CONF_PATH,
@@ -40,7 +41,6 @@ async def async_setup_entry(hass, config_entry):
         VERSION,
         ISSUE_URL,
     )
-
     config_entry.options = config_entry.data
     config_entry.add_update_listener(update_listener)
 
@@ -179,8 +179,10 @@ async def async_setup_entry(hass, config_entry):
         schema=vol.Schema({vol.Optional(ATTR_NAME): vol.Coerce(str)}),
     )
 
-    #    servicedata = {"lockname": config_entry.options[CONF_LOCK_NAME]}
-    #    await hass.services.async_call(DOMAIN, SERVICE_GENERATE_PACKAGE, servicedata)
+    # if the use turned on the bool generate the files
+    if config_entry.options[CONF_GENERATE]:
+        servicedata = {"lockname": config_entry.options[CONF_LOCK_NAME]}
+        await hass.services.async_call(DOMAIN, SERVICE_GENERATE_PACKAGE, servicedata)
 
     return True
 

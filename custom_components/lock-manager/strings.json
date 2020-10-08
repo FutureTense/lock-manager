@@ -6,15 +6,23 @@
     "step": {
       "user": {
         "data": {
+          "alarm_level": "User Code Sensor (from lock)",
+          "alarm_type": "Access Control Sensor (from lock)",
           "entity_id": "Select your lock",
           "slots": "Code Slots",
           "start_from": "Start from code slot #",
           "sensorname": "Door Sensor",
           "lockname": "Lock Name (ie: frontdoor)",
-          "packages_path": "Path to packages directory"
+          "packages_path": "Path to packages directory",
+          "using_ozw": "Using OZW?"
         },
         "description": "Select the lock to setup and code slots to create.",
         "title": "lock-manager"
+      },
+      "step_2": {
+        "data": {
+          "generate_package": "Generate package after you press submit?"
+        }
       }
     }
   },
@@ -25,12 +33,20 @@
     "step": {
       "init": {
         "data": {
+          "alarm_level": "User Code Sensor (from lock)",
+          "alarm_type": "Access Control Sensor (from lock)",
           "entity_id": "Select your lock",
           "slots": "Code Slots",
           "start_from": "Start from code slot #",
           "sensorname": "Door Sensor",
           "lockname": "Lock Name (ie: frontdoor)",
-          "packages_path": "Path to packages directory"
+          "packages_path": "Path to packages directory",
+          "using_ozw": "Using OZW?"
+        },
+        "options_2": {
+          "data": {
+            "generate_package": "Generate package after you press submit?"
+          }
         },
         "description": "Select the lock to setup and code slots to create.",
         "title": "lock-manager"
