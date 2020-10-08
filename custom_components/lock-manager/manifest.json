@@ -1,6 +1,6 @@
 {
   "domain": "lock-manager",
-  "name": "Lock Manager",
+  "name": "lock-manager",
   "documentation": "https://github.com/FutureTense/lock-manager",
   "dependencies": [],
   "codeowners": ["@FutureTense", "@firstof9"],

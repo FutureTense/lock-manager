@@ -15,12 +15,15 @@ from .const import (
     CONF_ALARM_TYPE,
     CONF_ALARM_LEVEL,
     CONF_ENTITY_ID,
+    CONF_GENERATE,
     CONF_LOCK_NAME,
     CONF_PATH,
     CONF_SENSOR_NAME,
     CONF_SLOTS,
     CONF_START,
+    CONF_OZW,
     DEFAULT_CODE_SLOTS,
+    DEFAULT_GENERATE,
     DEFAULT_PACKAGES_PATH,
     DEFAULT_START,
     DOMAIN,
@@ -57,6 +60,7 @@ class LockManagerFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         self._errors = {}
         self._locks = _get_entities(self.hass.data[LOCK_DOMAIN].entities)
         self._doors = _get_entities(self.hass.data[BINARY_DOMAIN].entities)
+        self._doors.append("binary_sensor.fake")
         self._alarm_type = _get_entities(
             self.hass.data[SENSORS_DOMAIN].entities, ["alarm_type", "access_control"]
         )
@@ -74,9 +78,7 @@ class LockManagerFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
             valid = await self._validate_path(user_input[CONF_PATH])
             if valid:
-                return self.async_create_entry(
-                    title=self._data[CONF_LOCK_NAME], data=self._data
-                )
+                return await self.async_step_config_2()
             else:
                 self._errors["base"] = "invalid_path"
 
@@ -91,11 +93,12 @@ class LockManagerFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         entity_id = ""
         slots = DEFAULT_CODE_SLOTS
         lockname = ""
-        sensorname = ""
+        sensorname = "binary_sensor.fake"
         packagepath = self.hass.config.path() + DEFAULT_PACKAGES_PATH
         start_from = DEFAULT_START
         alarm_level = ""
         alarm_type = ""
+        using_ozw = False
 
         if user_input is not None:
             if CONF_ENTITY_ID in user_input:
@@ -114,6 +117,8 @@ class LockManagerFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 alarm_level = user_input[CONF_ALARM_LEVEL]
             if CONF_ALARM_TYPE in user_input:
                 alarm_type = user_input[CONF_ALARM_TYPE]
+            if CONF_OZW in user_input:
+                using_ozw = user_input[CONF_OZW]
 
         data_schema = OrderedDict()
         data_schema[vol.Required(CONF_ENTITY_ID, default=entity_id)] = vol.In(
@@ -132,8 +137,37 @@ class LockManagerFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             self._alarm_type
         )
         data_schema[vol.Required(CONF_PATH, default=packagepath)] = str
+        data_schema[vol.Required(CONF_OZW, default=using_ozw)] = bool
         return self.async_show_form(
             step_id="user", data_schema=vol.Schema(data_schema), errors=self._errors
+        )
+
+    async def async_step_config_2(self, user_input=None):
+        """Handle a flow initialized by the user."""
+        self._errors = {}
+
+        if user_input is not None:
+            self._data.update(user_input)
+            return self.async_create_entry(
+                title=self._data[CONF_LOCK_NAME], data=self._data
+            )
+
+        return await self._show_config_2(user_input)
+
+    async def _show_config_2(self, user_input):
+        """Show the configuration form to edit location data."""
+
+        # Defaults
+        generate_package = DEFAULT_GENERATE
+
+        if user_input is not None:
+            if CONF_GENERATE in user_input:
+                generate_package = user_input[CONF_GENERATE]
+
+        data_schema = OrderedDict()
+        data_schema[vol.Required(CONF_GENERATE, default=generate_package)] = bool
+        return self.async_show_form(
+            step_id="config_2", data_schema=vol.Schema(data_schema), errors=self._errors
         )
 
     async def _validate_path(self, path):
@@ -163,6 +197,7 @@ class LockManagerOptionsFlow(config_entries.OptionsFlow):
         self._errors = {}
         self._locks = _get_entities(self.hass.data[LOCK_DOMAIN].entities)
         self._doors = _get_entities(self.hass.data[BINARY_DOMAIN].entities)
+        self._doors.append("binary_sensor.fake")
         self._sensors = _get_entities(self.hass.data[SENSORS_DOMAIN].entities)
         self._alarm_type = _get_entities(
             self.hass.data[SENSORS_DOMAIN].entities, ["alarm_type", "access_control"]
@@ -181,7 +216,7 @@ class LockManagerOptionsFlow(config_entries.OptionsFlow):
 
             valid = await self._validate_path(user_input[CONF_PATH])
             if valid:
-                return self.async_create_entry(title="", data=self._data)
+                return await self.async_step_options_2()
             else:
                 self._errors["base"] = "invalid_path"
 
@@ -201,6 +236,7 @@ class LockManagerOptionsFlow(config_entries.OptionsFlow):
         start_from = self.config.options.get(CONF_START)
         alarm_level = self.config.options.get(CONF_ALARM_LEVEL)
         alarm_type = self.config.options.get(CONF_ALARM_TYPE)
+        using_ozw = self.config.options.get(CONF_OZW)
 
         if user_input is not None:
             if CONF_ENTITY_ID in user_input:
@@ -219,6 +255,8 @@ class LockManagerOptionsFlow(config_entries.OptionsFlow):
                 alarm_level = user_input[CONF_ALARM_LEVEL]
             if CONF_ALARM_TYPE in user_input:
                 alarm_type = user_input[CONF_ALARM_TYPE]
+            if CONF_OZW in user_input:
+                using_ozw = user_input[CONF_OZW]
 
         data_schema = OrderedDict()
         data_schema[vol.Required(CONF_ENTITY_ID, default=entity_id)] = vol.In(
@@ -237,8 +275,37 @@ class LockManagerOptionsFlow(config_entries.OptionsFlow):
             self._alarm_type
         )
         data_schema[vol.Required(CONF_PATH, default=packagepath)] = str
+        data_schema[vol.Required(CONF_OZW, default=using_ozw)] = bool
         return self.async_show_form(
             step_id="init", data_schema=vol.Schema(data_schema), errors=self._errors
+        )
+
+    async def async_step_options_2(self, user_input=None):
+        """ Step 2 of options. """
+        self._errors = {}
+
+        if user_input is not None:
+            self._data.update(user_input)
+            return self.async_create_entry(title="", data=self._data)
+
+        return await self._show_options_2(user_input)
+
+    async def _show_options_2(self, user_input):
+        """Show the configuration form to edit location data."""
+
+        # Defaults
+        generate_package = DEFAULT_GENERATE
+
+        if user_input is not None:
+            if CONF_GENERATE in user_input:
+                generate_package = user_input[CONF_GENERATE]
+
+        data_schema = OrderedDict()
+        data_schema[vol.Required(CONF_GENERATE, default=generate_package)] = bool
+        return self.async_show_form(
+            step_id="options_2",
+            data_schema=vol.Schema(data_schema),
+            errors=self._errors,
         )
 
     async def _validate_path(self, path):
