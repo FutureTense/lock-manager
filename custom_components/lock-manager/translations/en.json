@@ -19,7 +19,7 @@
         "description": "Select the lock to setup and code slots to create.",
         "title": "Lock-Manager"
       },
-      "step_2": {
+      "config_2": {
         "data": {
           "generate_package": "Generate package after you press submit?"
         },

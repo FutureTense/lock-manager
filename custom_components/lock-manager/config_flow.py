@@ -152,9 +152,9 @@ class LockManagerFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 title=self._data[CONF_LOCK_NAME], data=self._data
             )
 
-        return await self._show_config_form_2()
+        return await self._show_config_2(user_input)
 
-    async def _show_config_form_2(self, user_input):
+    async def _show_config_2(self, user_input):
         """Show the configuration form to edit location data."""
 
         # Defaults
@@ -167,7 +167,7 @@ class LockManagerFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         data_schema = OrderedDict()
         data_schema[vol.Required(CONF_GENERATE, default=generate_package)] = bool
         return self.async_show_form(
-            step_id="step_2", data_schema=vol.Schema(data_schema), errors=self._errors
+            step_id="config_2", data_schema=vol.Schema(data_schema), errors=self._errors
         )
 
     async def _validate_path(self, path):
@@ -288,9 +288,9 @@ class LockManagerOptionsFlow(config_entries.OptionsFlow):
             self._data.update(user_input)
             return self.async_create_entry(title="", data=self._data)
 
-        return await self._show_options_form_2(user_input)
+        return await self._show_options_2(user_input)
 
-    async def _show_options_form_2(self, user_input):
+    async def _show_options_2(self, user_input):
         """Show the configuration form to edit location data."""
 
         # Defaults
