@@ -41,14 +41,16 @@ async def async_setup_entry(hass, config_entry):
         VERSION,
         ISSUE_URL,
     )
+    generate_package = None
 
     # grab the bool before we change it
-    generate_package = config_entry.data[CONF_GENERATE]
+    if CONF_GENERATE in config_entry.data.keys():
+        generate_package = config_entry.data[CONF_GENERATE]
 
-    # extract the data and manipulate it
-    config = {k: v for k, v in config_entry.data.items()}
-    config.pop(CONF_GENERATE)
-    config_entry.data = config
+        # extract the data and manipulate it
+        config = {k: v for k, v in config_entry.data.items()}
+        config.pop(CONF_GENERATE)
+        config_entry.data = config
 
     config_entry.options = config_entry.data
     config_entry.add_update_listener(update_listener)
@@ -189,7 +191,7 @@ async def async_setup_entry(hass, config_entry):
     )
 
     # if the use turned on the bool generate the files
-    if generate_package:
+    if generate_package is not None:
         servicedata = {"lockname": config_entry.options[CONF_LOCK_NAME]}
         await hass.services.async_call(DOMAIN, SERVICE_GENERATE_PACKAGE, servicedata)
 

@@ -7,12 +7,6 @@ input_number:
     step: 1
     unit_of_measurement: "Openings Left"
 
-  LOCKNAME_pin_TEMPLATENUM:
-    name: "PIN"
-    mode: box
-    min: 4
-    max: 8
-
 #################  input_datetime:  ##############
 input_datetime:
   end_date_LOCKNAME_TEMPLATENUM:
@@ -91,6 +85,9 @@ input_datetime:
 input_text:
   LOCKNAME_name_TEMPLATENUM:
     name: "Name"
+
+  LOCKNAME_pin_TEMPLATENUM:
+    name: "PIN"
 
 #################  input_boolean: ################
 input_boolean:
