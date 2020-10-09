@@ -10,8 +10,6 @@ input_number:
   LOCKNAME_pin_TEMPLATENUM:
     name: "PIN"
     mode: box
-    min: 4
-    max: 8
 
 #################  input_datetime:  ##############
 input_datetime:
