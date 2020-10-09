@@ -41,10 +41,24 @@ async def async_setup_entry(hass, config_entry):
         VERSION,
         ISSUE_URL,
     )
-    generate_package = config_entry.data[
-        CONF_GENERATE
-    ]  # grab the bool before we nuke it
-    del config_entry.data[CONF_GENERATE]  # delete the bool
+
+    # grab the bool before we change it
+    generate_package = config_entry.data[CONF_GENERATE]
+
+    # extract the data and manipulate it
+    config = {
+        CONF_ALARM_LEVEL: config_entry.data[CONF_ALARM_LEVEL],
+        CONF_ALARM_TYPE: config_entry.data[CONF_ALARM_TYPE],
+        CONF_ENTITY_ID: config_entry.data[CONF_ENTITY_ID],
+        CONF_LOCK_NAME: config_entry.data[CONF_LOCK_NAME],
+        CONF_OZW: config_entry.data[CONF_OZW],
+        CONF_PATH: config_entry.data[CONF_PATH],
+        CONF_SENSOR_NAME: config_entry.data[CONF_SENSOR_NAME],
+        CONF_SLOTS: config_entry.data[CONF_SLOTS],
+        CONF_START: config_entry.data[CONF_START],
+    }
+    config_entry.data = config
+
     config_entry.options = config_entry.data
     config_entry.add_update_listener(update_listener)
 
@@ -199,8 +213,27 @@ async def async_unload_entry(hass, config_entry):
 
 async def update_listener(hass, entry):
     """Update listener."""
-    del entry.options[CONF_GENERATE]  # we don't want to save this bool
+
+    # grab the bool before we change it
+    generate_package = entry.options[CONF_GENERATE]
+
+    if generate_package:
+        servicedata = {"lockname": entry.options[CONF_LOCK_NAME]}
+        await hass.services.async_call(DOMAIN, SERVICE_GENERATE_PACKAGE, servicedata)
+
+    # extract the data and manipulate it
+    config = {
+        CONF_ALARM_LEVEL: entry.options[CONF_ALARM_LEVEL],
+        CONF_ALARM_TYPE: entry.options[CONF_ALARM_TYPE],
+        CONF_ENTITY_ID: entry.options[CONF_ENTITY_ID],
+        CONF_LOCK_NAME: entry.options[CONF_LOCK_NAME],
+        CONF_OZW: entry.options[CONF_OZW],
+        CONF_PATH: entry.options[CONF_PATH],
+        CONF_SENSOR_NAME: entry.options[CONF_SENSOR_NAME],
+        CONF_SLOTS: entry.options[CONF_SLOTS],
+        CONF_START: entry.options[CONF_START],
+    }
+    entry.options = config
+
     entry.data = entry.options
 
-    servicedata = {"lockname": entry.options[CONF_LOCK_NAME]}
-    await hass.services.async_call(DOMAIN, SERVICE_GENERATE_PACKAGE, servicedata)
