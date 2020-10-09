@@ -76,9 +76,13 @@ class LockManagerFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     user_input[CONF_PATH] += "/"
                     self._data.update(user_input)
 
+            user_input[CONF_GENERATE] = DEFAULT_GENERATE
+            self._data.update(user_input)
             valid = await self._validate_path(user_input[CONF_PATH])
             if valid:
-                return await self.async_step_config_2()
+                return self.async_create_entry(
+                    title=self._data[CONF_LOCK_NAME], data=self._data
+                )
             else:
                 self._errors["base"] = "invalid_path"
 
@@ -142,34 +146,6 @@ class LockManagerFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="user", data_schema=vol.Schema(data_schema), errors=self._errors
         )
 
-    async def async_step_config_2(self, user_input=None):
-        """Handle a flow initialized by the user."""
-        self._errors = {}
-
-        if user_input is not None:
-            self._data.update(user_input)
-            return self.async_create_entry(
-                title=self._data[CONF_LOCK_NAME], data=self._data
-            )
-
-        return await self._show_config_2(user_input)
-
-    async def _show_config_2(self, user_input):
-        """Show the configuration form to edit location data."""
-
-        # Defaults
-        generate_package = DEFAULT_GENERATE
-
-        if user_input is not None:
-            if CONF_GENERATE in user_input:
-                generate_package = user_input[CONF_GENERATE]
-
-        data_schema = OrderedDict()
-        data_schema[vol.Required(CONF_GENERATE, default=generate_package)] = bool
-        return self.async_show_form(
-            step_id="config_2", data_schema=vol.Schema(data_schema), errors=self._errors
-        )
-
     async def _validate_path(self, path):
         """ make sure path is valid """
         if path in os.path.dirname(__file__):
@@ -214,9 +190,11 @@ class LockManagerOptionsFlow(config_entries.OptionsFlow):
                     user_input[CONF_PATH] += "/"
                     self._data.update(user_input)
 
+            user_input[CONF_GENERATE] = DEFAULT_GENERATE
+            self._data.update(user_input)
             valid = await self._validate_path(user_input[CONF_PATH])
             if valid:
-                return await self.async_step_options_2()
+                return self.async_create_entry(title="", data=self._data)
             else:
                 self._errors["base"] = "invalid_path"
 
@@ -278,34 +256,6 @@ class LockManagerOptionsFlow(config_entries.OptionsFlow):
         data_schema[vol.Required(CONF_OZW, default=using_ozw)] = bool
         return self.async_show_form(
             step_id="init", data_schema=vol.Schema(data_schema), errors=self._errors
-        )
-
-    async def async_step_options_2(self, user_input=None):
-        """ Step 2 of options. """
-        self._errors = {}
-
-        if user_input is not None:
-            self._data.update(user_input)
-            return self.async_create_entry(title="", data=self._data)
-
-        return await self._show_options_2(user_input)
-
-    async def _show_options_2(self, user_input):
-        """Show the configuration form to edit location data."""
-
-        # Defaults
-        generate_package = DEFAULT_GENERATE
-
-        if user_input is not None:
-            if CONF_GENERATE in user_input:
-                generate_package = user_input[CONF_GENERATE]
-
-        data_schema = OrderedDict()
-        data_schema[vol.Required(CONF_GENERATE, default=generate_package)] = bool
-        return self.async_show_form(
-            step_id="options_2",
-            data_schema=vol.Schema(data_schema),
-            errors=self._errors,
         )
 
     async def _validate_path(self, path):
