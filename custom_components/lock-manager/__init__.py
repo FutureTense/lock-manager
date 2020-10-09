@@ -46,17 +46,8 @@ async def async_setup_entry(hass, config_entry):
     generate_package = config_entry.data[CONF_GENERATE]
 
     # extract the data and manipulate it
-    config = {
-        CONF_ALARM_LEVEL: config_entry.data[CONF_ALARM_LEVEL],
-        CONF_ALARM_TYPE: config_entry.data[CONF_ALARM_TYPE],
-        CONF_ENTITY_ID: config_entry.data[CONF_ENTITY_ID],
-        CONF_LOCK_NAME: config_entry.data[CONF_LOCK_NAME],
-        CONF_OZW: config_entry.data[CONF_OZW],
-        CONF_PATH: config_entry.data[CONF_PATH],
-        CONF_SENSOR_NAME: config_entry.data[CONF_SENSOR_NAME],
-        CONF_SLOTS: config_entry.data[CONF_SLOTS],
-        CONF_START: config_entry.data[CONF_START],
-    }
+    config = {k: v for k, v in config_entry.data.items()}
+    config.pop(CONF_GENERATE)
     config_entry.data = config
 
     config_entry.options = config_entry.data
@@ -222,17 +213,8 @@ async def update_listener(hass, entry):
         await hass.services.async_call(DOMAIN, SERVICE_GENERATE_PACKAGE, servicedata)
 
     # extract the data and manipulate it
-    config = {
-        CONF_ALARM_LEVEL: entry.options[CONF_ALARM_LEVEL],
-        CONF_ALARM_TYPE: entry.options[CONF_ALARM_TYPE],
-        CONF_ENTITY_ID: entry.options[CONF_ENTITY_ID],
-        CONF_LOCK_NAME: entry.options[CONF_LOCK_NAME],
-        CONF_OZW: entry.options[CONF_OZW],
-        CONF_PATH: entry.options[CONF_PATH],
-        CONF_SENSOR_NAME: entry.options[CONF_SENSOR_NAME],
-        CONF_SLOTS: entry.options[CONF_SLOTS],
-        CONF_START: entry.options[CONF_START],
-    }
+    config = {k: v for k, v in entry.options.items()}
+    config.pop(CONF_GENERATE)
     entry.options = config
 
     entry.data = entry.options
