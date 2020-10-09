@@ -379,7 +379,7 @@ automation:
                     {% set index = object_id.rfind('_') + 1 %}
                     {% set code_slot = object_id[index:] %}    
                     {% set codetext = 'LOCKNAME_pin_' + code_slot | string %}
-                    {% set code = states['input_number'][codetext].state %}
+                    {% set code = states['input_text'][codetext].state %}
                     {{ code | string }}
           - conditions: >
               {{ USINGOZW == False and states('binary_sensor.allow_automation') == "on" }}
@@ -398,7 +398,7 @@ automation:
                     {% set index = object_id.rfind('_') + 1 %}
                     {% set code_slot = object_id[index:] %}    
                     {% set codetext = 'LOCKNAME_pin_' + code_slot | string %}
-                    {% set code = states['input_number'][codetext].state %}
+                    {% set code = states['input_text'][codetext].state %}
                     {{ code | string }}
 
   - alias: CASE_LOCK_NAME Update Code

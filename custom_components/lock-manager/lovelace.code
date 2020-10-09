@@ -7,7 +7,7 @@
             show_header_toggle: false
             entities:
               - entity: input_text.LOCKNAME_name_TEMPLATENUM
-              - entity: input_number.LOCKNAME_pin_TEMPLATENUM
+              - entity: input_text.LOCKNAME_pin_TEMPLATENUM
               - entity: input_boolean.enabled_LOCKNAME_TEMPLATENUM
               - entity: input_boolean.notify_LOCKNAME_TEMPLATENUM
               - type: divider

@@ -67,7 +67,7 @@ async def async_setup_entry(hass, config_entry):
         )
         if entry.options[CONF_LOCK_NAME] == name:
             lockname = entry.options[CONF_LOCK_NAME]
-            inputlockpinheader = "input_number." + lockname + "_pin_"
+            inputlockpinheader = "input_text." + lockname + "_pin_"
             activelockheader = "binary_sensor.active_" + lockname + "_"
             lockentityname = entry.options[CONF_ENTITY_ID]
             sensorname = lockname
