@@ -1,4 +1,4 @@
-"""Lock Manager Integration."""
+"""lock-manager Integration."""
 
 import fileinput
 from homeassistant.core import callback
@@ -9,6 +9,7 @@ from .const import (
     CONF_ALARM_LEVEL,
     CONF_ALARM_TYPE,
     CONF_ENTITY_ID,
+    CONF_GENERATE,
     CONF_LOCK_NAME,
     CONF_OZW,
     CONF_PATH,
@@ -41,6 +42,16 @@ async def async_setup_entry(hass, config_entry):
         VERSION,
         ISSUE_URL,
     )
+    generate_package = None
+
+    # grab the bool before we change it
+    if CONF_GENERATE in config_entry.data.keys():
+        generate_package = config_entry.data[CONF_GENERATE]
+
+        # extract the data and manipulate it
+        config = {k: v for k, v in config_entry.data.items()}
+        config.pop(CONF_GENERATE)
+        config_entry.data = config
 
     config_entry.options = config_entry.data
     config_entry.add_update_listener(update_listener)
@@ -64,7 +75,7 @@ async def async_setup_entry(hass, config_entry):
             doorsensorentityname = entry.options[CONF_SENSOR_NAME] or ""
             sensoralarmlevel = entry.options[CONF_ALARM_LEVEL]
             sensoralarmtype = entry.options[CONF_ALARM_TYPE]
-            using_ozw = entry.options[CONF_OZW]
+            using_ozw = f"{entry.options[CONF_OZW]}"
             dummy = "foobar"
 
             output_path = entry.options[CONF_PATH] + lockname + "/"
@@ -180,12 +191,10 @@ async def async_setup_entry(hass, config_entry):
         schema=vol.Schema({vol.Optional(ATTR_NAME): vol.Coerce(str)}),
     )
 
-    hass.async_create_task(
-        hass.config_entries.async_forward_entry_setup(config_entry, PLATFORM)
-    )
-
-    #    servicedata = {"lockname": config_entry.options[CONF_LOCK_NAME]}
-    #    await hass.services.async_call(DOMAIN, SERVICE_GENERATE_PACKAGE, servicedata)
+    # if the use turned on the bool generate the files
+    if generate_package is not None:
+        servicedata = {"lockname": config_entry.options[CONF_LOCK_NAME]}
+        await hass.services.async_call(DOMAIN, SERVICE_GENERATE_PACKAGE, servicedata)
 
     return True
 
@@ -198,7 +207,18 @@ async def async_unload_entry(hass, config_entry):
 
 async def update_listener(hass, entry):
     """Update listener."""
+
+    # grab the bool before we change it
+    generate_package = entry.options[CONF_GENERATE]
+
+    if generate_package:
+        servicedata = {"lockname": entry.options[CONF_LOCK_NAME]}
+        await hass.services.async_call(DOMAIN, SERVICE_GENERATE_PACKAGE, servicedata)
+
+    # extract the data and manipulate it
+    config = {k: v for k, v in entry.options.items()}
+    config.pop(CONF_GENERATE)
+    entry.options = config
+
     entry.data = entry.options
 
-    servicedata = {"lockname": entry.options[CONF_LOCK_NAME]}
-    await hass.services.async_call(DOMAIN, SERVICE_GENERATE_PACKAGE, servicedata)

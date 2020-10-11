@@ -15,6 +15,7 @@ from .const import (
     CONF_ALARM_TYPE,
     CONF_ALARM_LEVEL,
     CONF_ENTITY_ID,
+    CONF_GENERATE,
     CONF_LOCK_NAME,
     CONF_PATH,
     CONF_SENSOR_NAME,
@@ -22,6 +23,7 @@ from .const import (
     CONF_START,
     CONF_OZW,
     DEFAULT_CODE_SLOTS,
+    DEFAULT_GENERATE,
     DEFAULT_PACKAGES_PATH,
     DEFAULT_START,
     DOMAIN,
@@ -74,6 +76,8 @@ class LockManagerFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     user_input[CONF_PATH] += "/"
                     self._data.update(user_input)
 
+            user_input[CONF_GENERATE] = DEFAULT_GENERATE
+            self._data.update(user_input)
             valid = await self._validate_path(user_input[CONF_PATH])
             if valid:
                 return self.async_create_entry(
@@ -186,6 +190,8 @@ class LockManagerOptionsFlow(config_entries.OptionsFlow):
                     user_input[CONF_PATH] += "/"
                     self._data.update(user_input)
 
+            user_input[CONF_GENERATE] = DEFAULT_GENERATE
+            self._data.update(user_input)
             valid = await self._validate_path(user_input[CONF_PATH])
             if valid:
                 return self.async_create_entry(title="", data=self._data)
