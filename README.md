@@ -82,6 +82,8 @@ In order for the lovelace ui to work properly you will need to install the follo
 2. [lovelace-card-tools](https://github.com/thomasloven/lovelace-card-tools)
 3. [lovelace-fold-entity-row](https://github.com/thomasloven/lovelace-fold-entity-row)
 
+The easiest way to install these modules is via [Home Assistant Community Store(HACS)](https://hacs.xyz/docs/categories/plugins).
+
 #### Additional Setup
 
 Before your lock will respond to automations, you will need to add a couple of things to your existing configuration. The first is you need to add the following `input_booleans`:
