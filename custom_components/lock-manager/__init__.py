@@ -19,6 +19,7 @@ from .const import (
     DOMAIN,
     VERSION,
     ISSUE_URL,
+    PLATFORM,
 )
 import voluptuous as vol
 
@@ -189,6 +190,12 @@ async def async_setup_entry(hass, config_entry):
         _generate_package,
         schema=vol.Schema({vol.Optional(ATTR_NAME): vol.Coerce(str)}),
     )
+
+    # Load the code slot sensors if OZW is enabled
+    if config_entry.options[CONF_OZW]:
+        hass.async_create_task(
+            hass.config_entries.async_forward_entry_setup(config_entry, PLATFORM)
+        )
 
     # if the use turned on the bool generate the files
     if generate_package is not None:
