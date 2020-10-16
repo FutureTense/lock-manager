@@ -1,6 +1,6 @@
 """ Sensor for lock-manager """
 
-from .const import CONF_ENTITY_ID, CONF_SLOTS, CONF_START
+from .const import CONF_ENTITY_ID, CONF_SLOTS, CONF_LOCK_NAME
 from datetime import timedelta
 from homeassistant.components.ozw import DOMAIN as OZW_DOMAIN
 from openzwavemqtt.const import CommandClass, ValueIndex
@@ -28,7 +28,9 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
     while x > 0:
         sensor_name = f"code_slot_{x}"
-        sensors.append(CodesSensor(data, sensor_name, x, unique_id))
+        sensors.append(
+            CodesSensor(data, sensor_name, x, entry.data[CONF_LOCK_NAME], unique_id)
+        )
         x -= 1
 
     async_add_entities(sensors, True)
@@ -82,13 +84,14 @@ class CodeSlotsData:
 class CodesSensor(Entity):
     """ Represntation of a sensor """
 
-    def __init__(self, data, sensor_name, code_slot, unique_id):
+    def __init__(self, data, sensor_name, code_slot, lock_name, unique_id):
         """ Initialize the sensor """
         self.data = data
         self._code_slot = code_slot
         self._state = None
         self._unique_id = unique_id
         self._name = sensor_name
+        self._lock_name = lock_name
         self.update()
 
     @property
@@ -99,7 +102,7 @@ class CodesSensor(Entity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        return self._name
+        return f"{self._lock_name}_{self._name}"
 
     @property
     def state(self):
