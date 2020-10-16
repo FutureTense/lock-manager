@@ -23,7 +23,6 @@ async def async_setup_entry(hass, entry, async_add_entities):
     unique_id = entry.entry_id
 
     data = CodeSlotsData(hass, config)
-    _LOGGER.debug("~~~~ DEBUG: CodeSlotsData: %s", str(data._data))
     sensors = []
     x = entry.data[CONF_SLOTS]
 
