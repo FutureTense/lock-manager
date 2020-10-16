@@ -131,4 +131,3 @@ class CodesSensor(Entity):
 
         if self.data._data is not None:
             self._state = self.data._data[self._name]
-
