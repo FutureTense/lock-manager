@@ -2,10 +2,16 @@
 
 from .const import CONF_ENTITY_ID, CONF_SLOTS, CONF_START
 from datetime import timedelta
-from homeassistant.components.lock import DOMAIN as LOCK_DOMAIN
+from homeassistant.components.ozw import DOMAIN as OZW_DOMAIN
+from openzwavemqtt.const import CommandClass, ValueIndex
 from homeassistant.helpers.entity import Entity
 from homeassistant.util import Throttle
 import logging
+
+
+MANAGER = "manager"
+ATTR_VALUES = "values"
+ATTR_NODE_ID = "node_id"
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -17,12 +23,13 @@ async def async_setup_entry(hass, entry, async_add_entities):
     unique_id = entry.entry_id
 
     data = CodeSlotsData(hass, config)
-    _LOGGER.debug("~~~~ DEBUG: %s", str(data))
+    _LOGGER.debug("~~~~ DEBUG: CodeSlotsData: %s", str(data._data))
     sensors = []
     x = entry.data[CONF_SLOTS]
 
     while x > 0:
-        sensors.append(CodesSensor(data, x, unique_id))
+        sensor_name = f"code_slot_{x}"
+        sensors.append(CodesSensor(data, sensor_name, x, unique_id))
         x -= 1
 
     async_add_entities(sensors, True)
@@ -42,37 +49,58 @@ class CodeSlotsData:
     def update(self):
         """Get the latest data"""
         # loop to get user code data from entity_id node
+        instance_id = 1  # default
         data = {}
         data[CONF_ENTITY_ID] = self._entity_id
-        data["node_id"] = _get_node_id(
-            self._hass.data[LOCK_DOMAIN].entities, self._entity_id
-        )
-        # self._hass.data["ozw"]
-        _LOGGER.debug("~~~~ DEBUG: %s", str(data))
-        self._data = data
+        # data["node_id"] = _get_node_id(self._hass, self._entity_id)
+        data[ATTR_NODE_ID] = self._get_node_id()
+
+        # only pull the codes for ozw
+        if OZW_DOMAIN in self._hass.data:
+            if data[ATTR_NODE_ID] is not None:
+                manager = self._hass.data[OZW_DOMAIN][MANAGER]
+                lock_values = (
+                    manager.get_instance(instance_id)
+                    .get_node(data[ATTR_NODE_ID])
+                    .values()
+                )
+                for value in lock_values:
+                    if value.command_class == CommandClass.USER_CODE:
+                        sensor_name = f"code_slot_{value.index}"
+                        data[sensor_name] = value.value
+
+                self._data = data
+
+    def _get_node_id(self):
+        data = None
+        test = self._hass.states.get(self._entity_id)
+        if test is not None:
+            data = test.attributes["node_id"]
+
+        return data
 
 
 class CodesSensor(Entity):
     """ Represntation of a sensor """
 
-    def __init__(self, data, code_slot, unique_id):
+    def __init__(self, data, sensor_name, code_slot, unique_id):
         """ Initialize the sensor """
         self.data = data
         self._code_slot = code_slot
         self._state = None
         self._unique_id = unique_id
-        self._name = "Test"
+        self._name = sensor_name
         self.update()
 
     @property
     def unique_id(self):
         """Return a unique, Home Assistant friendly identifier for this entity."""
-        return f"{self._code_slot}_{self._name}_{self._unique_id}"
+        return f"{self._name}_{self._unique_id}"
 
     @property
     def name(self):
         """Return the name of the sensor."""
-        return f"{self._name}_{self._code_slot}"
+        return self._name
 
     @property
     def state(self):
@@ -98,16 +126,7 @@ class CodesSensor(Entity):
 
         self.data.update()
         # Using a dict to send the data back
-        self._state = self.data._data[self.type]
 
+        if self.data._data is not None:
+            self._state = self.data._data[self._name]
 
-def _get_node_id(entities, search=None):
-    data = None
-    for entity in entities:
-        if search is not None and not any(map(entity.entity_id.__contains__, search)):
-            continue
-        data = entity.entity_id.node_id
-
-    _LOGGER.debug("~~~ DEBUG: %s", str(data))
-
-    return data
