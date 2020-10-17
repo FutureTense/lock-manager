@@ -1,9 +1,9 @@
 """ Sensor for lock-manager """
 
-from .const import CONF_ENTITY_ID, CONF_SLOTS, CONF_LOCK_NAME
+from .const import CONF_ENTITY_ID, CONF_SLOTS, CONF_LOCK_NAME, ZWAVE_NETWORK
 from datetime import timedelta
 from homeassistant.components.ozw import DOMAIN as OZW_DOMAIN
-from openzwavemqtt.const import CommandClass, ValueIndex
+from openzwavemqtt.const import CommandClass
 from homeassistant.helpers.entity import Entity
 from homeassistant.util import Throttle
 import logging
@@ -12,6 +12,7 @@ import logging
 MANAGER = "manager"
 ATTR_VALUES = "values"
 ATTR_NODE_ID = "node_id"
+COMMAND_CLASS_USER_CODE = 99
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -56,7 +57,7 @@ class CodeSlotsData:
         # data["node_id"] = _get_node_id(self._hass, self._entity_id)
         data[ATTR_NODE_ID] = self._get_node_id()
 
-        # only pull the codes for ozw
+        # pull the codes for ozw
         if OZW_DOMAIN in self._hass.data:
             if data[ATTR_NODE_ID] is not None:
                 manager = self._hass.data[OZW_DOMAIN][MANAGER]
@@ -69,6 +70,21 @@ class CodeSlotsData:
                     if value.command_class == CommandClass.USER_CODE:
                         sensor_name = f"code_slot_{value.index}"
                         data[sensor_name] = value.value
+
+                self._data = data
+
+        # pull codes for zwave
+        elif ZWAVE_NETWORK in self._hass.data:
+            if data[ATTR_NODE_ID] is not None:
+                network = self._hass.data[ZWAVE_NETWORK]
+                lock_values = (
+                    network.nodes[data[ATTR_NODE_ID]]
+                    .get_values(class_id=COMMAND_CLASS_USER_CODE)
+                    .values()
+                )
+                for value in lock_values:
+                    sensor_name = f"code_slot_{value.index}"
+                    data[sensor_name] = value.value
 
                 self._data = data
 
