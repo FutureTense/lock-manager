@@ -23,6 +23,12 @@ input_number:
     min: 0
     max: 999
 
+  LOCKNAME_num_slots:
+    name: CASE_LOCK_NAME Num slots
+    initial: NUMSLOTS
+    min: 0
+    max: 999
+
 ###############  input_boolean:  #################
 input_boolean:
   LOCKNAME_lock_notifications:
