@@ -131,7 +131,6 @@ async def async_setup_entry(hass, config_entry):
                 "SENSORALARMTYPE": sensoralarmtype,
                 "SENSORALARMLEVEL": sensoralarmlevel,
                 "USINGOZW": using_ozw,
-                "NUMSLOTS": f"{entry.options[CONF_SLOTS]}",
             }
             # Replace variables in common file
             output = open(output_path + lockname + "_lock_manager_common.yaml", "w+",)
@@ -162,6 +161,7 @@ async def async_setup_entry(hass, config_entry):
                     "LOCKNAME": lockname,
                     "CASE_LOCK_NAME": lockname,
                     "TEMPLATENUM": str(x),
+                    "LOCKENTITYNAME": lockentityname,
                 }
                 output = open(
                     output_path + lockname + "_lock_manager_" + str(x) + ".yaml", "w+",

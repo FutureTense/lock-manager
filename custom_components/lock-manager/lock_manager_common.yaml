@@ -23,12 +23,6 @@ input_number:
     min: 0
     max: 999
 
-  LOCKNAME_num_slots:
-    name: CASE_LOCK_NAME Num slots
-    initial: NUMSLOTS
-    min: 0
-    max: 999
-
 ###############  input_boolean:  #################
 input_boolean:
   LOCKNAME_lock_notifications:
@@ -166,10 +160,10 @@ automation:
                {{ lockcmd | int}}
             {% endif %}
 
-  # {% set doordiff = as_timestamp(now()) - as_timestamp(states.lock.be469zp_connect_smart_deadbolt_locked.last_changed) %}
-  # {% set contdiff = as_timestamp(now()) - as_timestamp(states.sensor.be469zp_connect_smart_deadbolt_access_control.last_changed) %}
-  # {% set atv = 24 if (doordiff) < 15 and (contdiff) > 15 and (states.lock.be469zp_connect_smart_deadbolt_locked.state) == 'locked' else alarm_type_value %}
-  # {% set atv = 25 if (doordiff) < 15 and (contdiff) > 15 and (states.lock.be469zp_connect_smart_deadbolt_locked.state) == 'unlocked' else alarm_type_value %}
+  # {% set doordiff = as_timestamp(now()) - as_timestamp(states.lock.be666zp_connect_smart_deadbolt_locked.last_changed) %}
+  # {% set contdiff = as_timestamp(now()) - as_timestamp(states.sensor.be666zp_connect_smart_deadbolt_access_control.last_changed) %}
+  # {% set atv = 24 if (doordiff) < 15 and (contdiff) > 15 and (states.lock.be666zp_connect_smart_deadbolt_locked.state) == 'locked' else alarm_type_value %}
+  # {% set atv = 25 if (doordiff) < 15 and (contdiff) > 15 and (states.lock.be666zp_connect_smart_deadbolt_locked.state) == 'unlocked' else alarm_type_value %}
 
   - alias: CASE_LOCK_NAME Status Report
     trigger:
