@@ -1,5 +1,5 @@
 DOMAIN = "lock-manager"
-VERSION = "0.0.24"
+VERSION = "0.0.25"
 ISSUE_URL = "https://github.com/FutureTense/lock-manager"
 PLATFORM = "sensor"
 

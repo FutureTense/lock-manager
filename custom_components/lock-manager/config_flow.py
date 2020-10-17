@@ -69,7 +69,9 @@ class LockManagerFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         )
 
         if user_input is not None:
-            user_input[CONF_LOCK_NAME] = user_input[CONF_LOCK_NAME].lower()
+            user_input[CONF_LOCK_NAME] = (
+                user_input[CONF_LOCK_NAME].lower().replace(" ", "_")
+            )
             self._data.update(user_input)
             if user_input[CONF_PATH] is not None:
                 if not user_input[CONF_PATH].endswith("/"):
@@ -183,7 +185,9 @@ class LockManagerOptionsFlow(config_entries.OptionsFlow):
         )
 
         if user_input is not None:
-            user_input[CONF_LOCK_NAME] = user_input[CONF_LOCK_NAME].lower()
+            user_input[CONF_LOCK_NAME] = (
+                user_input[CONF_LOCK_NAME].lower().replace(" ", "_")
+            )
             self._data.update(user_input)
             if user_input[CONF_PATH] is not None:
                 if not user_input[CONF_PATH].endswith("/"):
