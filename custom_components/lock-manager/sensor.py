@@ -46,7 +46,7 @@ class CodeSlotsData:
         self._entity_id = config.get(CONF_ENTITY_ID)
         self._data = None
 
-        self.update = Throttle(timedelta(seconds=10))(self.update)
+        self.update = Throttle(timedelta(seconds=5))(self.update)
 
     def update(self):
         """Get the latest data"""
@@ -68,6 +68,9 @@ class CodeSlotsData:
                 )
                 for value in lock_values:
                     if value.command_class == CommandClass.USER_CODE:
+                        # do not update if the code contains *s
+                        if "*" in value.value:
+                            return
                         sensor_name = f"code_slot_{value.index}"
                         data[sensor_name] = value.value
 
@@ -83,6 +86,9 @@ class CodeSlotsData:
                     .values()
                 )
                 for value in lock_values:
+                    # do not update if the code contains *s
+                    if "*" in value.value:
+                        return
                     sensor_name = f"code_slot_{value.index}"
                     data[sensor_name] = value.value
 
