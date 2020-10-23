@@ -480,6 +480,15 @@ automation:
                     {{ code_slot  }}
                   usercode: >-
                     {{ range(1000, 9999) | random | int }}
+              - service: lock.clear_usercode
+                data_template:
+                  node_id: >-
+                    {{ state_attr('LOCKENTITYNAME','node_id') }}
+                  code_slot: >-
+                    {% set object_id = trigger.to_state.object_id %}
+                    {% set index = object_id.rfind('_') + 1 %}
+                    {% set code_slot = object_id[index:] %}
+                    {{ code_slot  }}
 
   - alias: CASE_LOCK_NAME Decrement Access Count
     trigger:
