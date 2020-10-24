@@ -118,6 +118,7 @@ async def async_setup_entry(hass, config_entry):
                 x += 1
                 code_slots -= 1
             inputlockpinheaders = ",".join(map(str, inputlockpinheaders))
+            using_ozw = f"{entry.options[CONF_OZW]}"
 
             _LOGGER.debug("Creating common YAML file...")
             replacements = {
@@ -162,7 +163,9 @@ async def async_setup_entry(hass, config_entry):
                     "CASE_LOCK_NAME": lockname,
                     "TEMPLATENUM": str(x),
                     "LOCKENTITYNAME": lockentityname,
+                    "USINGOZW": using_ozw,
                 }
+                
                 output = open(
                     output_path + lockname + "_lock_manager_" + str(x) + ".yaml", "w+",
                 )

@@ -14,6 +14,19 @@
               - entity: binary_sensor.active_LOCKNAME_TEMPLATENUM
                 state_color: true
               - type: divider
+
+              - type: 'custom:fold-entity-row'
+                head:
+                  type: section
+                  label: Debug
+                open: true
+                entities:
+                - entity: sensor.LOCKNAME_code_slot_TEMPLATENUM
+                  state_color: true
+                - type: divider
+                - entity: binary_sensor.pin_synched_LOCKNAME_TEMPLATENUM
+                  state_color: true
+              - type: divider
               - type: 'custom:fold-entity-row'
                 head:
                   type: section
