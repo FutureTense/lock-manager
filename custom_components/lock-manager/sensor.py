@@ -74,7 +74,7 @@ class CodeSlotsData:
                             str(value.value),
                         )
                         # do not update if the code contains *s
-                        if "*" in value.value:
+                        if "*" in str(value.value):
                             _LOGGER.debug("DEBUG: Ignoring code slot with * in value.")
                             continue
                         sensor_name = f"code_slot_{value.index}"
@@ -98,7 +98,7 @@ class CodeSlotsData:
                         str(value.value),
                     )
                     # do not update if the code contains *s
-                    if "*" in value.value:
+                    if "*" in str(value.value):
                         _LOGGER.debug("DEBUG: Ignoring code slot with * in value.")
                         continue
                     sensor_name = f"code_slot_{value.index}"
