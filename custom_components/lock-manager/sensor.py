@@ -68,9 +68,15 @@ class CodeSlotsData:
                 )
                 for value in lock_values:
                     if value.command_class == CommandClass.USER_CODE:
+                        _LOGGER.debug(
+                            "DEBUG: code_slot_%s value: %s",
+                            str(value.index),
+                            str(value.value),
+                        )
                         # do not update if the code contains *s
                         if "*" in value.value:
-                            return
+                            _LOGGER.debug("DEBUG: Ignoring code slot with * in value.")
+                            continue
                         sensor_name = f"code_slot_{value.index}"
                         data[sensor_name] = value.value
 
@@ -86,9 +92,15 @@ class CodeSlotsData:
                     .values()
                 )
                 for value in lock_values:
+                    _LOGGER.debug(
+                        "DEBUG: code_slot_%s value: %s",
+                        str(value.index),
+                        str(value.value),
+                    )
                     # do not update if the code contains *s
                     if "*" in value.value:
-                        return
+                        _LOGGER.debug("DEBUG: Ignoring code slot with * in value.")
+                        continue
                     sensor_name = f"code_slot_{value.index}"
                     data[sensor_name] = value.value
 
