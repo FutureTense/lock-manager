@@ -1,7 +1,15 @@
 DOMAIN = "lock-manager"
-VERSION = "0.0.31"
+VERSION = "0.0.32"
 ISSUE_URL = "https://github.com/FutureTense/lock-manager"
 PLATFORM = "sensor"
+ZWAVE_NETWORK = "zwave_network"
+
+# Attributes
+ATTR_NAME = "lockname"
+ATTR_CODE_SLOT = "code_slot"
+ATTR_USER_CODE = "usercode"
+ATTR_ENTITY_ID = "entity_id"
+ATTR_NODE_ID = "node_id"
 
 # Configuration Properties
 CONF_ALARM_LEVEL = "alarm_level"
