@@ -131,7 +131,7 @@ class CodesSensor(Entity):
     @property
     def unique_id(self):
         """Return a unique, Home Assistant friendly identifier for this entity."""
-        return f"{self._name}_{self._unique_id}"
+        return f"{self._lock_name}_{self._name}_{self._unique_id}"
 
     @property
     def name(self):
@@ -164,4 +164,9 @@ class CodesSensor(Entity):
         # Using a dict to send the data back
 
         if self.data._data is not None:
-            self._state = self.data._data[self._name]
+            try:
+                self._state = self.data._data[self._name]
+            except Exception as err:
+                _LOGGER.warning(
+                    "Code slot %s had no value: %s", str(self._name), str(err)
+                )
