@@ -369,7 +369,7 @@ async def async_setup_entry(hass, config_entry):
         DOMAIN,
         SERVICE_REFRESH_CODES,
         _refresh_codes,
-        schema=vol.Schema({vol.Required(ATTR_NODE_ID): vol.Coerce(str),}),
+        schema=vol.Schema({vol.Required(ATTR_ENTITY_ID): vol.Coerce(str),}),
     )
 
     # Load the code slot sensors if OZW is enabled
