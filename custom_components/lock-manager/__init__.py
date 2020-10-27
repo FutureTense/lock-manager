@@ -26,6 +26,7 @@ from .const import (
     ISSUE_URL,
     PLATFORM,
 )
+from openzwavemqtt.const import CommandClass
 import voluptuous as vol
 
 _LOGGER = logging.getLogger(__name__)
