@@ -27,3 +27,10 @@ clear_code:
     code_slot:
       description: The code slot you are attempting to clear
       example: 2      
+
+refresh_codes:
+  description: Refresh lock codes from the lock. 
+  fields:
+    entity_id: 
+      description: The entity_id of the lock you are attempting to refresh the codes of
+      example: lock.frontdoor_locked
