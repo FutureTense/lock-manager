@@ -182,7 +182,9 @@ automation:
         {{ states('sensor.connected_LOCKNAME_TEMPLATENUM') | lower in ['disconnected','connected'] }} 
   action:
     - service: timer.cancel
-      entity_id: timer.LOCKNAME_update_user_codes
+      entity_id:
+        - timer.LOCKNAME_update_user_codes
+        - timer.LOCKNAME_refresh_lock_node
 
 - alias: synchronize_codeslot_LOCKNAME_TEMPLATENUM
   initial_state: true
