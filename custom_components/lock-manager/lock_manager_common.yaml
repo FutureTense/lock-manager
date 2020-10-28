@@ -110,7 +110,22 @@ script:
           payload: >-
             {% set node_id = state_attr('LOCKENTITYNAME','node_id') %}
             { "node": {{ node_id }} }
-          retain: true    
+          retain: true
+          
+  LOCKNAME_refresh_codes:
+    description:  'Refreshes lock user codes'
+    sequence:
+      - service: system_log.write
+        data_template:
+          message: "refresh user codes: {{ now() }}"
+          level: debug
+      # - service: mqtt.publish
+      #   data:
+      #     topic: 'OpenZWave/1/command/refreshnodeinfo/'
+      #     payload: >-
+      #       {% set node_id = state_attr('LOCKENTITYNAME','node_id') %}
+      #       { "node": {{ node_id }} }
+      #     retain: true
 
 ###################  automation:  ####################
 automation:
