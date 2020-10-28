@@ -31,7 +31,6 @@ import voluptuous as vol
 
 _LOGGER = logging.getLogger(__name__)
 
-SERVICE_DOMAIN = "lock_manager"
 SERVICE_GENERATE_PACKAGE = "generate_package"
 SERVICE_ADD_CODE = "add_code"
 SERVICE_CLEAR_CODE = "clear_code"
@@ -333,7 +332,7 @@ async def async_setup_entry(hass, config_entry):
             _LOGGER.debug("Package generation complete")
 
     hass.services.async_register(
-        SERVICE_DOMAIN,
+        DOMAIN,
         SERVICE_GENERATE_PACKAGE,
         _generate_package,
         schema=vol.Schema({vol.Optional(ATTR_NAME): vol.Coerce(str)}),
@@ -341,7 +340,7 @@ async def async_setup_entry(hass, config_entry):
 
     # Add code
     hass.services.async_register(
-        SERVICE_DOMAIN,
+        DOMAIN,
         SERVICE_ADD_CODE,
         _add_code,
         schema=vol.Schema(
@@ -355,7 +354,7 @@ async def async_setup_entry(hass, config_entry):
 
     # Clear code
     hass.services.async_register(
-        SERVICE_DOMAIN,
+        DOMAIN,
         SERVICE_CLEAR_CODE,
         _clear_code,
         schema=vol.Schema(
@@ -368,7 +367,7 @@ async def async_setup_entry(hass, config_entry):
 
     # Button Press
     hass.services.async_register(
-        SERVICE_DOMAIN,
+        DOMAIN,
         SERVICE_REFRESH_CODES,
         _refresh_codes,
         schema=vol.Schema({vol.Required(ATTR_ENTITY_ID): vol.Coerce(str),}),
@@ -383,9 +382,7 @@ async def async_setup_entry(hass, config_entry):
     # if the use turned on the bool generate the files
     if generate_package is not None:
         servicedata = {"lockname": config_entry.options[CONF_LOCK_NAME]}
-        await hass.services.async_call(
-            SERVICE_DOMAIN, SERVICE_GENERATE_PACKAGE, servicedata
-        )
+        await hass.services.async_call(DOMAIN, SERVICE_GENERATE_PACKAGE, servicedata)
 
     return True
 
@@ -404,9 +401,7 @@ async def update_listener(hass, entry):
 
     if generate_package:
         servicedata = {"lockname": entry.options[CONF_LOCK_NAME]}
-        await hass.services.async_call(
-            SERVICE_DOMAIN, SERVICE_GENERATE_PACKAGE, servicedata
-        )
+        await hass.services.async_call(DOMAIN, SERVICE_GENERATE_PACKAGE, servicedata)
 
     # extract the data and manipulate it
     config = {k: v for k, v in entry.options.items()}
