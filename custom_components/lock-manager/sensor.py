@@ -110,7 +110,14 @@ class CodeSlotsData:
         data = None
         test = self._hass.states.get(self._entity_id)
         if test is not None:
-            data = test.attributes["node_id"]
+            try:
+                data = test.attributes["node_id"]
+            except Exception as err:
+                _LOGGER.error(
+                    "Error acquiring node id from entity %s: %s",
+                    self._entity_id,
+                    str(err),
+                )
 
         return data
 
