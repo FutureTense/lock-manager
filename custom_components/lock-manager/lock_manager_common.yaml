@@ -137,7 +137,6 @@ automation:
       - service: lock-manager.refresh_codes
         data:
           entity_id: LOCKENTITYNAME
-    
 
   - alias: CASE_LOCK_NAME Lock Command
     trigger:
