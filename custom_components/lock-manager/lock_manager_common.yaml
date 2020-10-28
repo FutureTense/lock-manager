@@ -10,6 +10,9 @@
 timer:
 
   LOCKNAME_update_user_codes:
+    duration: '00:00:20'
+    
+  LOCKNAME_refresh_lock_node:
     duration: '00:05:00'
 
 ###############  input_text:  #################
@@ -137,6 +140,19 @@ automation:
       - service: lock-manager.refresh_codes
         data:
           entity_id: LOCKENTITYNAME
+          
+  - alias: LOCKNAME_refresh_lock_node_finished
+    trigger:
+      platform: event
+      event_type: timer.finished
+      event_data:
+        entity_id: timer.LOCKNAME_refresh_lock_node
+    condition:
+      - condition: state
+        entity_id: "binary_sensor.allow_automation"
+        state: "on"
+    action:
+      - service: script.LOCKNAME_refreshnodeinfo
 
   - alias: CASE_LOCK_NAME Lock Command
     trigger:
