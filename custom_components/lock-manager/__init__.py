@@ -74,7 +74,7 @@ async def async_setup_entry(hass, config_entry):
 
     async def _refresh_codes(service):
         """Generate the package files"""
-        _LOGGER.debug("Add Code service: %s", service)
+        _LOGGER.debug("Refresh Codes service: %s", service)
         entity_id = service.data[ATTR_ENTITY_ID]
         data = None
         instance_id = 1

@@ -134,13 +134,9 @@ automation:
         entity_id: "binary_sensor.allow_automation"
         state: "on"
     action:
-      - service: script.LOCKNAME_refreshnodeinfo
-      # - service: lock-manager.refresh_codes
-      #   data_template:
-      #     entity_id: >- 
-      #         {% set node_id = state_attr('LOCKENTITYNAME','node_id') %}
-      #         { "node": {{ node_id }} }
-    
+      - service: lock-manager.refresh_codes
+        data:
+          entity_id: LOCKENTITYNAME
 
   - alias: CASE_LOCK_NAME Lock Command
     trigger:
