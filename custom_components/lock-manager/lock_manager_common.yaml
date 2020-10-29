@@ -9,9 +9,6 @@
 ############  timer:  #####################  
 timer:
 
-  LOCKNAME_update_user_codes:
-    duration: '00:00:20'
-    
   LOCKNAME_refresh_lock_node:
     duration: '00:05:00'
 
@@ -129,30 +126,6 @@ script:
 
 ###################  automation:  ####################
 automation:
-  # - alias: CASE_LOCK_NAME-ac-uc-sensors_last_changed_update
-  #   initial_state: false
-  #   trigger:
-  #     - platform: time_pattern
-  #       seconds: '/1'
-  #   action:
-  #     - service: homeassistant.update_entity
-  #       entity_id:
-  #         - sensor.LOCKNAME_ac_last_changed
-  #         - sensor.LOCKNAME_uc_last_changed
-
-
-  - alias: LOCKNAME_update_user_codes_finished
-    trigger:
-      platform: event
-      event_type: timer.finished
-      event_data:
-        entity_id: timer.LOCKNAME_update_user_codes
-    condition:
-      - condition: state
-        entity_id: "binary_sensor.allow_automation"
-        state: "on"
-    action:
-      - service: script.LOCKNAME_refresh_codes
           
   - alias: LOCKNAME_refresh_lock_node_finished
     trigger:

@@ -176,14 +176,10 @@ automation:
       state: "on"
     - condition: template
       value_template: >-
-         {{ states('timer.frontdoor_update_user_codes') == 'active' }} 
-    - condition: template
-      value_template: >-
         {{ states('sensor.connected_LOCKNAME_TEMPLATENUM') | lower in ['disconnected','connected'] }} 
   action:
     - service: timer.cancel
       entity_id:
-        - timer.LOCKNAME_update_user_codes
         - timer.LOCKNAME_refresh_lock_node
 
 - alias: synchronize_codeslot_LOCKNAME_TEMPLATENUM
@@ -193,7 +189,7 @@ automation:
       entity_id: "binary_sensor.pin_synched_LOCKNAME_TEMPLATENUM"
       to: 'off'
     - platform: time_pattern
-      seconds: "/10"      
+      seconds: "/5"      
   condition:
     - condition: state
       entity_id: "binary_sensor.allow_automation"
@@ -212,14 +208,10 @@ automation:
                 {{ states('sensor.connected_LOCKNAME_TEMPLATENUM') | lower in ['disconnecting','connecting'] }} 
             - condition: template
               value_template: >-
-                 {{ states('timer.frontdoor_update_user_codes') != 'active' }} 
+                {{ states('timer.LOCKNAME_refresh_lock_node') != 'active' }} 
           sequence:
-            # - service: persistent_notification.create
-            #   data_template:
-            #     title: TEMPLATENUM
-            #     message: 'TEMPLATENUM start timer: {{ now() }}'
             - service: timer.start
-              entity_id: timer.LOCKNAME_update_user_codes
+              entity_id: timer.LOCKNAME_refresh_lock_node
     - choose:
         - conditions:
             - condition: template
