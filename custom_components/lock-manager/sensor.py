@@ -164,6 +164,13 @@ class CodesSensor(Entity):
 
         return attr
 
+    @property
+    def available(self):
+        """Return if entity is available."""
+        if self._state is not None:
+            return True
+        return False
+
     def update(self):
         """Fetch new state data for the sensor.
         This is the only method that should fetch new data for Home Assistant.
