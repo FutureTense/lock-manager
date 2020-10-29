@@ -93,6 +93,8 @@ class CodeSlotsData:
                     .values()
                 )
                 for value in lock_values:
+                    if value not in value.keys():
+                        continue
                     _LOGGER.debug(
                         "DEBUG: code_slot_%s value: %s",
                         str(value.index),
