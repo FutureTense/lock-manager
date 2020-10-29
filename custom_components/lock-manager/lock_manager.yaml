@@ -166,6 +166,26 @@ input_boolean:
 ################  automation: #################  
 automation:
 
+- alias: sensor_cleanup_LOCKNAME_TEMPLATENUM
+  trigger:
+    - platform: state
+      entity_id: "sensor.connected_LOCKNAME_TEMPLATENUM"
+  condition:
+    - condition: state
+      entity_id: "binary_sensor.allow_automation"
+      state: "on"
+    - condition: template
+      value_template: >-
+         {{ states('timer.frontdoor_update_user_codes') == 'active' }} 
+    - condition: template
+      value_template: >-
+        {{ states('sensor.connected_LOCKNAME_TEMPLATENUM') | lower in ['disconnected','connected'] }} 
+  action:
+    - service: timer.cancel
+      entity_id:
+        - timer.LOCKNAME_update_user_codes
+        - timer.LOCKNAME_refresh_lock_node
+
 - alias: synchronize_codeslot_LOCKNAME_TEMPLATENUM
   initial_state: true
   trigger:
@@ -185,10 +205,21 @@ automation:
       value_template: >-
         {{ states("sensor.LOCKNAME_code_slot_TEMPLATENUM") != "unknown" }}
   action:
-    # - service: persistent_notification.create
-    #   data_template:
-    #     title: TEMPLATENUM
-    #     message: '{{ states("sensor.LOCKNAME_code_slot_TEMPLATENUM") }} {{ now() }}'
+    - choose:
+        - conditions:
+            - condition: template
+              value_template: >-
+                {{ states('sensor.connected_LOCKNAME_TEMPLATENUM') | lower in ['disconnecting','connecting'] }} 
+            - condition: template
+              value_template: >-
+                 {{ states('timer.frontdoor_update_user_codes') != 'active' }} 
+          sequence:
+            # - service: persistent_notification.create
+            #   data_template:
+            #     title: TEMPLATENUM
+            #     message: 'TEMPLATENUM start timer: {{ now() }}'
+            - service: timer.start
+              entity_id: timer.LOCKNAME_update_user_codes
     - choose:
         - conditions:
             - condition: template
@@ -401,25 +432,6 @@ binary_sensor:
 - platform: template
   sensors:
 
-    pin_synched_LOCKNAME_TEMPLATENUM:
-      friendly_name: 'PIN synchronized with lock'
-      value_template: >
-        {% set lock = 'sensor.LOCKNAME_code_slot_TEMPLATENUM' %}
-        {% set local = 'input_text.LOCKNAME_pin_TEMPLATENUM' %}
-        {% set status = 'binary_sensor.active_LOCKNAME_TEMPLATENUM' %}
-        {% set lockpin = states(lock).strip()  %}
-        {% set localpin = states(local).strip()  %}
-        {% set pinstatus = states(status)  %}
-        {% if lockpin == "0000" %}
-        {%   set lockpin = "" %}
-        {% endif %}
-        {% if pinstatus == 'on' %}
-        {% set correct = localpin == lockpin %}
-        {% else %}
-        {% set correct = lockpin == "" %}
-        {% endif %}
-        {{ correct }}
-
     enabled_LOCKNAME_TEMPLATENUM:
       value_template: "{{ is_state('input_boolean.enabled_LOCKNAME_TEMPLATENUM', 'on') }}"
 
@@ -479,4 +491,60 @@ binary_sensor:
          }}
       device_class: connectivity
 
+    pin_synched_LOCKNAME_TEMPLATENUM:
+      friendly_name: 'PIN synchronized with lock'
+      value_template: >
+        {% set lock = 'sensor.LOCKNAME_code_slot_TEMPLATENUM' %}
+        {% set local = 'input_text.LOCKNAME_pin_TEMPLATENUM' %}
+        {% set status = 'binary_sensor.active_LOCKNAME_TEMPLATENUM' %}
+        {% set lockpin = states(lock).strip()  %}
+        {% set localpin = states(local).strip()  %}
+        {% set pinstatus = states(status)  %}
+        {% if lockpin == "0000" %}
+        {%   set lockpin = "" %}
+        {% endif %}
+        {% if pinstatus == 'on' %}
+        {% set correct = localpin == lockpin %}
+        {% else %}
+        {% set correct = lockpin == "" %}
+        {% endif %}
+        {{ correct }}
+
 ###################  sensor:  ####################  
+sensor:
+
+- platform: template
+  sensors:
+  
+    connected_LOCKNAME_TEMPLATENUM:
+      # icon: mdi:glassdoor
+      friendly_name: "PIN Status"
+      value_template: >-
+        {% set pinstatus = states('binary_sensor.active_LOCKNAME_TEMPLATENUM')  %}      
+        {% set syncstatus = states('binary_sensor.pin_synched_LOCKNAME_TEMPLATENUM')  %}      
+        {% if pinstatus == 'on' %}
+          {% if syncstatus == 'on' %}
+            {% set report = 'Connected' %}
+          {% else %}
+            {% set report = 'Connecting' %}
+          {% endif %}
+        {% else %}
+          {% if syncstatus == 'on' %}
+            {% set report = 'Disconnected' %}
+          {% else %}
+            {% set report = 'Disconnecting' %}
+          {% endif %}
+        {% endif %}
+        {{
+          report
+        }}
+      icon_template: >
+        {% if (states('sensor.connected_LOCKNAME_TEMPLATENUM') | lower) == 'connected' %}
+          mdi:folder-key
+        {% elif (states('sensor.connected_LOCKNAME_TEMPLATENUM') | lower) == 'connecting' %}
+          mdi:folder-key-network
+        {% elif (states('sensor.connected_LOCKNAME_TEMPLATENUM') | lower) == 'disconnected' %}
+          mdi:folder-open
+        {% elif (states('sensor.connected_LOCKNAME_TEMPLATENUM') | lower) == 'disconnecting' %}
+          mdi:wiper-wash
+        {% endif %}

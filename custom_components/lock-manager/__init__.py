@@ -26,6 +26,7 @@ from .const import (
     ISSUE_URL,
     PLATFORM,
 )
+from openzwavemqtt.const import CommandClass
 import voluptuous as vol
 
 _LOGGER = logging.getLogger(__name__)
@@ -33,9 +34,12 @@ _LOGGER = logging.getLogger(__name__)
 SERVICE_GENERATE_PACKAGE = "generate_package"
 SERVICE_ADD_CODE = "add_code"
 SERVICE_CLEAR_CODE = "clear_code"
+SERVICE_REFRESH_CODES = "refresh_codes"
 
 OZW_DOMAIN = "ozw"
 ZWAVE_DOMAIN = "lock"
+
+MANAGER = "manager"
 
 SET_USERCODE = "set_usercode"
 CLEAR_USERCODE = "clear_usercode"
@@ -67,6 +71,39 @@ async def async_setup_entry(hass, config_entry):
 
     config_entry.options = config_entry.data
     config_entry.add_update_listener(update_listener)
+
+    async def _refresh_codes(service):
+        """Generate the package files"""
+        _LOGGER.debug("Refresh Codes service: %s", service)
+        entity_id = service.data[ATTR_ENTITY_ID]
+        data = None
+        instance_id = 1
+
+        # Pull the node_id from the entity
+        test = hass.states.get(entity_id)
+        if test is not None:
+            data = test.attributes[ATTR_NODE_ID]
+
+        # Bail out if no node_id could be extracted
+        if data is None:
+            _LOGGER.error("Problem pulling node_id from entity.")
+            return
+
+        # OZW Button press (experimental)
+        if OZW_DOMAIN in hass.data:
+            if data is not None:
+                manager = hass.data[OZW_DOMAIN][MANAGER]
+                lock_values = manager.get_instance(instance_id).get_node(data).values()
+                for value in lock_values:
+                    if (
+                        value.command_class == CommandClass.USER_CODE
+                        and value.index == 255
+                    ):
+                        _LOGGER.debug("DEBUG: Index found valueIDKey: %s", int(value))
+                        value.send_value(True)
+                        value.send_value(False)
+
+        _LOGGER.debug("Refresh codes call completed.")
 
     async def _add_code(service):
         """Generate the package files"""
@@ -271,7 +308,7 @@ async def async_setup_entry(hass, config_entry):
                     "LOCKENTITYNAME": lockentityname,
                     "USINGOZW": using_ozw,
                 }
-                
+
                 output = open(
                     output_path + lockname + "_lock_manager_" + str(x) + ".yaml", "w+",
                 )
@@ -326,6 +363,14 @@ async def async_setup_entry(hass, config_entry):
                 vol.Required(ATTR_CODE_SLOT): vol.Coerce(int),
             }
         ),
+    )
+
+    # Button Press
+    hass.services.async_register(
+        DOMAIN,
+        SERVICE_REFRESH_CODES,
+        _refresh_codes,
+        schema=vol.Schema({vol.Required(ATTR_ENTITY_ID): vol.Coerce(str),}),
     )
 
     # Load the code slot sensors if OZW is enabled

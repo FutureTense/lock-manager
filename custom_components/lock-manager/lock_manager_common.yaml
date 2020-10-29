@@ -6,6 +6,15 @@
 ################  COMMON ENTITIES  ###############
 ##################################################
 
+############  timer:  #####################  
+timer:
+
+  LOCKNAME_update_user_codes:
+    duration: '00:00:20'
+    
+  LOCKNAME_refresh_lock_node:
+    duration: '00:05:00'
+
 ###############  input_text:  #################
 input_text:
   LOCKNAME_status_report:
@@ -88,6 +97,36 @@ script:
           title: "{{title}}"
           message: "{{message}}"
 
+  LOCKNAME_refreshnodeinfo:
+    description:  'Send MQTT RefreshNodeInfo command'
+    sequence:
+      - service: system_log.write
+        data_template:
+          message: "LOCKNAME_TEMPLATENUM started noderefreshinfo: {{ now() }}"
+          level: debug  
+      - service: mqtt.publish
+        data:
+          topic: 'OpenZWave/1/command/refreshnodeinfo/'
+          payload: >-
+            {% set node_id = state_attr('LOCKENTITYNAME','node_id') %}
+            { "node": {{ node_id }} }
+          retain: true
+          
+  LOCKNAME_refresh_codes:
+    description:  'Refreshes lock user codes'
+    sequence:
+      - service: system_log.write
+        data_template:
+          message: "refresh user codes: {{ now() }}"
+          level: debug
+      # - service: mqtt.publish
+      #   data:
+      #     topic: 'OpenZWave/1/command/refreshnodeinfo/'
+      #     payload: >-
+      #       {% set node_id = state_attr('LOCKENTITYNAME','node_id') %}
+      #       { "node": {{ node_id }} }
+      #     retain: true
+
 ###################  automation:  ####################
 automation:
   # - alias: CASE_LOCK_NAME-ac-uc-sensors_last_changed_update
@@ -100,6 +139,33 @@ automation:
   #       entity_id:
   #         - sensor.LOCKNAME_ac_last_changed
   #         - sensor.LOCKNAME_uc_last_changed
+
+
+  - alias: LOCKNAME_update_user_codes_finished
+    trigger:
+      platform: event
+      event_type: timer.finished
+      event_data:
+        entity_id: timer.LOCKNAME_update_user_codes
+    condition:
+      - condition: state
+        entity_id: "binary_sensor.allow_automation"
+        state: "on"
+    action:
+      - service: script.LOCKNAME_refresh_codes
+          
+  - alias: LOCKNAME_refresh_lock_node_finished
+    trigger:
+      platform: event
+      event_type: timer.finished
+      event_data:
+        entity_id: timer.LOCKNAME_refresh_lock_node
+    condition:
+      - condition: state
+        entity_id: "binary_sensor.allow_automation"
+        state: "on"
+    action:
+      - service: script.LOCKNAME_refreshnodeinfo
 
   - alias: CASE_LOCK_NAME Lock Command
     trigger:
