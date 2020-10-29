@@ -10,7 +10,7 @@
 timer:
 
   LOCKNAME_refresh_lock_node:
-    duration: '00:05:00'
+    duration: '00:15:00'
 
 ###############  input_text:  #################
 input_text:

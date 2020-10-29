@@ -1,5 +1,5 @@
 DOMAIN = "lock-manager"
-VERSION = "0.0.36"
+VERSION = "0.0.37"
 ISSUE_URL = "https://github.com/FutureTense/lock-manager"
 PLATFORM = "sensor"
 ZWAVE_NETWORK = "zwave_network"
