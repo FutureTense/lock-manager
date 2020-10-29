@@ -74,11 +74,12 @@ class CodeSlotsData:
                             str(value.value),
                         )
                         # do not update if the code contains *s
+                        code = value.value
                         if "*" in str(value.value):
                             _LOGGER.debug("DEBUG: Ignoring code slot with * in value.")
-                            continue
+                            code = "Unknown"
                         sensor_name = f"code_slot_{value.index}"
-                        data[sensor_name] = value.value
+                        data[sensor_name] = code
 
                 self._data = data
 
@@ -98,11 +99,12 @@ class CodeSlotsData:
                         str(value.value),
                     )
                     # do not update if the code contains *s
+                    code = value.value
                     if "*" in str(value.value):
                         _LOGGER.debug("DEBUG: Ignoring code slot with * in value.")
-                        continue
+                        code = "Unknown"
                     sensor_name = f"code_slot_{value.index}"
-                    data[sensor_name] = value.value
+                    data[sensor_name] = code
 
                 self._data = data
 
