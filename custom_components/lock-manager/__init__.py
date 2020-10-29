@@ -373,11 +373,9 @@ async def async_setup_entry(hass, config_entry):
         schema=vol.Schema({vol.Required(ATTR_ENTITY_ID): vol.Coerce(str),}),
     )
 
-    # Load the code slot sensors if OZW is enabled
-    if config_entry.options[CONF_OZW]:
-        hass.async_create_task(
-            hass.config_entries.async_forward_entry_setup(config_entry, PLATFORM)
-        )
+    hass.async_create_task(
+        hass.config_entries.async_forward_entry_setup(config_entry, PLATFORM)
+    )
 
     # if the use turned on the bool generate the files
     if generate_package is not None:
