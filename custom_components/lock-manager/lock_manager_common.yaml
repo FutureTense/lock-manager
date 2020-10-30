@@ -153,7 +153,7 @@ automation:
         data_template:
           entity_id: input_number.LOCKNAME_lock_command
           value: >-
-            {{ states.SENSORALARMTYPE.state | int}}
+            {{ states('SENSORALARMTYPE') | int}}
 
   - alias: CASE_LOCK_NAME User Command
     trigger:
