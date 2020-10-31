@@ -141,7 +141,7 @@ class CodeSlotsData:
 
         # If slot is enabled return the PIN
         if enabled:
-            data = pin
+            data = pin.state
 
         return data
 
