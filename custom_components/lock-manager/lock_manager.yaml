@@ -199,7 +199,7 @@ automation:
       state: "off"
     - condition: template
       value_template: >-
-        {{ states("sensor.LOCKNAME_code_slot_TEMPLATENUM") != "unknown" and states("sensor.LOCKNAME_code_slot_TEMPLATENUM") != "unavailable" }}
+        {{ states("sensor.LOCKNAME_code_slot_TEMPLATENUM") != "unavailable" }}
   action:
     - choose:
         - conditions:
@@ -495,7 +495,9 @@ binary_sensor:
         {% if lockpin == "0000" %}
         {%   set lockpin = "" %}
         {% endif %}
-        {% if pinstatus == 'on' %}
+        {% if lockpin = 'occupied' %}
+        {% set correct = true %}
+        {% elif pinstatus == 'on' %}
         {% set correct = localpin == lockpin %}
         {% else %}
         {% set correct = lockpin == "" %}
