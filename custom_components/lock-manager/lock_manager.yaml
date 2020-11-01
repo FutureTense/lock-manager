@@ -495,7 +495,7 @@ binary_sensor:
         {% if lockpin == "0000" %}
         {%   set lockpin = "" %}
         {% endif %}
-        {% elif pinstatus == 'on' %}
+        {% if pinstatus == 'on' %}
         {% set correct = localpin == lockpin %}
         {% else %}
         {% set correct = lockpin == "" %}
