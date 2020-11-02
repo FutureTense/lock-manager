@@ -214,7 +214,7 @@ automation:
         entity_id: "binary_sensor.allow_automation"
         state: "on"
       - condition: template
-        value_template: "{{ SENSORALARMTYPE != 0 }}"
+        value_template: "{{ states(SENSORALARMTYPE) != 0 }}"
     action:
       - service: input_text.set_value
         data_template:
