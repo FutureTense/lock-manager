@@ -44,6 +44,7 @@ class CodeSlotsData:
         """Initialize the data object."""
         self._hass = hass
         self._entity_id = config.get(CONF_ENTITY_ID)
+        self._lockname = config.get(CONF_LOCK_NAME)
         self._data = None
 
         self.update = Throttle(timedelta(seconds=5))(self.update)
@@ -70,15 +71,15 @@ class CodeSlotsData:
                     if value.command_class == CommandClass.USER_CODE:
                         _LOGGER.debug(
                             "DEBUG: code_slot_%s value: %s",
-                            str(value.index),
+                            int(value.index),
                             str(value.value),
                         )
                         # do not update if the code contains *s
                         code = value.value
+                        sensor_name = f"code_slot_{value.index}"
                         if "*" in str(value.value):
                             _LOGGER.debug("DEBUG: Ignoring code slot with * in value.")
-                            code = "unknown"
-                        sensor_name = f"code_slot_{value.index}"
+                            code = self._invalid_code(value.index)
                         data[sensor_name] = code
 
                 self._data = data
@@ -102,13 +103,15 @@ class CodeSlotsData:
                     code = value.data
                     if "*" in str(value.data):
                         _LOGGER.debug("DEBUG: Ignoring code slot with * in value.")
-                        code = "unknown"
+                        code = self._invalid_code(value.index)
                     sensor_name = f"code_slot_{value.index}"
                     data[sensor_name] = code
 
                 self._data = data
 
     def _get_node_id(self):
+        """ Obtain the node_id from the entity via attributes. """
+
         data = None
         test = self._hass.states.get(self._entity_id)
         if test is not None:
@@ -120,6 +123,26 @@ class CodeSlotsData:
                     self._entity_id,
                     str(err),
                 )
+
+        return data
+
+    def _invalid_code(self, code_slot):
+        """ Return the PIN slot value as we are unable to read the slot value
+        from the lock. """
+
+        _LOGGER.debug("Utilizing BE469 work around code.")
+        # This is a fail safe and should not be needing to return ""
+        data = ""
+
+        # Build data from entities
+        enabled_bool = f"input_boolean.enabled_{self._lockname}_{code_slot}"
+        enabled = self._hass.states.get(enabled_bool)
+        pin_data = f"input_text.{self._lockname}_pin_{code_slot}"
+        pin = self._hass.states.get(pin_data)
+
+        # If slot is enabled return the PIN
+        if enabled:
+            data = pin.state
 
         return data
 
