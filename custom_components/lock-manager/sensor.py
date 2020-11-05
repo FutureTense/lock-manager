@@ -130,7 +130,7 @@ class CodeSlotsData:
         """ Return the PIN slot value as we are unable to read the slot value
         from the lock. """
 
-        _LOGGER.debug("Utilizing BE469 work around code.")
+        _LOGGER.debug("Work around code in use.")
         # This is a fail safe and should not be needing to return ""
         data = ""
 
@@ -142,7 +142,11 @@ class CodeSlotsData:
 
         # If slot is enabled return the PIN
         if enabled:
+            _LOGGER.debug("Utilizing BE469 work around code.")
             data = pin.state
+        else:
+            _LOGGER.debug("Utilizing FE599 work around code.")
+            data = ""
 
         return data
 
