@@ -261,6 +261,7 @@ automation:
                 '168':'Battery Critical',
                 '169':'Battery Too Low To Operate Lock' } %}
               {% set alarm_type_lock_actions = {
+                '16':'Keypad Unlock',
                 '18':'Keypad Lock',
                 '19':'Keypad Unlock',
                 '162':'Lock Code Attempt Outside of Schedule' } %}
@@ -289,6 +290,7 @@ automation:
                 '12':'All User Codes Deleted',
                 '13':'Single Code Deleted',
                 '14':'New User Code Added',
+                '18':'New Program Code Entered',
                 '15':'Duplicate Code' } %}
             {% endif %}
             {% if alarm_type_value in alarm_type_code_actions %}
