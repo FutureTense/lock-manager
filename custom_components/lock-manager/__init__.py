@@ -99,7 +99,7 @@ async def async_setup_entry(hass, config_entry):
                         value.command_class == CommandClass.USER_CODE
                         and value.index == 255
                     ):
-                        _LOGGER.debug("DEBUG: Index found valueIDKey: %s", int(value))
+                        _LOGGER.debug("DEBUG: Index found valueIDKey: %s", int(value.value_id_key))
                         value.send_value(True)
                         value.send_value(False)
 

@@ -47,7 +47,7 @@ class CodeSlotsData:
         self._lockname = config.get(CONF_LOCK_NAME)
         self._data = None
 
-        self.update = Throttle(timedelta(seconds=5))(self.update)
+        self.update = Throttle(timedelta(seconds=1))(self.update)
 
     def update(self):
         """Get the latest data"""
@@ -100,10 +100,30 @@ class CodeSlotsData:
                         str(value.data),
                     )
                     # do not update if the code contains *s
-                    code = value.data
-                    if "*" in str(value.data):
+                    code = str(value.data)
+
+                    # Remove \x00 if found
+                    code = code.replace("\x00", "")
+
+                    # Check for * in lock data and use workaround code if exist
+                    if "*" in code:
                         _LOGGER.debug("DEBUG: Ignoring code slot with * in value.")
                         code = self._invalid_code(value.index)
+
+                    # Build data from entities
+                    enabled_bool = (
+                        f"input_boolean.enabled_{self._lockname}_{value.index}"
+                    )
+                    enabled = self._hass.states.get(enabled_bool)
+
+                    # Report blank slot if occupied by random code
+                    if enabled is not None:
+                        if enabled.state == "off":
+                            _LOGGER.debug(
+                                "DEBUG: Utilizing Zwave clear_usercode work around code."
+                            )
+                            code = ""
+
                     sensor_name = f"code_slot_{value.index}"
                     data[sensor_name] = code
 
@@ -141,12 +161,13 @@ class CodeSlotsData:
         pin = self._hass.states.get(pin_data)
 
         # If slot is enabled return the PIN
-        if enabled:
-            _LOGGER.debug("Utilizing BE469 work around code.")
-            data = pin.state
-        else:
-            _LOGGER.debug("Utilizing FE599 work around code.")
-            data = ""
+        if enabled is not None:
+            if enabled.state == "on" and pin.state.isnumeric():
+                _LOGGER.debug("Utilizing BE469 work around code.")
+                data = pin.state
+            else:
+                _LOGGER.debug("Utilizing FE599 work around code.")
+                data = ""
 
         return data
 
