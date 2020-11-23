@@ -1,6 +1,6 @@
 """ Sensor for lock-manager """
 
-from .const import CONF_ENTITY_ID, CONF_SLOTS, CONF_LOCK_NAME, ZWAVE_NETWORK
+from .const import CONF_ENTITY_ID, CONF_SLOTS, CONF_LOCK_NAME, DOMAIN, ZWAVE_NETWORK
 from datetime import timedelta
 from homeassistant.components.ozw import DOMAIN as OZW_DOMAIN
 from openzwavemqtt.const import CommandClass
@@ -13,6 +13,7 @@ MANAGER = "manager"
 ATTR_VALUES = "values"
 ATTR_NODE_ID = "node_id"
 COMMAND_CLASS_USER_CODE = 99
+SERVICE_REFRESH_CODES = "refresh_codes"
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -47,9 +48,9 @@ class CodeSlotsData:
         self._lockname = config.get(CONF_LOCK_NAME)
         self._data = None
 
-        self.update = Throttle(timedelta(seconds=1))(self.update)
+        self.update = Throttle(timedelta(seconds=5))(self.update)
 
-    def update(self):
+    async def update(self):
         """Get the latest data"""
         # loop to get user code data from entity_id node
         instance_id = 1  # default
@@ -57,6 +58,9 @@ class CodeSlotsData:
         data[CONF_ENTITY_ID] = self._entity_id
         # data["node_id"] = _get_node_id(self._hass, self._entity_id)
         data[ATTR_NODE_ID] = self._get_node_id()
+
+        servicedata = {"entity_id": self._entity_id}
+        await self._hass.services.async_call(DOMAIN, SERVICE_REFRESH_CODES, servicedata)
 
         # pull the codes for ozw
         if OZW_DOMAIN in self._hass.data:
