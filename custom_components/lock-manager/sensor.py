@@ -187,7 +187,6 @@ class CodesSensor(Entity):
         self._unique_id = unique_id
         self._name = sensor_name
         self._lock_name = lock_name
-        self.update()
 
     @property
     def unique_id(self):
@@ -223,12 +222,12 @@ class CodesSensor(Entity):
             return True
         return False
 
-    def update(self):
+    async def async_update(self):
         """Fetch new state data for the sensor.
         This is the only method that should fetch new data for Home Assistant.
         """
 
-        self.data.update()
+        await self.data.update()
         # Using a dict to send the data back
 
         if self.data._data is not None:
