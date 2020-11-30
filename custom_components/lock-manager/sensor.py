@@ -48,7 +48,7 @@ class CodeSlotsData:
         self._lockname = config.get(CONF_LOCK_NAME)
         self._data = None
 
-        self.update = Throttle(timedelta(seconds=5))(self.update)
+        self.update = Throttle(timedelta(seconds=60))(self.update)
 
     async def update(self):
         """Get the latest data"""
