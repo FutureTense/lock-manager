@@ -188,8 +188,8 @@ automation:
     - platform: state
       entity_id: "binary_sensor.pin_synched_LOCKNAME_TEMPLATENUM"
       to: 'off'
-    - platform: time_pattern
-      seconds: "/5"      
+    - platform: state
+      entity_id: "sensor.LOCKNAME_code_slot_TEMPLATENUM"
   condition:
     - condition: state
       entity_id: "binary_sensor.allow_automation"
@@ -252,16 +252,17 @@ automation:
                       {{ USINGOZW }}
                   # this comment preserves formating
                     sequence:
+                      # a fake call to clear a non existent slot seems to fix a non clearing call on Schlage
+                      - service: ozw.clear_usercode
+                        data_template:
+                          entity_id: LOCKENTITYNAME
+                          code_slot: >-
+                            {{ 999 }}
                       - service: ozw.clear_usercode
                         data_template:
                           entity_id: LOCKENTITYNAME
                           code_slot: >-
                             {{ TEMPLATENUM }}
-                      # #Debug for flaky clear
-                      # - service: persistent_notification.create
-                      #   data_template:
-                      #     title: Slot TEMPLATENUM
-                      #     message: 'ozw clear_usercode called'
                   - conditions: >
                       {{ USINGOZW == False }}
                   # this comment preserves formating

@@ -400,58 +400,7 @@ automation:
           title: CASE_LOCK_NAME
           message: "Opened"
 
-  # - alias: CASE_LOCK_NAME Add Code
-  #   trigger:
-  #     entity_id: ACTIVELOCKHEADER
-  #     platform: state
-  #     to: "on"
-  #   condition:
-  #     - condition: state
-  #       entity_id: "binary_sensor.allow_automation"
-  #       state: "on"
-  #   action:
-  #     - choose:
-  #         - conditions: >
-  #             {{ USINGOZW }}
-  #         # this comment preserves formating
-  #           sequence:
-  #             - service: ozw.set_usercode
-  #               data_template:
-  #                 entity_id: LOCKENTITYNAME
-  #                 code_slot: >-
-  #                   {% set object_id = trigger.to_state.object_id %}
-  #                   {% set index = object_id.rfind('_') + 1 %}
-  #                   {% set code_slot = object_id[index:] %}
-  #                   {{ code_slot  }}
-  #                 usercode: >-
-  #                   {% set object_id = trigger.to_state.object_id %}
-  #                   {% set index = object_id.rfind('_') + 1 %}
-  #                   {% set code_slot = object_id[index:] %}    
-  #                   {% set codetext = 'LOCKNAME_pin_' + code_slot | string %}
-  #                   {% set code = states['input_text'][codetext].state %}
-  #                   {{ code | string }}
-  #         - conditions: >
-  #             {{ USINGOZW == False }}
-  #         # this comment preserves formating
-  #           sequence:
-  #             - service: lock.set_usercode
-  #               data_template:
-  #                 node_id: >-
-  #                   {{ state_attr('LOCKENTITYNAME','node_id') }}
-  #                 code_slot: >-
-  #                   {% set object_id = trigger.to_state.object_id %}
-  #                   {% set index = object_id.rfind('_') + 1 %}
-  #                   {% set code_slot = object_id[index:] %}
-  #                   {{ code_slot  }}
-  #                 usercode: >-
-  #                   {% set object_id = trigger.to_state.object_id %}
-  #                   {% set index = object_id.rfind('_') + 1 %}
-  #                   {% set code_slot = object_id[index:] %}    
-  #                   {% set codetext = 'LOCKNAME_pin_' + code_slot | string %}
-  #                   {% set code = states['input_text'][codetext].state %}
-  #                   {{ code | string }}
-
-  - alias: CASE_LOCK_NAME Update Code
+  - alias: CASE_LOCK_NAME Changed Code
     trigger:
       entity_id: INPUTLOCKPINHEADER
       platform: state

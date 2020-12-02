@@ -48,7 +48,8 @@ class CodeSlotsData:
         self._lockname = config.get(CONF_LOCK_NAME)
         self._data = None
 
-        self.update = Throttle(timedelta(seconds=60))(self.update)
+        # sensor refresh interval
+        self.update = Throttle(timedelta(seconds=1))(self.update)
 
     async def update(self):
         """Get the latest data"""
@@ -59,8 +60,9 @@ class CodeSlotsData:
         # data["node_id"] = _get_node_id(self._hass, self._entity_id)
         data[ATTR_NODE_ID] = self._get_node_id()
 
-        servicedata = {"entity_id": self._entity_id}
-        await self._hass.services.async_call(DOMAIN, SERVICE_REFRESH_CODES, servicedata)
+        # # make button call
+        # servicedata = {"entity_id": self._entity_id}
+        # await self._hass.services.async_call(DOMAIN, SERVICE_REFRESH_CODES, servicedata)
 
         # pull the codes for ozw
         if OZW_DOMAIN in self._hass.data:
