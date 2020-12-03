@@ -21,7 +21,6 @@ from .const import (
     CONF_SENSOR_NAME,
     CONF_SLOTS,
     CONF_START,
-    CONF_OZW,
     DEFAULT_CODE_SLOTS,
     DEFAULT_GENERATE,
     DEFAULT_PACKAGES_PATH,
@@ -104,7 +103,6 @@ class LockManagerFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         start_from = DEFAULT_START
         alarm_level = ""
         alarm_type = ""
-        using_ozw = False
 
         if user_input is not None:
             if CONF_ENTITY_ID in user_input:
@@ -123,8 +121,6 @@ class LockManagerFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 alarm_level = user_input[CONF_ALARM_LEVEL]
             if CONF_ALARM_TYPE in user_input:
                 alarm_type = user_input[CONF_ALARM_TYPE]
-            if CONF_OZW in user_input:
-                using_ozw = user_input[CONF_OZW]
 
         data_schema = OrderedDict()
         data_schema[vol.Required(CONF_ENTITY_ID, default=entity_id)] = vol.In(
@@ -143,7 +139,6 @@ class LockManagerFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             self._alarm_type
         )
         data_schema[vol.Required(CONF_PATH, default=packagepath)] = str
-        data_schema[vol.Required(CONF_OZW, default=using_ozw)] = bool
         return self.async_show_form(
             step_id="user", data_schema=vol.Schema(data_schema), errors=self._errors
         )
@@ -218,7 +213,6 @@ class LockManagerOptionsFlow(config_entries.OptionsFlow):
         start_from = self.config.options.get(CONF_START)
         alarm_level = self.config.options.get(CONF_ALARM_LEVEL)
         alarm_type = self.config.options.get(CONF_ALARM_TYPE)
-        using_ozw = self.config.options.get(CONF_OZW)
 
         if user_input is not None:
             if CONF_ENTITY_ID in user_input:
@@ -237,8 +231,6 @@ class LockManagerOptionsFlow(config_entries.OptionsFlow):
                 alarm_level = user_input[CONF_ALARM_LEVEL]
             if CONF_ALARM_TYPE in user_input:
                 alarm_type = user_input[CONF_ALARM_TYPE]
-            if CONF_OZW in user_input:
-                using_ozw = user_input[CONF_OZW]
 
         data_schema = OrderedDict()
         data_schema[vol.Required(CONF_ENTITY_ID, default=entity_id)] = vol.In(
@@ -257,7 +249,6 @@ class LockManagerOptionsFlow(config_entries.OptionsFlow):
             self._alarm_type
         )
         data_schema[vol.Required(CONF_PATH, default=packagepath)] = str
-        data_schema[vol.Required(CONF_OZW, default=using_ozw)] = bool
         return self.async_show_form(
             step_id="init", data_schema=vol.Schema(data_schema), errors=self._errors
         )

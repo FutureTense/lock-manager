@@ -99,7 +99,9 @@ async def async_setup_entry(hass, config_entry):
                         value.command_class == CommandClass.USER_CODE
                         and value.index == 255
                     ):
-                        _LOGGER.debug("DEBUG: Index found valueIDKey: %s", int(value.value_id_key))
+                        _LOGGER.debug(
+                            "DEBUG: Index found valueIDKey: %s", int(value.value_id_key)
+                        )
                         value.send_value(True)
                         value.send_value(False)
 
@@ -218,7 +220,9 @@ async def async_setup_entry(hass, config_entry):
             doorsensorentityname = entry.options[CONF_SENSOR_NAME] or ""
             sensoralarmlevel = entry.options[CONF_ALARM_LEVEL]
             sensoralarmtype = entry.options[CONF_ALARM_TYPE]
-            using_ozw = f"{entry.options[CONF_OZW]}"
+            using_ozw = False  # Set false by default
+            if OZW_DOMAIN in hass.data:
+                using_ozw = True  # Set true if we find ozw
             dummy = "foobar"
 
             output_path = entry.options[CONF_PATH] + lockname + "/"

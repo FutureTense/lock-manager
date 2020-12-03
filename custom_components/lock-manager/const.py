@@ -21,7 +21,6 @@ CONF_LOCK_NAME = "lockname"
 CONF_SENSOR_NAME = "sensorname"
 CONF_SLOTS = "slots"
 CONF_START = "start_from"
-CONF_OZW = "using_ozw"
 
 # Defaults
 DEFAULT_CODE_SLOTS = 10
