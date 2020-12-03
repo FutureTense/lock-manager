@@ -48,7 +48,8 @@ class CodeSlotsData:
         self._lockname = config.get(CONF_LOCK_NAME)
         self._data = None
 
-        self.update = Throttle(timedelta(seconds=5))(self.update)
+        # sensor refresh interval
+        self.update = Throttle(timedelta(seconds=1))(self.update)
 
     async def update(self):
         """Get the latest data"""
@@ -59,8 +60,9 @@ class CodeSlotsData:
         # data["node_id"] = _get_node_id(self._hass, self._entity_id)
         data[ATTR_NODE_ID] = self._get_node_id()
 
-        servicedata = {"entity_id": self._entity_id}
-        await self._hass.services.async_call(DOMAIN, SERVICE_REFRESH_CODES, servicedata)
+        # # make button call
+        # servicedata = {"entity_id": self._entity_id}
+        # await self._hass.services.async_call(DOMAIN, SERVICE_REFRESH_CODES, servicedata)
 
         # pull the codes for ozw
         if OZW_DOMAIN in self._hass.data:
@@ -187,7 +189,6 @@ class CodesSensor(Entity):
         self._unique_id = unique_id
         self._name = sensor_name
         self._lock_name = lock_name
-        self.update()
 
     @property
     def unique_id(self):
@@ -223,12 +224,12 @@ class CodesSensor(Entity):
             return True
         return False
 
-    def update(self):
+    async def async_update(self):
         """Fetch new state data for the sensor.
         This is the only method that should fetch new data for Home Assistant.
         """
 
-        self.data.update()
+        await self.data.update()
         # Using a dict to send the data back
 
         if self.data._data is not None:
