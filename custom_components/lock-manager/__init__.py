@@ -112,7 +112,9 @@ async def async_setup_entry(hass, config_entry):
         entity_id = service.data[ATTR_ENTITY_ID]
         code_slot = service.data[ATTR_CODE_SLOT]
         usercode = service.data[ATTR_USER_CODE]
-        using_ozw = config_entry.options[CONF_OZW]
+        using_ozw = False  # Set false by default
+        if OZW_DOMAIN in hass.data:
+            using_ozw = True  # Set true if we find ozw
         data = None
 
         # Pull the node_id from the entity
@@ -158,7 +160,9 @@ async def async_setup_entry(hass, config_entry):
         _LOGGER.debug("Clear Code service: %s", service)
         entity_id = service.data[ATTR_ENTITY_ID]
         code_slot = service.data[ATTR_CODE_SLOT]
-        using_ozw = config_entry.options[CONF_OZW]
+        using_ozw = False  # Set false by default
+        if OZW_DOMAIN in hass.data:
+            using_ozw = True  # Set true if we find ozw
         data = None
 
         # Pull the node_id from the entity
@@ -264,7 +268,7 @@ async def async_setup_entry(hass, config_entry):
                 x += 1
                 code_slots -= 1
             inputlockpinheaders = ",".join(map(str, inputlockpinheaders))
-            using_ozw = f"{entry.options[CONF_OZW]}"
+            using_ozw = f"{using_ozw}"
 
             _LOGGER.debug("Creating common YAML file...")
             replacements = {
