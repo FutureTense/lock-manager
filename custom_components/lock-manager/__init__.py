@@ -16,7 +16,6 @@ from .const import (
     CONF_ENTITY_ID,
     CONF_GENERATE,
     CONF_LOCK_NAME,
-    CONF_OZW,
     CONF_PATH,
     CONF_SENSOR_NAME,
     CONF_SLOTS,
