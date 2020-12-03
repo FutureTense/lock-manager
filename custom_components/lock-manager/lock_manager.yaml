@@ -474,7 +474,7 @@ binary_sensor:
          }}
 
     active_LOCKNAME_TEMPLATENUM:
-      friendly_name: "Status"
+      friendly_name: "Desired PIN State"
       value_template: >-
          {{
             is_state('binary_sensor.enabled_LOCKNAME_TEMPLATENUM', 'on')  and  
@@ -482,7 +482,6 @@ binary_sensor:
             is_state('binary_sensor.daterange_LOCKNAME_TEMPLATENUM', 'on') and
             is_state('binary_sensor.smtwtfs_LOCKNAME_TEMPLATENUM', 'on')  
          }}
-      device_class: connectivity
 
     pin_synched_LOCKNAME_TEMPLATENUM:
       friendly_name: 'PIN synchronized with lock'
