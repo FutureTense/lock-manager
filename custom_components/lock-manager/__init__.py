@@ -117,12 +117,13 @@ async def async_setup_entry(hass, config_entry):
 
         _LOGGER.debug("Attempting to call set_usercode...")
 
+        servicedata = {
+            ATTR_CODE_SLOT: code_slot,
+            ATTR_USER_CODE: usercode,
+        }
+
         if using_ozw:
-            servicedata = {
-                ATTR_ENTITY_ID: entity_id,
-                ATTR_CODE_SLOT: code_slot,
-                ATTR_USER_CODE: usercode,
-            }
+            servicedata[ATTR_ENTITY_ID] =  entity_id
 
             try:
                 await hass.services.async_call(OZW_DOMAIN, SET_USERCODE, servicedata)
@@ -143,11 +144,7 @@ async def async_setup_entry(hass, config_entry):
                 _LOGGER.error("Problem pulling node_id from entity.")
                 return
 
-            servicedata = {
-                ATTR_NODE_ID: node_id,
-                ATTR_CODE_SLOT: code_slot,
-                ATTR_USER_CODE: usercode,
-            }
+            servicedata[ATTR_NODE_ID] = node_id
 
             try:
                 await hass.services.async_call(ZWAVE_DOMAIN, SET_USERCODE, servicedata)
@@ -169,11 +166,10 @@ async def async_setup_entry(hass, config_entry):
 
         _LOGGER.debug("Attempting to call clear_usercode...")
 
+        servicedata = {ATTR_CODE_SLOT: code_slot}
+
         if using_ozw:
-            servicedata = {
-                ATTR_ENTITY_ID: entity_id,
-                ATTR_CODE_SLOT: code_slot,
-            }
+            servicedata[ATTR_ENTITY_ID] = entity_id
 
             try:
                 await hass.services.async_call(OZW_DOMAIN, CLEAR_USERCODE, servicedata)
@@ -193,10 +189,7 @@ async def async_setup_entry(hass, config_entry):
                 _LOGGER.error("Problem pulling node_id from entity.")
                 return
 
-            servicedata = {
-                ATTR_NODE_ID: node_id,
-                ATTR_CODE_SLOT: code_slot,
-            }
+            servicedata[ATTR_NODE_ID] = node_id
 
             try:
                 await hass.services.async_call(
