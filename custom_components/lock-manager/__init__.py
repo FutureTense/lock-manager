@@ -112,30 +112,18 @@ async def async_setup_entry(hass, config_entry):
         entity_id = service.data[ATTR_ENTITY_ID]
         code_slot = service.data[ATTR_CODE_SLOT]
         usercode = service.data[ATTR_USER_CODE]
-        using_ozw = False  # Set false by default
-        if OZW_DOMAIN in hass.data:
-            using_ozw = True  # Set true if we find ozw
-        data = None
-
-        # Pull the node_id from the entity
-        test = hass.states.get(entity_id)
-        if test is not None:
-            data = test.attributes[ATTR_NODE_ID]
-
-        # Bail out if no node_id could be extracted
-        if data is None:
-            _LOGGER.error("Problem pulling node_id from entity.")
-            return
-
-        servicedata = {
-            ATTR_ENTITY_ID: entity_id,
-            ATTR_CODE_SLOT: code_slot,
-            ATTR_USER_CODE: usercode,
-        }
+        using_ozw = (OZW_DOMAIN in hass.data)  # Can we find ozw?
+        node_id = None
 
         _LOGGER.debug("Attempting to call set_usercode...")
 
         if using_ozw:
+            servicedata = {
+                ATTR_ENTITY_ID: entity_id,
+                ATTR_CODE_SLOT: code_slot,
+                ATTR_USER_CODE: usercode,
+            }
+
             try:
                 await hass.services.async_call(OZW_DOMAIN, SET_USERCODE, servicedata)
             except Exception as err:
@@ -145,6 +133,22 @@ async def async_setup_entry(hass, config_entry):
                 pass
 
         else:
+            # Pull the node_id from the entity
+            test = hass.states.get(entity_id)
+            if test is not None:
+                node_id = test.attributes[ATTR_NODE_ID]
+
+            # Bail out if no node_id could be extracted
+            if node_id is None:
+                _LOGGER.error("Problem pulling node_id from entity.")
+                return
+
+            servicedata = {
+                ATTR_NODE_ID: node_id,
+                ATTR_CODE_SLOT: code_slot,
+                ATTR_USER_CODE: usercode,
+            }
+
             try:
                 await hass.services.async_call(ZWAVE_DOMAIN, SET_USERCODE, servicedata)
             except Exception as err:
